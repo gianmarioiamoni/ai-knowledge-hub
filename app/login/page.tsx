@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { ArrowUpRight, ShieldCheck } from "lucide-react";
 import { AuthForm } from "@/components/auth/AuthForm";
+import { JSX } from "react";
 
 export const metadata: Metadata = {
   title: "AI Knowledge Hub | Login",
@@ -28,7 +29,7 @@ export default function LoginPage(): JSX.Element {
           </div>
         </div>
 
-        <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="grid items-start justify-items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:justify-items-stretch">
           <div className="space-y-8">
             <div className="space-y-4">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
@@ -78,7 +79,7 @@ export default function LoginPage(): JSX.Element {
             </div>
           </div>
 
-          <div className="relative">
+          <div className="relative w-full max-w-xl lg:ml-auto">
             <div className="absolute inset-0 -z-10 scale-105 rounded-[28px] bg-gradient-to-br from-primary/20 via-accent/15 to-secondary/40 blur-3xl" />
             <div className="rounded-[28px] border border-white/40 bg-white/70 p-1 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
               <AuthForm />
