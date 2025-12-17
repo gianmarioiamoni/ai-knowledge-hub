@@ -1,9 +1,9 @@
 import createMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 
-const intlMiddleware = createMiddleware(routing);
+const intlProxy = createMiddleware(routing);
 
-export default intlMiddleware;
+export default intlProxy;
 
 export const config = {
   matcher: [
