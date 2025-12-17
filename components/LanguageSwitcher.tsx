@@ -19,7 +19,8 @@ function LanguageSwitcher(): JSX.Element {
   const currentLanguage = languages.find((lang) => lang.code === locale);
 
   const handleLanguageChange = (newLocale: string) => {
-    router.push(pathname, { locale: newLocale });
+    const targetPath = pathname || "/";
+    router.push(targetPath, { locale: newLocale });
   };
 
   return (
