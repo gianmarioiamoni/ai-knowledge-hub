@@ -4,9 +4,13 @@ import type { Mode } from "./types";
 type ModeSwitchProps = {
   mode: Mode;
   onChange: (mode: Mode) => void;
+  labels: {
+    signin: string;
+    signup: string;
+  };
 };
 
-function ModeSwitch({ mode, onChange }: ModeSwitchProps): JSX.Element {
+function ModeSwitch({ mode, onChange, labels }: ModeSwitchProps): JSX.Element {
   return (
     <div className="flex w-full rounded-full bg-muted/70 p-1 text-sm font-semibold text-foreground shadow-inner ring-1 ring-border/70">
       {(["signin", "signup"] as const).map((value) => (
@@ -20,7 +24,7 @@ function ModeSwitch({ mode, onChange }: ModeSwitchProps): JSX.Element {
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          {value === "signin" ? "Accedi" : "Registrati"}
+          {value === "signin" ? labels.signin : labels.signup}
         </button>
       ))}
     </div>

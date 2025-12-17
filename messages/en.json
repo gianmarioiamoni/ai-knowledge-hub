@@ -1,0 +1,74 @@
+{
+  "common": {
+    "secureAccess": "Secure access with Supabase",
+    "or": "or",
+    "logout": "Logout",
+    "multiTenantProtection": "Multi-tenant protection: RLS, Supabase Auth and secure storage."
+  },
+  "auth": {
+    "signin": "Sign in",
+    "signup": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "continueWithGoogle": "Continue with Google",
+    "welcome": "Welcome to your hub",
+    "createSpace": "Create your space",
+    "signinDescription": "Authenticate with email/password or continue with Google.",
+    "signupDescription": "Set up your account and start uploading your content."
+  },
+  "loginPage": {
+    "badgeHint": "Supabase Auth · Secure storage · SOP generation",
+    "title": "A hyper-modern control room",
+    "highlight": "hyper-modern",
+    "description": "Upload, extraction, chunking and end-to-end RAG: create operational procedures and contextual answers for enterprise teams.",
+    "stats": {
+      "documents": "Documents indexed",
+      "conversations": "Conversations per month",
+      "sops": "SOP generated"
+    },
+    "selling": {
+      "onboarding": "Express onboarding",
+      "pipeline": "Ingestion pipeline ready",
+      "ui": "Shadcn UI + Tailwind 4"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "headline": "Hi, {email}. Everything you need to orchestrate knowledge and AI.",
+    "subtitle": "Monitor, quick actions and pipeline status ingestion → retrieval → SOP. Multi-tenant secured with Supabase Auth, Storage and RLS.",
+    "tenant": "Isolated tenant",
+    "pgvector": "pgvector live",
+    "sop": "SOP generator",
+    "quickActions": "Instant operations",
+    "pipelineTitle": "Ingestion & RAG pipeline",
+    "pipelineDesc": "From storage to retrieval: every step is ready and trackable.",
+    "recommended": "Recommended actions",
+    "recommendedDesc": "Keep the knowledge base fresh for your team.",
+    "kpiTitle": "KPIs coming soon",
+    "kpiDesc": "Here we will display live metrics: latency, hit rate, answer quality, sync status.",
+    "integrity": "Dataset integrity",
+    "synced": "Sources synced",
+    "stats": {
+      "documents": "Indexed documents",
+      "conversations": "RAG conversations",
+      "sops": "SOP generated",
+      "users": "Active users"
+    },
+    "pipeline": {
+      "upload": "Upload & parsing",
+      "uploadDesc": "PDF, docx, company policies stored in Supabase Storage.",
+      "chunking": "Chunking + embeddings",
+      "chunkingDesc": "Semantic split + pgvector ready for search.",
+      "chat": "RAG chat",
+      "chatDesc": "Top-k context, GPT-4.1 and conversation persistence.",
+      "sop": "SOP generator",
+      "sopDesc": "Operational templates with checklist and warnings."
+    },
+    "actions": [
+      "Upload new manuals or internal procedures.",
+      "Open the RAG thread and validate answers with the team.",
+      "Generate a SOP starting from a saved conversation."
+    ]
+  }
+}
+

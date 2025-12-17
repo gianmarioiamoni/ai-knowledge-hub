@@ -1,15 +1,5 @@
-import { redirect } from "next/navigation";
-
-export default function DashboardPage(): never {
-  redirect("/en/dashboard");
-}
-import { redirect } from "next/navigation";
-import {
-  ArrowUpRight,
-  FileSpreadsheet,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
+import { getTranslations } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
 import { signOut } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { BadgePills } from "@/components/dashboard/BadgePills";
@@ -27,34 +17,29 @@ export default async function DashboardPage(): Promise<JSX.Element> {
     redirect("/login");
   }
 
-  const email = data.user.email ?? "Utente";
+  const email = data.user.email ?? "User";
+  const t = await getTranslations("dashboard");
+  const tCommon = await getTranslations("common");
 
   const stats = [
-    { label: "Documenti indicizzati", value: "128", delta: "+12 questa settimana" },
-    { label: "Conversazioni RAG", value: "3.4k", delta: "+8.2% trend" },
-    { label: "SOP generate", value: "640", delta: "Pronte per export" },
-    { label: "Utenti attivi", value: "42", delta: "RLS attiva" },
+    { label: t("stats.documents"), value: "128", delta: "+12 this week" },
+    { label: t("stats.conversations"), value: "3.4k", delta: "+8.2% trend" },
+    { label: t("stats.sops"), value: "640", delta: t("kpiDesc") },
+    { label: t("stats.users"), value: "42", delta: "RLS" },
   ];
 
   const pipeline = [
-    {
-      title: "Upload & parsing",
-      desc: "PDF, docx, policy aziendali salvate in Supabase Storage.",
-    },
-    { title: "Chunking + embeddings", desc: "Split semantico + pgvector pronto alla ricerca." },
-    { title: "Chat RAG", desc: "Context top-k, GPT-4.1 e persistenza conversazioni." },
-    { title: "SOP generator", desc: "Template operativi con checklist e avvisi." },
+    { title: t("pipeline.upload"), desc: t("pipeline.uploadDesc") },
+    { title: t("pipeline.chunking"), desc: t("pipeline.chunkingDesc") },
+    { title: t("pipeline.chat"), desc: t("pipeline.chatDesc") },
+    { title: t("pipeline.sop"), desc: t("pipeline.sopDesc") },
   ];
 
-  const nextActions = [
-    "Carica nuovi manuali o procedure interne.",
-    "Apri il thread RAG e valida le risposte con il team.",
-    "Genera una SOP partendo da una conversazione salvata.",
-  ];
+  const nextActions = t.raw("actions") as string[];
 
   const logoutButton = (
     <form action={signOut} className="flex items-center justify-end">
-      <Button variant="outline">Logout</Button>
+      <Button variant="outline">{tCommon("logout")}</Button>
     </form>
   );
 
@@ -69,12 +54,26 @@ export default async function DashboardPage(): Promise<JSX.Element> {
       <div className="relative mx-auto flex max-w-6xl flex-col gap-8">
         <HeaderBar email={email} actionSlot={logoutButton} />
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <BadgePills email={email} />
-        </div>
+        <BadgePills
+          badgeLabel={t("title")}
+          title={t("title")}
+          headline={t("headline", { email })}
+          subtitle={t("subtitle")}
+          pills={[
+            { label: t("tenant") },
+            { label: t("pgvector") },
+            { label: t("sop") },
+          ]}
+        />
 
-        <StatusCard title="Operativita immediata">
-          <QuickActions />
+        <StatusCard title={t("quickActions")}>
+          <QuickActions
+            labels={{
+              upload: t("pipeline.upload"),
+              chat: t("pipeline.chat"),
+              sop: t("pipeline.sop"),
+            }}
+          />
         </StatusCard>
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -89,10 +88,8 @@ export default async function DashboardPage(): Promise<JSX.Element> {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.9fr]">
-          <StatusCard title="Pipeline ingestion & RAG">
-            <p className="text-sm text-muted-foreground">
-              Dallo storage al retrieval: ogni fase e pronta e monitorabile.
-            </p>
+          <StatusCard title={t("pipelineTitle")}>
+            <p className="text-sm text-muted-foreground">{t("pipelineDesc")}</p>
             <div className="space-y-4">
               {pipeline.map((item, idx) => (
                 <div
@@ -111,10 +108,8 @@ export default async function DashboardPage(): Promise<JSX.Element> {
             </div>
           </StatusCard>
 
-          <StatusCard title="Azioni consigliate">
-            <p className="text-sm text-muted-foreground">
-              Mantieni la knowledge base aggiornata e pronta per il team.
-            </p>
+          <StatusCard title={t("recommended")}>
+            <p className="text-sm text-muted-foreground">{t("recommendedDesc")}</p>
             <div className="space-y-3">
               {nextActions.map((action) => (
                 <div
@@ -128,21 +123,20 @@ export default async function DashboardPage(): Promise<JSX.Element> {
             </div>
             <div className="flex flex-col gap-3 rounded-2xl border border-white/40 bg-gradient-to-br from-primary/10 via-secondary/20 to-accent/10 p-4 text-sm text-foreground shadow-md backdrop-blur dark:border-white/10 dark:from-primary/20 dark:via-secondary/10 dark:to-accent/10">
               <div className="flex items-center gap-2 font-semibold">
-                <FileSpreadsheet className="size-4" />
-                KPI in arrivo
+                <span className="inline-flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  •
+                </span>
+                {t("kpiTitle")}
               </div>
-              <p className="text-sm text-muted-foreground">
-                In questa sezione mostreremo metriche live: latenza media, hit rate, qualita delle
-                risposte e stato delle sincronizzazioni.
-              </p>
+              <p className="text-sm text-muted-foreground">{t("kpiDesc")}</p>
             </div>
           </StatusCard>
         </div>
 
-        <StatusCard title="Integrita dataset">
+        <StatusCard title={t("integrity")}>
           <ProgressCard
-            title="Integrita dataset"
-            subtitle="Sorgenti sincronizzate"
+            title={t("integrity")}
+            subtitle={t("synced")}
             progress={88}
             syncedLabel="12/14"
           />
@@ -151,3 +145,4 @@ export default async function DashboardPage(): Promise<JSX.Element> {
     </div>
   );
 }
+

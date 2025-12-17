@@ -8,6 +8,10 @@ type CredentialFormProps = {
   modeLabel: string;
   error?: string;
   action: BoundAuthAction;
+  labels: {
+    email: string;
+    password: string;
+  };
 };
 
 function CredentialForm({
@@ -15,12 +19,13 @@ function CredentialForm({
   modeLabel,
   error,
   action,
+  labels,
 }: CredentialFormProps): JSX.Element {
   return (
     <form action={action} className="space-y-3">
       <div className="space-y-2">
         <label className="block text-sm font-medium text-foreground" htmlFor="email">
-          Email
+          {labels.email}
         </label>
         <Input
           id="email"
@@ -33,7 +38,7 @@ function CredentialForm({
       </div>
       <div className="space-y-2">
         <label className="block text-sm font-medium text-foreground" htmlFor="password">
-          Password
+          {labels.password}
         </label>
         <Input
           id="password"
