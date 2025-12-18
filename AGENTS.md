@@ -220,6 +220,13 @@ Elementi principali:
 - Definizione schema DB  
 - Setup OpenAI + LangChain  
 
+Status: completato
+- Next.js 15, Tailwind 4, Shadcn configurati; i18n attiva.
+- Supabase schema con pgvector e RLS in `supabase/migrations/0001_init.sql`.
+- Env validation in `lib/env.ts`.
+- Supabase client SSR pronto in `lib/server/supabaseUser.ts`.
+- OpenAI client e factory LangChain pronti in `lib/server/openai.ts` e `lib/server/langchain.ts`.
+
 ### PHASE 1 – Document Upload & Ingestion (2 settimane)
 - UI upload documenti  
 - API upload → storage  
