@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import pdfParse from "pdf-parse";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createEmbeddingModel, createTextSplitter } from "@/lib/server/langchain";
@@ -111,6 +110,7 @@ const runIngestion = async ({
   fileName,
   fileType,
 }: IngestionParams) => {
+  const pdfParse = await loadPdfParse();
   const parsed = await pdfParse(buffer);
   const text = parsed.text?.trim() ?? "";
   if (!text) {
@@ -142,5 +142,13 @@ const runIngestion = async ({
   if (insertChunksError) {
     throw new Error(insertChunksError.message);
   }
+};
+
+const loadPdfParse = async (): Promise<(data: Buffer) => Promise<{ text: string }>> => {
+  const mod = await import("pdf-parse");
+  const fn = (mod as unknown as { default?: (data: Buffer) => Promise<{ text: string }> }).default;
+  if (fn) return fn;
+  // pdf-parse CommonJS export
+  return mod as unknown as (data: Buffer) => Promise<{ text: string }>;
 };
 
