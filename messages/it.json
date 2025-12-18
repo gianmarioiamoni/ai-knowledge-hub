@@ -39,6 +39,29 @@
       "ui": "UI Shadcn + Tailwind 4"
     }
   },
+  "documentsPage": {
+    "title": "Documenti",
+    "subtitle": "Carica e ingesta la knowledge base pronta per il RAG.",
+    "uploadLabel": "Carica documento (PDF)",
+    "uploadButton": "Carica",
+    "listTitle": "Pipeline di ingestion",
+    "empty": "Nessun documento presente.",
+    "table": {
+      "name": "Nome",
+      "type": "Tipo",
+      "status": "Stato",
+      "updated": "Aggiornato"
+    },
+    "status": {
+      "pending": "In attesa",
+      "processing": "In elaborazione",
+      "ingested": "Ingestato",
+      "failed": "Errore"
+    },
+    "ingestionNote": "Estrazione, chunking ed embeddings vengono processati dopo l'upload.",
+    "hintFormats": "Supportato: PDF",
+    "hintSecurity": "Salvato in sicurezza su Supabase Storage"
+  },
   "dashboard": {
     "title": "Dashboard",
     "user": "Ciao, {email}",

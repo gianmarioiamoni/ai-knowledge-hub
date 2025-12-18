@@ -39,6 +39,29 @@
       "ui": "Shadcn UI + Tailwind 4"
     }
   },
+  "documentsPage": {
+    "title": "Documents",
+    "subtitle": "Upload and ingest your knowledge base, ready for RAG.",
+    "uploadLabel": "Upload document (PDF)",
+    "uploadButton": "Upload",
+    "listTitle": "Ingestion pipeline",
+    "empty": "No documents yet.",
+    "table": {
+      "name": "Name",
+      "type": "Type",
+      "status": "Status",
+      "updated": "Updated"
+    },
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "ingested": "Ingested",
+      "failed": "Failed"
+    },
+    "ingestionNote": "Extraction, chunking and embeddings are processed after upload.",
+    "hintFormats": "Supported: PDF",
+    "hintSecurity": "Stored securely in Supabase Storage"
+  },
   "dashboard": {
     "title": "Dashboard",
     "user": "Hi, {email}",
