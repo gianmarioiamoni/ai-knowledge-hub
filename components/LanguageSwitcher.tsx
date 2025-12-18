@@ -19,6 +19,7 @@ function LanguageSwitcher(): JSX.Element {
   const currentLanguage = languages.find((lang) => lang.code === locale);
 
   const handleLanguageChange = (newLocale: string) => {
+    document.cookie = `preferred_locale=${newLocale}; path=/; max-age=${60 * 60 * 24 * 365}`;
     const targetPath = pathname || "/";
     router.push(targetPath, { locale: newLocale });
   };
