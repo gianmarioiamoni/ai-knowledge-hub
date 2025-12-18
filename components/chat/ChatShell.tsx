@@ -1,6 +1,6 @@
 "use client";
 
-import { JSX, useEffect, useMemo, useState } from "react";
+import { JSX, useEffect, useMemo, useRef, useState } from "react";
 
 type ChatMessage = {
   id: string;
@@ -31,6 +31,8 @@ type ChatShellProps = {
     send: string;
     newChat: string;
     empty: string;
+    loading: string;
+    retry: string;
     contextTitle: string;
     contextEmpty: string;
   };
@@ -49,11 +51,25 @@ function ChatShell({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [contextChunks, setContextChunks] = useState<ContextChunk[]>([]);
+  const [fetchingMessages, setFetchingMessages] = useState(false);
+  const [lastQuery, setLastQuery] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!conversationId) return;
-    setMessages(initialMessages);
+    setFetchingMessages(true);
+    fetch(`/api/chat/messages?conversationId=${conversationId}`)
+      .then((res) => res.json())
+      .then((data) => setMessages((data.messages as ChatMessage[]) ?? []))
+      .catch(() => setMessages([]))
+      .finally(() => setFetchingMessages(false));
   }, [conversationId, initialMessages]);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const sortedConversations = useMemo(
     () => [...conversations].sort((a, b) => (a.created_at > b.created_at ? -1 : 1)),
@@ -81,6 +97,7 @@ function ChatShell({
         { id: assistantId, role: "assistant", content: "", created_at: new Date().toISOString() },
       ]);
       setQuery("");
+      setLastQuery(query);
 
       const res = await fetch("/api/chat/query", {
         method: "POST",
@@ -133,6 +150,7 @@ function ChatShell({
     setConversationId(undefined);
     setMessages([]);
     setContextChunks([]);
+    setLastQuery(null);
   };
 
   return (
@@ -169,7 +187,9 @@ function ChatShell({
 
       <section className="flex flex-col gap-4 rounded-2xl border border-border/60 bg-white/70 p-4 backdrop-blur dark:bg-white/5">
         <div className="flex-1 space-y-3 overflow-y-auto">
-          {messages.length === 0 ? (
+          {fetchingMessages ? (
+            <p className="text-sm text-muted-foreground">{labels.loading}</p>
+          ) : messages.length === 0 ? (
             <p className="text-sm text-muted-foreground">{labels.empty}</p>
           ) : (
             messages.map((m) => (
@@ -186,6 +206,7 @@ function ChatShell({
               </div>
             ))
           )}
+          <div ref={messagesEndRef} />
         </div>
 
         <form onSubmit={sendMessage} className="flex items-center gap-3">
@@ -202,6 +223,19 @@ function ChatShell({
           >
             {labels.send}
           </button>
+          {error && lastQuery ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setQuery(lastQuery);
+                void sendMessage(e);
+              }}
+              className="text-xs font-semibold text-primary underline-offset-4 hover:underline"
+            >
+              {labels.retry}
+            </button>
+          ) : null}
         </form>
         {error ? <p className="text-xs text-rose-600">{error}</p> : null}
 

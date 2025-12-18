@@ -78,6 +78,8 @@
     "send": "Invia",
     "newChat": "Nuova chat",
     "empty": "Nessun messaggio.",
+    "loading": "Caricamento messaggi...",
+    "retry": "Riprova",
     "contextTitle": "Contesto usato",
     "contextEmpty": "Nessun contesto disponibile.",
     "breadcrumbs": {

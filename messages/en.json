@@ -78,6 +78,8 @@
     "send": "Send",
     "newChat": "New chat",
     "empty": "No messages yet.",
+    "loading": "Loading messages...",
+    "retry": "Retry",
     "contextTitle": "Context used",
     "contextEmpty": "No context available.",
     "breadcrumbs": {
