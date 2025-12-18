@@ -5,9 +5,12 @@ import { signOut } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { BadgePills } from "@/components/dashboard/BadgePills";
 import { HeaderBar } from "@/components/dashboard/HeaderBar";
+import { IngestionCard } from "@/components/dashboard/IngestionCard";
 import { ProgressCard } from "@/components/dashboard/ProgressCard";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { StatusCard } from "@/components/dashboard/StatusCard";
+import { getIngestionStats } from "@/lib/server/documents";
+import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 
 type DashboardPageProps = {
@@ -28,6 +31,8 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
   const email = user.email ?? "User";
   const t = await getTranslations({ locale, namespace: "dashboard" });
   const tCommon = await getTranslations({ locale, namespace: "common" });
+  const organizationId = await ensureUserOrganization({ supabase });
+  const ingestion = await getIngestionStats(organizationId);
 
   const stats = [
     { label: t("stats.documents"), value: "128", delta: t("stats.deltas.documents") },
@@ -120,29 +125,43 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
             </div>
           </StatusCard>
 
-          <StatusCard title={t("recommended")}>
-            <p className="text-sm text-muted-foreground">{t("recommendedDesc")}</p>
-            <div className="space-y-3">
-              {nextActions.map((action) => (
-                <div
-                  key={action}
-                  className="flex items-start gap-3 rounded-2xl border border-white/40 bg-white/70 p-4 text-sm font-semibold text-foreground shadow-inner backdrop-blur dark:border-white/10 dark:bg-white/5"
-                >
-                  <span className="mt-0.5 size-2 rounded-full bg-primary shadow-[0_0_0_6px_rgba(79,70,229,0.14)]" />
-                  {action}
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-col gap-3 rounded-2xl border border-white/40 bg-gradient-to-br from-primary/10 via-secondary/20 to-accent/10 p-4 text-sm text-foreground shadow-md backdrop-blur dark:border-white/10 dark:from-primary/20 dark:via-secondary/10 dark:to-accent/10">
-              <div className="flex items-center gap-2 font-semibold">
-                <span className="inline-flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  •
-                </span>
-                {t("kpiTitle")}
+          <div className="space-y-4">
+            <StatusCard title={t("recommended")}>
+              <p className="text-sm text-muted-foreground">{t("recommendedDesc")}</p>
+              <div className="space-y-3">
+                {nextActions.map((action) => (
+                  <div
+                    key={action}
+                    className="flex items-start gap-3 rounded-2xl border border-white/40 bg-white/70 p-4 text-sm font-semibold text-foreground shadow-inner backdrop-blur dark:border-white/10 dark:bg-white/5"
+                  >
+                    <span className="mt-0.5 size-2 rounded-full bg-primary shadow-[0_0_0_6px_rgba(79,70,229,0.14)]" />
+                    {action}
+                  </div>
+                ))}
               </div>
-              <p className="text-sm text-muted-foreground">{t("kpiDesc")}</p>
-            </div>
-          </StatusCard>
+              <div className="flex flex-col gap-3 rounded-2xl border border-white/40 bg-gradient-to-br from-primary/10 via-secondary/20 to-accent/10 p-4 text-sm text-foreground shadow-md backdrop-blur dark:border-white/10 dark:from-primary/20 dark:via-secondary/10 dark:to-accent/10">
+                <div className="flex items-center gap-2 font-semibold">
+                  <span className="inline-flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    •
+                  </span>
+                  {t("kpiTitle")}
+                </div>
+                <p className="text-sm text-muted-foreground">{t("kpiDesc")}</p>
+              </div>
+            </StatusCard>
+
+            <IngestionCard
+              title={t("ingestion.title")}
+              ingestedLabel={t("ingestion.ingested")}
+              processingLabel={t("ingestion.processing")}
+              lastIngestedLabel={t("ingestion.lastIngested")}
+              notAvailableLabel={t("ingestion.notAvailable")}
+              ingestedCount={ingestion.ingestedCount}
+              processingCount={ingestion.processingCount}
+              lastIngestedAt={ingestion.lastIngestedAt}
+              locale={locale}
+            />
+          </div>
         </div>
 
         <StatusCard title={t("integrity")}>

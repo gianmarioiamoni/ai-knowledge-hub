@@ -79,6 +79,13 @@
     "kpiDesc": "Here we will display live metrics: latency, hit rate, answer quality, sync status.",
     "integrity": "Dataset integrity",
     "synced": "Sources synced",
+    "ingestion": {
+      "title": "Ingestion status",
+      "ingested": "ingested",
+      "processing": "in progress",
+      "lastIngested": "Last ingested",
+      "notAvailable": "N/A"
+    },
     "stats": {
       "documents": "Indexed documents",
       "conversations": "RAG conversations",
