@@ -60,7 +60,15 @@
     },
     "ingestionNote": "Extraction, chunking and embeddings are processed after upload.",
     "hintFormats": "Supported: PDF",
-    "hintSecurity": "Stored securely in Supabase Storage"
+    "hintSecurity": "Stored securely in Supabase Storage",
+    "breadcrumbs": {
+      "home": "Dashboard",
+      "documents": "Documents"
+    },
+    "links": {
+      "chat": "Jump to chat",
+      "procedures": "Generate a SOP"
+    }
   },
   "dashboard": {
     "title": "Dashboard",

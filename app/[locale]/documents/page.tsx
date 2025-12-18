@@ -4,6 +4,7 @@ import { uploadDocument } from "./actions";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { StatusBadge } from "@/components/documents/StatusBadge";
+import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { Card } from "@/components/ui/card";
 
 type DocumentRow = {
@@ -38,12 +39,27 @@ export default async function DocumentsPage({
 
   return (
     <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 py-10 sm:px-8 lg:px-0">
+      <Breadcrumbs
+        items={[
+          { label: t("breadcrumbs.home"), href: "/dashboard" },
+          { label: t("breadcrumbs.documents") },
+        ]}
+      />
       <div className="flex flex-col gap-2">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
           {t("title")}
         </p>
         <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{t("subtitle")}</h1>
         <p className="text-sm text-muted-foreground">{t("ingestionNote")}</p>
+        <div className="flex flex-wrap gap-2 text-sm text-primary">
+          <a className="underline-offset-4 hover:underline" href="/chat">
+            {t("links.chat")}
+          </a>
+          <span>·</span>
+          <a className="underline-offset-4 hover:underline" href="/procedures">
+            {t("links.procedures")}
+          </a>
+        </div>
       </div>
 
       <Card className="border border-white/40 bg-white/70 p-6 backdrop-blur dark:border-white/10 dark:bg-white/5">

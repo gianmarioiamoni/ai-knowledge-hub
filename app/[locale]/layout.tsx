@@ -3,6 +3,8 @@ import { getMessages } from "next-intl/server";
 import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { routing } from "@/i18n/routing";
+import { CommandPalette } from "@/components/navigation/CommandPalette";
+import { TopNav } from "@/components/navigation/TopNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import "@/app/globals.css";
 
@@ -33,8 +35,11 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <div className="relative z-50 mx-auto flex w-full max-w-6xl justify-end px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
+          <div className="relative z-50 mx-auto flex w-full max-w-6xl items-center justify-end gap-3 px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
+            <TopNav />
+            <CommandHint />
             <LanguageSwitcher />
+            <CommandPalette />
           </div>
           {children}
         </NextIntlClientProvider>
