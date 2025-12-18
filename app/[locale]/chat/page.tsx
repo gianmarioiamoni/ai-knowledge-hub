@@ -1,0 +1,63 @@
+import { getTranslations } from "next-intl/server";
+import { JSX } from "react";
+import { ChatShell } from "@/components/chat/ChatShell";
+import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
+import { listConversations, listMessages } from "@/lib/server/chat";
+import { ensureUserOrganization } from "@/lib/server/organizations";
+import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
+
+type ChatPageProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.Element> {
+  const { locale } = await params;
+  const supabase = createSupabaseServerClient();
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error || !data.user) {
+    return redirectToLogin(locale);
+  }
+
+  const orgId = await ensureUserOrganization({ supabase });
+  const conversations = await listConversations(orgId, data.user.id);
+  const initialConversationId = conversations[0]?.id;
+  const initialMessages = initialConversationId ? await listMessages(initialConversationId) : [];
+
+  const t = await getTranslations({ locale, namespace: "chatPage" });
+
+  return (
+    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-10 sm:px-8 lg:px-0">
+      <Breadcrumbs
+        items={[
+          { label: t("breadcrumbs.home"), href: "/dashboard" },
+          { label: t("breadcrumbs.chat") },
+        ]}
+      />
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{t("title")}</p>
+        <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{t("subtitle")}</h1>
+        <p className="text-sm text-muted-foreground">{t("description")}</p>
+      </div>
+
+      <ChatShell
+        locale={locale}
+        conversations={conversations}
+        initialConversationId={initialConversationId}
+        initialMessages={initialMessages}
+        labels={{
+          placeholder: t("inputPlaceholder"),
+          send: t("send"),
+          newChat: t("newChat"),
+          empty: t("empty"),
+        }}
+      />
+    </div>
+  );
+}
+
+function redirectToLogin(locale: string): never {
+  const { redirect } = require("next/navigation");
+  redirect(`/${locale}/login`);
+}
+

@@ -70,6 +70,19 @@
       "procedures": "Generate a SOP"
     }
   },
+  "chatPage": {
+    "title": "Chat",
+    "subtitle": "Ask questions on your ingested documents.",
+    "description": "We retrieve the most relevant chunks and answer concisely.",
+    "inputPlaceholder": "Ask a question...",
+    "send": "Send",
+    "newChat": "New chat",
+    "empty": "No messages yet.",
+    "breadcrumbs": {
+      "home": "Dashboard",
+      "chat": "Chat"
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "user": "Hi, {email}",
