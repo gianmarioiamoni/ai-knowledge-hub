@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { env } from "@/lib/env";
+import { routing } from "@/i18n/routing";
 
 const createResponseSupabaseClient = (
   request: NextRequest,
@@ -36,10 +37,12 @@ const createResponseSupabaseClient = (
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const next = requestUrl.searchParams.get("next") ?? "/dashboard";
+  const cookieLocale = request.cookies.get("preferred_locale")?.value;
+  const locale = routing.locales.includes(cookieLocale ?? "") ? (cookieLocale as string) : routing.defaultLocale;
+  const next = requestUrl.searchParams.get("next") ?? `/${locale}/dashboard`;
 
   if (!code) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
   }
 
   const response = NextResponse.redirect(new URL(next, request.url));
