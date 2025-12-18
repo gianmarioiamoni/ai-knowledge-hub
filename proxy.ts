@@ -10,6 +10,8 @@ const intlProxy = createMiddleware({
 });
 
 export default function proxy(request: NextRequest) {
+  const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
+
   if (process.env.NODE_ENV !== "production") {
     // Debug: trace incoming path and detected locale to diagnose redirects
     console.info("[proxy] incoming", {
@@ -18,7 +20,22 @@ export default function proxy(request: NextRequest) {
       locale: request.nextUrl.locale,
     });
   }
-  return intlProxy(request);
+
+  const response = intlProxy(request);
+
+  const [, maybeLocale] = request.nextUrl.pathname.split("/");
+  const hasLocale = routing.locales.includes(maybeLocale);
+  if (hasLocale) {
+    const cookieLocale = request.cookies.get("preferred_locale")?.value;
+    if (cookieLocale !== maybeLocale) {
+      response.cookies.set("preferred_locale", maybeLocale, {
+        path: "/",
+        maxAge: ONE_YEAR_SECONDS,
+      });
+    }
+  }
+
+  return response;
 }
 
 export const config = {
