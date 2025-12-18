@@ -28,6 +28,10 @@ function CommandPalette(): JSX.Element {
       if (isMetaK) {
         event.preventDefault();
         setOpen((prev) => !prev);
+        return;
+      }
+      if (event.key === "Escape") {
+        setOpen(false);
       }
     };
     const openFromEvent = () => setOpen(true);
@@ -54,8 +58,14 @@ function CommandPalette(): JSX.Element {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/30 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-border bg-background shadow-2xl">
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/30 p-4 backdrop-blur-sm"
+      onClick={() => setOpen(false)}
+    >
+      <div
+        className="w-full max-w-md overflow-hidden rounded-2xl border border-border bg-background shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="border-b border-border px-4 py-3">
           <input
             autoFocus
@@ -63,6 +73,12 @@ function CommandPalette(): JSX.Element {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search or jump to…"
             className="w-full bg-transparent text-sm text-foreground outline-none"
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                e.stopPropagation();
+                setOpen(false);
+              }
+            }}
           />
         </div>
         <div className="max-h-64 overflow-y-auto">
