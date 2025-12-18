@@ -1,6 +1,6 @@
 // lib/server/langchain.ts
 import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { env } from "../env";
 
 const defaultEmbeddingDimensions = 1536;

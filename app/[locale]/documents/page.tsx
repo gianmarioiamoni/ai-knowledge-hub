@@ -47,7 +47,7 @@ export default async function DocumentsPage({
       </div>
 
       <Card className="border border-white/40 bg-white/70 p-6 backdrop-blur dark:border-white/10 dark:bg-white/5">
-        <form action={action} className="flex flex-col gap-4" encType="multipart/form-data">
+        <form action={action} className="flex flex-col gap-4">
           <input type="hidden" name="locale" value={locale} />
           <label className="text-sm font-medium text-foreground">
             {t("uploadLabel")}

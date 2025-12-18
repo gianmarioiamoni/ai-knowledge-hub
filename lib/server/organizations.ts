@@ -1,5 +1,6 @@
 // lib/server/organizations.ts
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { createSupabaseServiceClient } from "./supabaseService";
 
 type EnsureOrganizationParams = {
   supabase: SupabaseClient;
@@ -19,9 +20,12 @@ export const ensureUserOrganization = async ({
     throw new Error("User not authenticated");
   }
 
-  const { data: memberships, error: membershipError } = await supabase
+  const service = createSupabaseServiceClient();
+
+  const { data: memberships, error: membershipError } = await service
     .from("organization_members")
     .select("organization_id")
+    .eq("user_id", userData.user.id)
     .limit(1);
 
   if (membershipError) {
@@ -35,7 +39,7 @@ export const ensureUserOrganization = async ({
 
   const orgName = userData.user.email ? `Org - ${userData.user.email}` : fallbackName;
 
-  const { data: orgInsert, error: orgError } = await supabase
+  const { data: orgInsert, error: orgError } = await service
     .from("organizations")
     .insert({ name: orgName })
     .select("id")
