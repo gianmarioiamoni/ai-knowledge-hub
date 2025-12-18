@@ -66,7 +66,7 @@ function CommandPalette(): JSX.Element {
         className="w-full max-w-md overflow-hidden rounded-2xl border border-border bg-background shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="border-b border-border px-4 py-3">
+        <div className="flex items-center gap-3 border-b border-border px-4 py-3">
           <input
             autoFocus
             value={query}
@@ -80,6 +80,14 @@ function CommandPalette(): JSX.Element {
               }
             }}
           />
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="rounded-full p-1 text-muted-foreground transition hover:bg-muted"
+            aria-label="Close command palette"
+          >
+            ✕
+          </button>
         </div>
         <div className="max-h-64 overflow-y-auto">
           {filtered.length === 0 ? (
