@@ -78,6 +78,8 @@
     "send": "Invia",
     "newChat": "Nuova chat",
     "empty": "Nessun messaggio.",
+    "contextTitle": "Contesto usato",
+    "contextEmpty": "Nessun contesto disponibile.",
     "breadcrumbs": {
       "home": "Dashboard",
       "chat": "Chat"

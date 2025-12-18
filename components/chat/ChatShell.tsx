@@ -15,6 +15,12 @@ type Conversation = {
   created_at: string;
 };
 
+type ContextChunk = {
+  id: string;
+  chunk_text: string;
+  chunk_metadata?: Record<string, unknown>;
+};
+
 type ChatShellProps = {
   locale: string;
   conversations: Conversation[];
@@ -25,6 +31,8 @@ type ChatShellProps = {
     send: string;
     newChat: string;
     empty: string;
+    contextTitle: string;
+    contextEmpty: string;
   };
 };
 
@@ -40,6 +48,7 @@ function ChatShell({
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [contextChunks, setContextChunks] = useState<ContextChunk[]>([]);
 
   useEffect(() => {
     if (!conversationId) return;
@@ -69,7 +78,7 @@ function ChatShell({
       const data = (await res.json()) as {
         conversationId: string;
         answer: string;
-        chunks: unknown[];
+        chunks: ContextChunk[];
       };
       setConversationId(data.conversationId);
       setMessages((prev) => [
@@ -77,6 +86,7 @@ function ChatShell({
         { id: crypto.randomUUID(), role: "user", content: query, created_at: new Date().toISOString() },
         { id: crypto.randomUUID(), role: "assistant", content: data.answer, created_at: new Date().toISOString() },
       ]);
+      setContextChunks(data.chunks ?? []);
       setQuery("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unexpected error");
@@ -159,6 +169,24 @@ function ChatShell({
           </button>
         </form>
         {error ? <p className="text-xs text-rose-600">{error}</p> : null}
+
+        <div className="rounded-xl border border-border/60 bg-muted/40 p-3">
+          <div className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            {labels.contextTitle}
+          </div>
+          {contextChunks.length === 0 ? (
+            <p className="text-xs text-muted-foreground">{labels.contextEmpty}</p>
+          ) : (
+            <div className="space-y-3 text-xs text-foreground">
+              {contextChunks.slice(0, 3).map((chunk, idx) => (
+                <div key={chunk.id} className="rounded-lg bg-white/70 p-3 ring-1 ring-border">
+                  <p className="mb-1 font-semibold text-primary">#{idx + 1}</p>
+                  <p className="whitespace-pre-wrap">{chunk.chunk_text}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );
