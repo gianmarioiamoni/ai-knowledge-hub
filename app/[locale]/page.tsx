@@ -2,12 +2,12 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 
 type LocalePageProps = {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 };
 
 export default async function LocaleIndexPage({ params }: LocalePageProps): Promise<never> {
-  const { locale } = params;
-  const supabase = createSupabaseServerClient();
+  const { locale } = await params;
+  const supabase = createSupabaseServerClient(false);
   const { data, error } = await supabase.auth.getUser();
 
   const target = data.user ? `/${locale}/dashboard` : `/${locale}/login`;
