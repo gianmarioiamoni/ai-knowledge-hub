@@ -35,6 +35,7 @@ type ChatShellProps = {
     retry: string;
     contextTitle: string;
     contextEmpty: string;
+    stop: string;
   };
 };
 
@@ -49,11 +50,13 @@ function ChatShell({
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
+  const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [contextChunks, setContextChunks] = useState<ContextChunk[]>([]);
   const [fetchingMessages, setFetchingMessages] = useState(false);
   const [lastQuery, setLastQuery] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!conversationId) return;
@@ -80,6 +83,7 @@ function ChatShell({
     e.preventDefault();
     if (!query.trim()) return;
     setLoading(true);
+    setStreaming(true);
     setError(null);
     setContextChunks([]);
     try {
@@ -99,10 +103,14 @@ function ChatShell({
       setQuery("");
       setLastQuery(query);
 
+      abortRef.current?.abort();
+      abortRef.current = new AbortController();
+
       const res = await fetch("/api/chat/query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query, conversationId }),
+        signal: abortRef.current.signal,
       });
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
@@ -134,6 +142,8 @@ function ChatShell({
             setContextChunks(parsed.chunks ?? []);
           } else if (parsed.type === "token") {
             appendToken(parsed.data ?? "");
+          } else if (parsed.type === "done") {
+            setStreaming(false);
           } else if (parsed.type === "error") {
             throw new Error(parsed.error ?? "Stream error");
           }
@@ -143,6 +153,8 @@ function ChatShell({
       setError(err instanceof Error ? err.message : "Unexpected error");
     } finally {
       setLoading(false);
+      setStreaming(false);
+      abortRef.current = null;
     }
   };
 
@@ -151,6 +163,9 @@ function ChatShell({
     setMessages([]);
     setContextChunks([]);
     setLastQuery(null);
+    setStreaming(false);
+    abortRef.current?.abort();
+    abortRef.current = null;
   };
 
   return (
@@ -223,6 +238,19 @@ function ChatShell({
           >
             {labels.send}
           </button>
+          {streaming ? (
+            <button
+              type="button"
+              onClick={() => {
+                abortRef.current?.abort();
+                setStreaming(false);
+                setLoading(false);
+              }}
+              className="text-xs font-semibold text-primary underline-offset-4 hover:underline"
+            >
+              {labels.stop}
+            </button>
+          ) : null}
           {error && lastQuery ? (
             <button
               type="button"

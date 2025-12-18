@@ -82,6 +82,7 @@
     "retry": "Retry",
     "contextTitle": "Context used",
     "contextEmpty": "No context available.",
+    "stop": "Stop",
     "breadcrumbs": {
       "home": "Dashboard",
       "chat": "Chat"
