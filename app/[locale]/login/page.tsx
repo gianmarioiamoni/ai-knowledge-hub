@@ -8,13 +8,18 @@ import { SellingPoints } from "@/components/login/SellingPoints";
 import { StatsGrid } from "@/components/login/StatsGrid";
 import type { Stat } from "@/components/login/StatsGrid";
 
-export default async function LoginPage(): Promise<JSX.Element> {
-  const t = await getTranslations("loginPage");
+type LoginPageProps = {
+  params: Promise<{ locale: string }> | { locale: string };
+};
+
+export default async function LoginPage({ params }: LoginPageProps): Promise<JSX.Element> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "loginPage" });
 
   const stats: Stat[] = [
-    { label: t("stats.documents"), value: "1.2k", hint: "pgvector + RLS" },
-    { label: t("stats.conversations"), value: "38k", hint: "GPT-4.1 + caching" },
-    { label: t("stats.sops"), value: "640", hint: "Template operativi" },
+    { label: t("stats.documents"), value: "1.2k", hint: t("statsHints.documents") },
+    { label: t("stats.conversations"), value: "38k", hint: t("statsHints.conversations") },
+    { label: t("stats.sops"), value: "640", hint: t("statsHints.sops") },
   ];
 
   return (
@@ -26,11 +31,16 @@ export default async function LoginPage(): Promise<JSX.Element> {
       </div>
 
       <div className="relative mx-auto flex max-w-6xl flex-col gap-10">
-        <BadgeBar hint={t("badgeHint")} />
+        <BadgeBar label={t("badgeLabel")} hint={t("badgeHint")} />
 
         <div className="grid items-start justify-items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:justify-items-stretch">
           <div className="space-y-8">
-            <Hero title={t("title")} highlight={t("highlight")} description={t("description")} />
+            <Hero
+              title={t("title")}
+              highlight={t("highlight")}
+              suffix={t("titleSuffix")}
+              description={t("description")}
+            />
             <StatsGrid stats={stats} />
             <SellingPoints
               items={[

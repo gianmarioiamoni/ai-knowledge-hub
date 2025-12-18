@@ -18,13 +18,20 @@
   },
   "loginPage": {
     "badgeHint": "Supabase Auth · Storage sicuro · SOP generation",
+    "badgeLabel": "Multi-tenant RAG protetto",
     "title": "Una control room",
     "highlight": "iper-moderna",
+    "titleSuffix": "per gestire e attivare il tuo capitale informativo.",
     "description": "Upload, estrazione, chunking e RAG end-to-end: crea procedure operative e risposte contestuali con un'esperienza pensata per team enterprise.",
     "stats": {
       "documents": "Documenti indicizzati",
       "conversations": "Conversazioni al mese",
       "sops": "SOP generate"
+    },
+    "statsHints": {
+      "documents": "pgvector + RLS",
+      "conversations": "GPT-4.1 + caching",
+      "sops": "Template operativi"
     },
     "selling": {
       "onboarding": "Onboarding espresso",
@@ -34,7 +41,8 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "headline": "Ciao, {email}. Tutto ciò che serve per orchestrare conoscenza e AI.",
+    "user": "Ciao, {email}",
+    "headline": "Tutto ciò che serve per orchestrare conoscenza e AI.",
     "subtitle": "Monitor, azioni rapide e stato della pipeline ingestion → retrieval → SOP. Multi-tenant sicuro con Supabase Auth, Storage e RLS.",
     "tenant": "Tenant isolato",
     "pgvector": "pgvector live",
@@ -52,7 +60,13 @@
       "documents": "Documenti indicizzati",
       "conversations": "Conversazioni RAG",
       "sops": "SOP generate",
-      "users": "Utenti attivi"
+      "users": "Utenti attivi",
+      "deltas": {
+        "documents": "+12 questa settimana",
+        "conversations": "+8.2% trend",
+        "sops": "Pronte per export",
+        "users": "RLS attiva"
+      }
     },
     "pipeline": {
       "upload": "Upload & parsing",

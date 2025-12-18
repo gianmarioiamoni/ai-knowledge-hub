@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { JSX } from "react";
 import { redirect } from "@/i18n/navigation";
 import { signOut } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
@@ -9,23 +10,30 @@ import { QuickActions } from "@/components/dashboard/QuickActions";
 import { StatusCard } from "@/components/dashboard/StatusCard";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 
-export default async function DashboardPage(): Promise<JSX.Element> {
+type DashboardPageProps = {
+  params: Promise<{ locale: string }> | { locale: string };
+};
+
+export default async function DashboardPage({ params }: DashboardPageProps): Promise<JSX.Element> {
+  const { locale } = await params;
   const supabase = createSupabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
+  const user = data.user;
 
-  if (error || !data.user) {
-    redirect("/login");
+  if (error || !user) {
+    redirect({ href: "/login", locale });
+    return null as never;
   }
 
-  const email = data.user.email ?? "User";
-  const t = await getTranslations("dashboard");
-  const tCommon = await getTranslations("common");
+  const email = user.email ?? "User";
+  const t = await getTranslations({ locale, namespace: "dashboard" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
 
   const stats = [
-    { label: t("stats.documents"), value: "128", delta: "+12 this week" },
-    { label: t("stats.conversations"), value: "3.4k", delta: "+8.2% trend" },
-    { label: t("stats.sops"), value: "640", delta: t("kpiDesc") },
-    { label: t("stats.users"), value: "42", delta: "RLS" },
+    { label: t("stats.documents"), value: "128", delta: t("stats.deltas.documents") },
+    { label: t("stats.conversations"), value: "3.4k", delta: t("stats.deltas.conversations") },
+    { label: t("stats.sops"), value: "640", delta: t("stats.deltas.sops") },
+    { label: t("stats.users"), value: "42", delta: t("stats.deltas.users") },
   ];
 
   const pipeline = [
@@ -52,12 +60,16 @@ export default async function DashboardPage(): Promise<JSX.Element> {
       </div>
 
       <div className="relative mx-auto flex max-w-6xl flex-col gap-8">
-        <HeaderBar email={email} actionSlot={logoutButton} />
+        <HeaderBar
+          title={t("title")}
+          headline={t("user", { email })}
+          actionSlot={logoutButton}
+        />
 
         <BadgePills
           badgeLabel={t("title")}
           title={t("title")}
-          headline={t("headline", { email })}
+          headline={t("headline")}
           subtitle={t("subtitle")}
           pills={[
             { label: t("tenant") },

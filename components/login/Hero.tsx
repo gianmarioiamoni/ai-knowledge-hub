@@ -3,10 +3,11 @@ import { JSX } from "react";
 type HeroProps = {
   title: string;
   highlight: string;
+  suffix: string;
   description: string;
 };
 
-function Hero({ title, highlight, description }: HeroProps): JSX.Element {
+function Hero({ title, highlight, suffix, description }: HeroProps): JSX.Element {
   return (
     <div className="space-y-4">
       <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
@@ -17,7 +18,7 @@ function Hero({ title, highlight, description }: HeroProps): JSX.Element {
         <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
           {highlight}
         </span>{" "}
-        per gestire e attivare il tuo capitale informativo.
+        {suffix}
       </h1>
       <p className="max-w-2xl text-lg text-muted-foreground">{description}</p>
     </div>
