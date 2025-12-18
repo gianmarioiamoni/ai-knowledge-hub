@@ -14,6 +14,7 @@ const options: CommandOption[] = [
   { label: "Open Documents", href: "/documents" },
   { label: "Open Chat", href: "/chat" },
   { label: "Open Procedures", href: "/procedures" },
+  { label: "Open Settings", href: "/settings" },
 ];
 
 function CommandPalette(): JSX.Element {
@@ -29,8 +30,13 @@ function CommandPalette(): JSX.Element {
         setOpen((prev) => !prev);
       }
     };
+    const openFromEvent = () => setOpen(true);
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    window.addEventListener("open-command-palette", openFromEvent as EventListener);
+    return () => {
+      window.removeEventListener("keydown", handler);
+      window.removeEventListener("open-command-palette", openFromEvent as EventListener);
+    };
   }, []);
 
   const filtered = useMemo(() => {
