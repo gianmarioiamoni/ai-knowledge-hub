@@ -46,28 +46,41 @@ export async function POST(request: Request): Promise<NextResponse> {
     title: parsed.data.query.slice(0, 80),
   });
 
-  const context = chunks.map((c, idx) => `(${idx + 1}) ${c.chunk_text}`).join("\n\n");
-  const prompt = buildPrompt(parsed.data.query, context);
-
-  const llm = createChatModel();
-  const result = await llm.invoke([{ role: "user", content: prompt }]);
-  const answer = result.content?.toString() ?? "";
-
   await insertMessage({
     conversationId,
     role: "user",
     content: parsed.data.query,
   });
 
-  await insertMessage({
+  const meta = {
+    type: "meta" as const,
     conversationId,
-    role: "assistant",
-    content: answer,
-    metadata: { chunks: chunks.slice(0, 3).map((c) => c.id) },
+    chunks: chunks.slice(0, 3).map((c) => ({
+      id: c.id,
+      chunk_text: c.chunk_text,
+      chunk_metadata: c.chunk_metadata,
+    })),
+  };
+
+  const stream = await createAnswerStream({
+    query: parsed.data.query,
+    chunks,
+    conversationId,
   });
 
-  return NextResponse.json({ conversationId, answer, chunks });
+  return new NextResponse(stream, {
+    headers: {
+      "Content-Type": "application/x-ndjson",
+      "Cache-Control": "no-store",
+    },
+  });
 }
+
+type StreamParams = {
+  query: string;
+  chunks: Awaited<ReturnType<typeof searchSimilarChunks>>;
+  conversationId: string;
+};
 
 const buildPrompt = (question: string, context: string): string => {
   return [
@@ -80,5 +93,57 @@ const buildPrompt = (question: string, context: string): string => {
     "Question:",
     question,
   ].join("\n");
+};
+
+const createAnswerStream = async ({ query, chunks, conversationId }: StreamParams) => {
+  const context = chunks.map((c, idx) => `(${idx + 1}) ${c.chunk_text}`).join("\n\n");
+  const prompt = buildPrompt(query, context);
+  const llm = createChatModel();
+  const stream = await llm.stream([{ role: "user", content: prompt }]);
+
+  const meta = {
+    type: "meta" as const,
+    conversationId,
+    chunks: chunks.slice(0, 3).map((c) => ({
+      id: c.id,
+      chunk_text: c.chunk_text,
+      chunk_metadata: c.chunk_metadata,
+    })),
+  };
+
+  let fullAnswer = "";
+
+  const readable = new ReadableStream({
+    async start(controller) {
+      controller.enqueue(encodeLine(meta));
+      try {
+        for await (const chunk of stream) {
+          const token = chunk.content?.toString() ?? "";
+          if (!token) continue;
+          fullAnswer += token;
+          controller.enqueue(encodeLine({ type: "token", data: token }));
+        }
+        controller.enqueue(encodeLine({ type: "done" }));
+        controller.close();
+        await insertMessage({
+          conversationId,
+          role: "assistant",
+          content: fullAnswer,
+          metadata: { chunks: chunks.slice(0, 3).map((c) => c.id) },
+        });
+      } catch (err) {
+        controller.enqueue(
+          encodeLine({ type: "error", error: err instanceof Error ? err.message : "Stream error" })
+        );
+        controller.close();
+      }
+    },
+  });
+
+  return readable;
+};
+
+const encodeLine = (data: unknown): Uint8Array => {
+  return new TextEncoder().encode(`${JSON.stringify(data)}\n`);
 };
 

@@ -65,29 +65,63 @@ function ChatShell({
     if (!query.trim()) return;
     setLoading(true);
     setError(null);
+    setContextChunks([]);
     try {
+      const userMessage = {
+        id: crypto.randomUUID(),
+        role: "user" as const,
+        content: query,
+        created_at: new Date().toISOString(),
+      };
+      const assistantId = crypto.randomUUID();
+
+      setMessages((prev) => [
+        ...prev,
+        userMessage,
+        { id: assistantId, role: "assistant", content: "", created_at: new Date().toISOString() },
+      ]);
+      setQuery("");
+
       const res = await fetch("/api/chat/query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query, conversationId }),
       });
-      if (!res.ok) {
+      if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error ?? "Request failed");
       }
-      const data = (await res.json()) as {
-        conversationId: string;
-        answer: string;
-        chunks: ContextChunk[];
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      const appendToken = (token: string) => {
+        setMessages((prev) =>
+          prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + token } : m))
+        );
       };
-      setConversationId(data.conversationId);
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), role: "user", content: query, created_at: new Date().toISOString() },
-        { id: crypto.randomUUID(), role: "assistant", content: data.answer, created_at: new Date().toISOString() },
-      ]);
-      setContextChunks(data.chunks ?? []);
-      setQuery("");
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          const parsed = safeParse(line);
+          if (!parsed) continue;
+          if (parsed.type === "meta") {
+            setConversationId(parsed.conversationId);
+            setContextChunks(parsed.chunks ?? []);
+          } else if (parsed.type === "token") {
+            appendToken(parsed.data ?? "");
+          } else if (parsed.type === "error") {
+            throw new Error(parsed.error ?? "Stream error");
+          }
+        }
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unexpected error");
     } finally {
@@ -98,6 +132,7 @@ function ChatShell({
   const startNewChat = () => {
     setConversationId(undefined);
     setMessages([]);
+    setContextChunks([]);
   };
 
   return (
@@ -191,6 +226,20 @@ function ChatShell({
     </div>
   );
 }
+
+type StreamEvent =
+  | { type: "meta"; conversationId: string; chunks?: ContextChunk[] }
+  | { type: "token"; data?: string }
+  | { type: "done" }
+  | { type: "error"; error?: string };
+
+const safeParse = (line: string): StreamEvent | null => {
+  try {
+    return JSON.parse(line) as StreamEvent;
+  } catch {
+    return null;
+  }
+};
 
 export { ChatShell };
 
