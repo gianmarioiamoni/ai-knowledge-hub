@@ -33,7 +33,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <div className="fixed right-4 top-4 z-50">
+          <div className="relative z-50 mx-auto flex max-w-6xl justify-end px-6 pt-4 sm:pt-6">
             <LanguageSwitcher />
           </div>
           {children}
