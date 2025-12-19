@@ -276,21 +276,25 @@ function ChatShell({
         {error ? <p className="text-xs text-rose-600">{error}</p> : null}
 
         <div className="rounded-xl border border-border/60 bg-muted/40 p-3">
-          <div className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-            {labels.contextTitle}
+          <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            <span>{labels.contextTitle}</span>
+            <span className="text-[11px] text-muted-foreground">
+              {contextChunks.length > 0 ? `${contextChunks.length} chunks` : labels.contextEmpty}
+            </span>
           </div>
-          {contextChunks.length === 0 ? (
-            <p className="text-xs text-muted-foreground">{labels.contextEmpty}</p>
-          ) : (
-            <div className="space-y-3 text-xs text-foreground">
-              {contextChunks.slice(0, 3).map((chunk, idx) => (
-                <div key={chunk.id} className="rounded-lg bg-white/70 p-3 ring-1 ring-border">
-                  <p className="mb-1 font-semibold text-primary">#{idx + 1}</p>
-                  <p className="whitespace-pre-wrap">{chunk.chunk_text}</p>
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="space-y-3 text-xs text-foreground">
+            {contextChunks.slice(0, 3).map((chunk, idx) => (
+              <div key={chunk.id} className="rounded-lg bg-white/70 p-3 ring-1 ring-border">
+                <p className="mb-1 font-semibold text-primary">#{idx + 1}</p>
+                <p className="whitespace-pre-wrap">
+                  {chunk.chunk_text?.trim() ? chunk.chunk_text : labels.contextEmpty}
+                </p>
+              </div>
+            ))}
+            {contextChunks.length === 0 ? (
+              <p className="text-xs text-muted-foreground">{labels.contextEmpty}</p>
+            ) : null}
+          </div>
         </div>
       </section>
     </div>
