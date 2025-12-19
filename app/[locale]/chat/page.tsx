@@ -41,7 +41,6 @@ export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.E
       </div>
 
       <ChatShell
-        locale={locale}
         conversations={conversations}
         initialConversationId={initialConversationId}
         initialMessages={initialMessages}
