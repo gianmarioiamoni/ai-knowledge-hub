@@ -37,6 +37,7 @@ type ChatShellProps = {
     contextEmpty: string;
     stop: string;
     sending: string;
+    streaming: string;
   };
 };
 
@@ -47,6 +48,7 @@ function ChatShell({
   initialMessages,
   labels,
 }: ChatShellProps): JSX.Element {
+  const [conversationList, setConversationList] = useState<Conversation[]>(conversations);
   const [conversationId, setConversationId] = useState(initialConversationId);
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [query, setQuery] = useState("");
@@ -76,8 +78,8 @@ function ChatShell({
   }, [messages]);
 
   const sortedConversations = useMemo(
-    () => [...conversations].sort((a, b) => (a.created_at > b.created_at ? -1 : 1)),
-    [conversations]
+    () => [...conversationList].sort((a, b) => (a.created_at > b.created_at ? -1 : 1)),
+    [conversationList]
   );
 
   const sendMessage = async (e: React.FormEvent) => {
@@ -141,6 +143,18 @@ function ChatShell({
           if (parsed.type === "meta") {
             setConversationId(parsed.conversationId);
             setContextChunks(parsed.chunks ?? []);
+            setConversationList((prev) => {
+              const exists = prev.some((c) => c.id === parsed.conversationId);
+              if (exists) return prev;
+              return [
+                ...prev,
+                {
+                  id: parsed.conversationId,
+                  title: lastQuery?.slice(0, 80) || "Conversation",
+                  created_at: new Date().toISOString(),
+                },
+              ];
+            });
           } else if (parsed.type === "token") {
             appendToken(parsed.data ?? "");
           } else if (parsed.type === "done") {
@@ -202,6 +216,16 @@ function ChatShell({
       </aside>
 
       <section className="flex flex-col gap-4 rounded-2xl border border-border/60 bg-white/70 p-4 backdrop-blur dark:bg-white/5">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span />
+          {streaming ? (
+            <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-2 py-1 font-semibold text-primary">
+              <span className="h-2.5 w-2.5 animate-spin rounded-full border-2 border-primary/40 border-t-transparent" />
+              {labels.streaming}
+            </span>
+          ) : null}
+        </div>
+
         <div className="flex-1 space-y-3 overflow-y-auto">
           {fetchingMessages ? (
             <p className="text-sm text-muted-foreground">{labels.loading}</p>

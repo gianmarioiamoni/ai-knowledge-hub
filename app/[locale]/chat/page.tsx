@@ -50,6 +50,13 @@ export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.E
           send: t("send"),
           newChat: t("newChat"),
           empty: t("empty"),
+          loading: t("loading"),
+          retry: t("retry"),
+          contextTitle: t("contextTitle"),
+          contextEmpty: t("contextEmpty"),
+          stop: t("stop"),
+          sending: t("sending"),
+          streaming: t("streaming"),
         }}
       />
     </div>
