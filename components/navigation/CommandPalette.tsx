@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { JSX, useEffect, useMemo, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 
 type CommandOption = {
@@ -17,7 +17,7 @@ const options: CommandOption[] = [
   { label: "Open Settings", href: "/settings" },
 ];
 
-function CommandPalette(): JSX.Element {
+function CommandPalette(): JSX.Element | null {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const router = useRouter();
