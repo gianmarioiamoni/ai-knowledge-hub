@@ -82,6 +82,7 @@
     "retry": "Riprova",
     "contextTitle": "Contesto usato",
     "contextEmpty": "Nessun contesto disponibile.",
+    "sending": "Sto generando...",
     "stop": "Ferma",
     "breadcrumbs": {
       "home": "Dashboard",
