@@ -23,5 +23,10 @@ describe("filterOptions", () => {
     const result = filterOptions(sampleOptions, "   documents  ");
     expect(result[0].href).toBe("/documents");
   });
+
+  it("returns empty array when no option matches", () => {
+    const result = filterOptions(sampleOptions, "something else");
+    expect(result).toHaveLength(0);
+  });
 });
 
