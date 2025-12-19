@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import type { CommandOption } from "./types";
 import { defaultOptions } from "./options";
