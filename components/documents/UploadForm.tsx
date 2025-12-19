@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { JSX } from "react";
 import { handleUploadWithState } from "@/app/[locale]/documents/actions";
 
@@ -34,7 +35,7 @@ function SubmitButton({ labels }: { labels: UploadFormProps["labels"] }): JSX.El
 }
 
 function UploadForm({ locale, labels }: UploadFormProps): JSX.Element {
-  const [state, formAction] = useFormState<FormState>(handleUploadWithState, {});
+  const [state, formAction] = useActionState<FormState>(handleUploadWithState, {});
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
