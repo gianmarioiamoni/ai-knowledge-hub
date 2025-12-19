@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { createRequire } from "module";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
@@ -158,20 +159,22 @@ const runIngestion = async ({
 };
 
 const loadPdfParse = async (): Promise<(data: Buffer) => Promise<{ text: string }>> => {
+  const require = createRequire(import.meta.url);
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const mod = require("pdf-parse");
+    const candidate = (mod as { default?: unknown }).default ?? mod;
+    if (typeof candidate === "function") {
+      return candidate as (data: Buffer) => Promise<{ text: string }>;
+    }
+  } catch {
+    // ignore and fallback
+  }
+
   const mod = await import("pdf-parse").catch(() => null);
-
-  const candidate =
-    (mod as unknown as { default?: unknown }).default ?? (mod as unknown as { default?: unknown });
-
+  const candidate = (mod as unknown as { default?: unknown })?.default ?? mod;
   if (typeof candidate === "function") {
     return candidate as (data: Buffer) => Promise<{ text: string }>;
-  }
-  if (
-    candidate &&
-    typeof candidate === "object" &&
-    typeof (candidate as { default?: unknown }).default === "function"
-  ) {
-    return (candidate as { default: (data: Buffer) => Promise<{ text: string }> }).default;
   }
 
   throw new Error("pdf-parse is not available");
