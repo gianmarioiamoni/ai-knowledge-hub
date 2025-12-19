@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import type { CommandOption } from "./types";
 import { defaultOptions } from "./options";
+import { filterOptions } from "./filters";
 
 type UseCommandPaletteParams = {
   options?: CommandOption[];
@@ -36,9 +37,7 @@ export const useCommandPalette = ({ options = defaultOptions }: UseCommandPalett
   }, []);
 
   const filtered = useMemo(() => {
-    const q = query.toLowerCase().trim();
-    if (!q) return options;
-    return options.filter((opt) => opt.label.toLowerCase().includes(q));
+    return filterOptions(options, query);
   }, [options, query]);
 
   const onSelect = (href: string) => {

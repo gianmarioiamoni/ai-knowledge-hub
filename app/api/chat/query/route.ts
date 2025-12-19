@@ -5,6 +5,7 @@ import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { embedQuery, searchSimilarChunks } from "@/lib/server/rag";
 import { createChatModel } from "@/lib/server/langchain";
+import { buildPrompt, encodeLine } from "@/lib/server/ragPrompt";
 
 const bodySchema = z.object({
   query: z.string().min(4, "Query too short"),
@@ -80,19 +81,6 @@ type StreamParams = {
   query: string;
   chunks: Awaited<ReturnType<typeof searchSimilarChunks>>;
   conversationId: string;
-};
-
-const buildPrompt = (question: string, context: string): string => {
-  return [
-    "You are a concise assistant. Answer based only on the provided context.",
-    "If the answer is not present, say you don't have enough information.",
-    "",
-    "Context:",
-    context,
-    "",
-    "Question:",
-    question,
-  ].join("\n");
 };
 
 const createAnswerStream = async ({ query, chunks, conversationId }: StreamParams) => {
