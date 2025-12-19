@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
+import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createEmbeddingModel, createTextSplitter } from "@/lib/server/langchain";
 
@@ -41,6 +42,7 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
   const buffer = Buffer.from(await file.arrayBuffer());
 
   const supabase = createSupabaseServerClient();
+  const service = createSupabaseServiceClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
     return { error: "You must be logged in" };
@@ -50,7 +52,7 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
 
   const filePath = `${organizationId}/${crypto.randomUUID()}-${file.name}`;
 
-  const { error: storageError } = await supabase.storage
+  const { error: storageError } = await service.storage
     .from("documents")
     .upload(filePath, buffer, {
       contentType: file.type,
@@ -61,7 +63,7 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
     return { error: storageError.message };
   }
 
-  const { data: insertDoc, error: insertError } = await supabase
+  const { data: insertDoc, error: insertError } = await service
     .from("documents")
     .insert({
       organization_id: organizationId,
@@ -81,19 +83,19 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
 
   try {
     await runIngestion({
-      supabase,
+      service,
       buffer,
       documentId,
       organizationId,
       fileName: file.name,
       fileType: file.type,
     });
-    await supabase
+    await service
       .from("documents")
       .update({ status: "ingested", updated_at: new Date().toISOString() })
       .eq("id", documentId);
   } catch (err) {
-    await supabase
+    await service
       .from("documents")
       .update({ status: "failed", updated_at: new Date().toISOString() })
       .eq("id", documentId);
@@ -105,7 +107,7 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
 }
 
 type IngestionParams = {
-  supabase: ReturnType<typeof createSupabaseServerClient>;
+  service: ReturnType<typeof createSupabaseServiceClient>;
   buffer: Buffer;
   documentId: string;
   organizationId: string;
@@ -114,7 +116,7 @@ type IngestionParams = {
 };
 
 const runIngestion = async ({
-  supabase,
+  service,
   buffer,
   documentId,
   organizationId,
@@ -149,17 +151,30 @@ const runIngestion = async ({
     embedding: embeddings[idx],
   }));
 
-  const { error: insertChunksError } = await supabase.from("document_chunks").insert(rows);
+  const { error: insertChunksError } = await service.from("document_chunks").insert(rows);
   if (insertChunksError) {
     throw new Error(insertChunksError.message);
   }
 };
 
 const loadPdfParse = async (): Promise<(data: Buffer) => Promise<{ text: string }>> => {
-  const mod = await import("pdf-parse");
-  const fn = (mod as unknown as { default?: (data: Buffer) => Promise<{ text: string }> }).default;
-  if (fn) return fn;
-  // pdf-parse CommonJS export
-  return mod as unknown as (data: Buffer) => Promise<{ text: string }>;
+  const mod =
+    (await import("pdf-parse/lib/pdf-parse.js").catch(() => null)) ?? (await import("pdf-parse"));
+
+  const candidate =
+    (mod as unknown as { default?: unknown }).default ?? (mod as unknown as { default?: unknown });
+
+  if (typeof candidate === "function") {
+    return candidate as (data: Buffer) => Promise<{ text: string }>;
+  }
+  if (
+    candidate &&
+    typeof candidate === "object" &&
+    typeof (candidate as { default?: unknown }).default === "function"
+  ) {
+    return (candidate as { default: (data: Buffer) => Promise<{ text: string }> }).default;
+  }
+
+  throw new Error("pdf-parse is not available");
 };
 
