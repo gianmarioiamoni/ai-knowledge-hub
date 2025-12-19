@@ -61,6 +61,7 @@
     "ingestionNote": "Estrazione, chunking ed embeddings vengono processati dopo l'upload.",
     "hintFormats": "Supportato: PDF",
     "hintSecurity": "Salvato in sicurezza su Supabase Storage",
+    "uploading": "Caricamento...",
     "breadcrumbs": {
       "home": "Dashboard",
       "documents": "Documenti"

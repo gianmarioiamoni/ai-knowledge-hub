@@ -6,6 +6,7 @@ import { ensureUserOrganization } from "@/lib/server/organizations";
 import { StatusBadge } from "@/components/documents/StatusBadge";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { Card } from "@/components/ui/card";
+import { UploadForm } from "@/components/documents/UploadForm";
 
 type DocumentRow = {
   id: string;
@@ -33,7 +34,7 @@ export default async function DocumentsPage({
     .eq("organization_id", organizationId)
     .order("updated_at", { ascending: false });
 
-  const action = uploadDocument;
+  const action = uploadDocumentWithState;
 
   const rows: DocumentRow[] = (docs ?? []) as DocumentRow[];
 
@@ -63,30 +64,17 @@ export default async function DocumentsPage({
       </div>
 
       <Card className="border border-white/40 bg-white/70 p-6 backdrop-blur dark:border-white/10 dark:bg-white/5">
-        <form action={action} className="flex flex-col gap-4">
-          <input type="hidden" name="locale" value={locale} />
-          <label className="text-sm font-medium text-foreground">
-            {t("uploadLabel")}
-            <input
-              required
-              name="file"
-              type="file"
-              accept="application/pdf"
-              className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-primary/90"
-            />
-          </label>
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">
-              {t("hintFormats")} · {t("hintSecurity")}
-            </p>
-            <button
-              type="submit"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            >
-              {t("uploadButton")}
-            </button>
-          </div>
-        </form>
+        <UploadForm
+          locale={locale}
+          labels={{
+            uploadLabel: t("uploadLabel"),
+            uploadButton: t("uploadButton"),
+            uploading: t("uploading"),
+            hintFormats: t("hintFormats"),
+            hintSecurity: t("hintSecurity"),
+          }}
+          action={action}
+        />
       </Card>
 
       <Card className="border border-white/40 bg-white/70 p-6 backdrop-blur dark:border-white/10 dark:bg-white/5">
@@ -143,5 +131,14 @@ const formatDate = (value: string | null, locale: string): string => {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
+};
+
+type FormState = {
+  error?: string;
+  success?: string;
+};
+
+const uploadDocumentWithState = async (_prevState: FormState, formData: FormData): Promise<FormState> => {
+  return uploadDocument(formData);
 };
 

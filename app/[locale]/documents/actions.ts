@@ -23,6 +23,10 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
     return { error: "File is required" };
   }
 
+  if (file.size > 10 * 1024 * 1024) {
+    return { error: "File too large. Max 10MB." };
+  }
+
   if (!file.type.includes("pdf")) {
     return { error: "Only PDF files are supported right now" };
   }
