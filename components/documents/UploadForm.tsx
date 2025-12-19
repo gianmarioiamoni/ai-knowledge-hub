@@ -2,6 +2,7 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import { JSX } from "react";
+import { handleUploadWithState } from "@/app/[locale]/documents/actions";
 
 type FormState = {
   error?: string;
@@ -17,7 +18,6 @@ type UploadFormProps = {
     hintSecurity: string;
     uploading: string;
   };
-  action: (prevState: FormState, formData: FormData) => Promise<FormState>;
 };
 
 function SubmitButton({ labels }: { labels: UploadFormProps["labels"] }): JSX.Element {
@@ -33,8 +33,8 @@ function SubmitButton({ labels }: { labels: UploadFormProps["labels"] }): JSX.El
   );
 }
 
-function UploadForm({ locale, labels, action }: UploadFormProps): JSX.Element {
-  const [state, formAction] = useFormState<FormState>(action, {});
+function UploadForm({ locale, labels }: UploadFormProps): JSX.Element {
+  const [state, formAction] = useFormState<FormState>(handleUploadWithState, {});
 
   return (
     <form action={formAction} className="flex flex-col gap-4">

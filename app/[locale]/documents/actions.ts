@@ -12,6 +12,13 @@ const uploadSchema = z.object({
 
 type ActionResult = { error?: string; success?: string };
 
+export async function handleUploadWithState(
+  _prevState: ActionResult,
+  formData: FormData
+): Promise<ActionResult> {
+  return uploadDocument(formData);
+}
+
 export async function uploadDocument(formData: FormData): Promise<ActionResult> {
   const locale = uploadSchema.safeParse({ locale: formData.get("locale") });
   if (!locale.success) {

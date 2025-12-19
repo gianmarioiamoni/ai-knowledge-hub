@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { JSX } from "react";
-import { uploadDocument } from "./actions";
+import { handleUploadWithState } from "./actions";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { StatusBadge } from "@/components/documents/StatusBadge";
@@ -34,7 +34,7 @@ export default async function DocumentsPage({
     .eq("organization_id", organizationId)
     .order("updated_at", { ascending: false });
 
-  const action = uploadDocumentWithState;
+  const action = handleUploadWithState;
 
   const rows: DocumentRow[] = (docs ?? []) as DocumentRow[];
 
@@ -131,14 +131,5 @@ const formatDate = (value: string | null, locale: string): string => {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
-};
-
-type FormState = {
-  error?: string;
-  success?: string;
-};
-
-const uploadDocumentWithState = async (_prevState: FormState, formData: FormData): Promise<FormState> => {
-  return uploadDocument(formData);
 };
 
