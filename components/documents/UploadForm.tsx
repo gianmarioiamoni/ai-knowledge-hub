@@ -36,9 +36,25 @@ function SubmitButton({ labels }: { labels: UploadFormProps["labels"] }): JSX.El
 
 function UploadForm({ locale, labels }: UploadFormProps): JSX.Element {
   const [state, formAction] = useActionState<FormState>(handleUploadWithState, {});
+  const [localError, setLocalError] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement | null>(null);
+
+  const handleSubmit = (formData: FormData) => {
+    const file = fileRef.current?.files?.[0];
+    if (!file) {
+      setLocalError("Please select a file.");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setLocalError("File too large. Max 10MB.");
+      return;
+    }
+    setLocalError(null);
+    formAction(formData);
+  };
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form action={handleSubmit} className="flex flex-col gap-4">
       <input type="hidden" name="locale" value={locale} />
       <label className="text-sm font-medium text-foreground">
         {labels.uploadLabel}
@@ -47,7 +63,9 @@ function UploadForm({ locale, labels }: UploadFormProps): JSX.Element {
           name="file"
           type="file"
           accept="application/pdf"
+          ref={fileRef}
           className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-primary/90"
+          onChange={() => setLocalError(null)}
         />
       </label>
       <div className="flex items-center justify-between">
@@ -58,6 +76,7 @@ function UploadForm({ locale, labels }: UploadFormProps): JSX.Element {
       </div>
       {state?.error ? <p className="text-xs text-rose-600">{state.error}</p> : null}
       {state?.success ? <p className="text-xs text-emerald-700">{state.success}</p> : null}
+      {localError ? <p className="text-xs text-rose-600">{localError}</p> : null}
     </form>
   );
 }
