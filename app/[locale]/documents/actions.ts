@@ -158,8 +158,7 @@ const runIngestion = async ({
 };
 
 const loadPdfParse = async (): Promise<(data: Buffer) => Promise<{ text: string }>> => {
-  const mod =
-    (await import("pdf-parse/lib/pdf-parse.js").catch(() => null)) ?? (await import("pdf-parse"));
+  const mod = await import("pdf-parse").catch(() => null);
 
   const candidate =
     (mod as unknown as { default?: unknown }).default ?? (mod as unknown as { default?: unknown });
