@@ -96,6 +96,7 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
       fileName: file.name,
       fileType: file.type,
       parsePdf,
+      locale: locale.data.locale,
     });
     await service
       .from("documents")
@@ -106,7 +107,7 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
       .from("documents")
       .update({ status: "failed", updated_at: new Date().toISOString() })
       .eq("id", documentId);
-    return { error: err instanceof Error ? err.message : "Ingestion failed" };
+    return { error: getFriendlyError(err, locale.data.locale) };
   }
 
   revalidatePath(`/${locale.data.locale}/documents`);
@@ -121,6 +122,7 @@ type IngestionParams = {
   fileName: string;
   fileType: string;
   parsePdf: (data: Buffer) => Promise<{ text: string }>;
+  locale: string;
 };
 
 const runIngestion = async ({
@@ -131,11 +133,12 @@ const runIngestion = async ({
   fileName,
   fileType,
   parsePdf,
+  locale,
 }: IngestionParams) => {
   const parsed = await parsePdf(buffer);
   const text = parsed.text?.trim() ?? "";
   if (!text) {
-    throw new Error("No text extracted from PDF");
+    throw new Error(getFriendlyError("NO_TEXT", locale));
   }
 
   const splitter = createTextSplitter();
@@ -194,5 +197,42 @@ const loadPdfParse = async (): Promise<((data: Buffer) => Promise<{ text: string
   }
 
   return null;
+};
+
+const friendlyErrors: Record<string, { en: string; it: string }> = {
+  INVALID_PDF: {
+    en: "The PDF is invalid or protected. Please upload an unprotected PDF.",
+    it: "Il PDF non è valido o è protetto. Carica un PDF non protetto.",
+  },
+  NO_TEXT: {
+    en: "No text could be extracted from this PDF. Please try another file.",
+    it: "Non è stato possibile estrarre testo da questo PDF. Prova un altro file.",
+  },
+  INGESTION_FAILED: {
+    en: "Ingestion failed. Please try again or use a different PDF.",
+    it: "Ingestion fallita. Riprova o usa un altro PDF.",
+  },
+};
+
+const getFriendlyError = (error: unknown, locale: string): string => {
+  const key = normalizeErrorKey(error);
+  const lang = locale.startsWith("it") ? "it" : "en";
+  return friendlyErrors[key]?.[lang] ?? friendlyErrors.INGESTION_FAILED[lang];
+};
+
+const normalizeErrorKey = (error: unknown): keyof typeof friendlyErrors => {
+  if (typeof error === "string") {
+    if (error === "NO_TEXT") return "NO_TEXT";
+    return "INGESTION_FAILED";
+  }
+
+  if (error instanceof Error) {
+    const msg = error.message || "";
+    if (msg.toLowerCase().includes("invalid pdf")) return "INVALID_PDF";
+    if (msg.toLowerCase().includes("password")) return "INVALID_PDF";
+    if (msg.toLowerCase().includes("no text extracted")) return "NO_TEXT";
+  }
+
+  return "INGESTION_FAILED";
 };
 
