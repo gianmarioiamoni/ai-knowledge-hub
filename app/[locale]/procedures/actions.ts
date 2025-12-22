@@ -60,3 +60,81 @@ export const handleGenerateSop = async (_prev: ActionResult, formData: FormData)
   }
 };
 
+const deleteSchema = z.object({
+  locale: z.string().min(2),
+  id: z.string().uuid(),
+});
+
+export const handleDeleteSop = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {
+  const parsed = deleteSchema.safeParse({
+    locale: formData.get("locale"),
+    id: formData.get("id"),
+  });
+
+  if (!parsed.success) {
+    return { error: "Invalid input" };
+  }
+
+  const supabase = createSupabaseServerClient();
+  const service = createSupabaseServiceClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user) {
+    return { error: "You must be logged in" };
+  }
+
+  const organizationId = await ensureUserOrganization({ supabase });
+
+  const { error: delError } = await service
+    .from("procedures")
+    .delete()
+    .eq("id", parsed.data.id)
+    .eq("organization_id", organizationId);
+
+  if (delError) {
+    return { error: delError.message };
+  }
+
+  revalidatePath(`/${parsed.data.locale}/procedures`);
+  return { success: "Deleted" };
+};
+
+const renameSchema = z.object({
+  locale: z.string().min(2),
+  id: z.string().uuid(),
+  title: z.string().min(3, "Title is required"),
+});
+
+export const handleRenameSop = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {
+  const parsed = renameSchema.safeParse({
+    locale: formData.get("locale"),
+    id: formData.get("id"),
+    title: formData.get("title"),
+  });
+
+  if (!parsed.success) {
+    return { error: parsed.error.errors[0]?.message ?? "Invalid input" };
+  }
+
+  const supabase = createSupabaseServerClient();
+  const service = createSupabaseServiceClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user) {
+    return { error: "You must be logged in" };
+  }
+
+  const organizationId = await ensureUserOrganization({ supabase });
+
+  const { error: updateError } = await service
+    .from("procedures")
+    .update({ title: parsed.data.title })
+    .eq("id", parsed.data.id)
+    .eq("organization_id", organizationId);
+
+  if (updateError) {
+    return { error: updateError.message };
+  }
+
+  revalidatePath(`/${parsed.data.locale}/procedures`);
+  return { success: "Updated" };
+};
+

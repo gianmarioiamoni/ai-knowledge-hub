@@ -153,7 +153,11 @@
     "actions": {
       "view": "Visualizza",
       "exportMd": "Esporta Markdown",
-      "exportPdf": "Esporta PDF"
+      "exportPdf": "Esporta PDF",
+      "delete": "Elimina",
+      "edit": "Modifica titolo",
+      "save": "Salva",
+      "cancel": "Annulla"
     },
     "form": {
       "titleLabel": "Titolo",

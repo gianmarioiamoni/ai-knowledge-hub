@@ -82,6 +82,10 @@ export default async function ProceduresPage({
             view: t("actions.view"),
             exportMd: t("actions.exportMd"),
             exportPdf: t("actions.exportPdf"),
+            delete: t("actions.delete"),
+            edit: t("actions.edit"),
+            save: t("actions.save"),
+            cancel: t("actions.cancel"),
           }}
           locale={locale}
         />

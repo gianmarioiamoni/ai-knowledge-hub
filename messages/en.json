@@ -153,7 +153,11 @@
     "actions": {
       "view": "View",
       "exportMd": "Export Markdown",
-      "exportPdf": "Export PDF"
+      "exportPdf": "Export PDF",
+      "delete": "Delete",
+      "edit": "Edit title",
+      "save": "Save",
+      "cancel": "Cancel"
     },
     "form": {
       "titleLabel": "Title",
