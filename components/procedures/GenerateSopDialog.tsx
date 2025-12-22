@@ -1,8 +1,15 @@
 "use client";
 
-import { JSX, useActionState, useTransition } from "react";
+import { JSX, useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { handleGenerateSop } from "@/app/[locale]/procedures/actions";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,6 +23,7 @@ type GenerateSopDialogProps = {
     submit: string;
     cancel: string;
     success: string;
+    description: string;
   };
   action?: typeof handleGenerateSop;
 };
@@ -28,17 +36,38 @@ type FormState = {
 function GenerateSopDialog({ locale, labels, action = handleGenerateSop }: GenerateSopDialogProps): JSX.Element {
   const [state, formAction] = useActionState<FormState, FormData>(action, {});
   const [pending, startTransition] = useTransition();
+  const [open, setOpen] = useState(false);
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  useEffect(() => {
+    if (state?.success) {
+      formRef.current?.reset();
+      setOpen(false);
+    }
+  }, [state?.success]);
+
+  const handleCancel = () => {
+    formRef.current?.reset();
+    setOpen(false);
+  };
+
+  const showError = open && state?.error;
+  const showSuccess = open && state?.success;
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default">{labels.trigger}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{labels.trigger}</DialogTitle>
+          <DialogDescription>
+            {labels.description}
+          </DialogDescription>
         </DialogHeader>
         <form
+          ref={formRef}
           action={(fd) => {
             startTransition(() => formAction(fd));
           }}
@@ -54,15 +83,15 @@ function GenerateSopDialog({ locale, labels, action = handleGenerateSop }: Gener
             <Textarea name="scope" required minLength={5} rows={4} disabled={pending} />
           </label>
           <div className="flex items-center justify-end gap-2">
-            <Button type="button" variant="outline" disabled={pending}>
+            <Button type="button" variant="outline" disabled={pending} onClick={handleCancel}>
               {labels.cancel}
             </Button>
             <Button type="submit" disabled={pending}>
               {pending ? labels.submit + "..." : labels.submit}
             </Button>
           </div>
-          {state?.error ? <p className="text-xs text-rose-600">{state.error}</p> : null}
-          {state?.success ? <p className="text-xs text-emerald-700">{labels.success}</p> : null}
+          {showError ? <p className="text-xs text-rose-600">{state.error}</p> : null}
+          {showSuccess ? <p className="text-xs text-emerald-700">{labels.success}</p> : null}
         </form>
       </DialogContent>
     </Dialog>

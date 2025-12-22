@@ -64,6 +64,7 @@ export default async function ProceduresPage({
             submit: t("form.submit"),
             cancel: t("form.cancel"),
             success: t("form.success"),
+            description: t("form.description"),
           }}
           action={handleGenerateSop}
         />

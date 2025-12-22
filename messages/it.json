@@ -160,7 +160,8 @@
       "scopeLabel": "Ambito / Contesto",
       "submit": "Genera",
       "cancel": "Annulla",
-      "success": "SOP generata con successo"
+      "success": "SOP generata con successo",
+      "description": "Inserisci titolo e ambito/contesto per generare la SOP. Potrai esportarla in PDF o Markdown."
     },
     "breadcrumbs": {
       "home": "Dashboard",

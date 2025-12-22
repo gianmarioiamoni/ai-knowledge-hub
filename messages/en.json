@@ -160,7 +160,8 @@
       "scopeLabel": "Scope / Context",
       "submit": "Generate",
       "cancel": "Cancel",
-      "success": "SOP generated successfully"
+      "success": "SOP generated successfully",
+      "description": "Fill the title and scope/context to generate a SOP. You can export it later in PDF or Markdown."
     },
     "breadcrumbs": {
       "home": "Dashboard",
