@@ -1,0 +1,73 @@
+"use client";
+
+import { JSX, useActionState, useTransition } from "react";
+import { handleGenerateSop } from "@/app/[locale]/procedures/actions";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+type GenerateSopDialogProps = {
+  locale: string;
+  labels: {
+    trigger: string;
+    titleLabel: string;
+    scopeLabel: string;
+    submit: string;
+    cancel: string;
+    success: string;
+  };
+  action?: typeof handleGenerateSop;
+};
+
+type FormState = {
+  error?: string;
+  success?: string;
+};
+
+function GenerateSopDialog({ locale, labels, action = handleGenerateSop }: GenerateSopDialogProps): JSX.Element {
+  const [state, formAction] = useActionState<FormState, FormData>(action, {});
+  const [pending, startTransition] = useTransition();
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="default">{labels.trigger}</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>{labels.trigger}</DialogTitle>
+        </DialogHeader>
+        <form
+          action={(fd) => {
+            startTransition(() => formAction(fd));
+          }}
+          className="space-y-4"
+        >
+          <input type="hidden" name="locale" value={locale} />
+          <label className="flex flex-col gap-2 text-sm font-medium text-foreground">
+            {labels.titleLabel}
+            <Input name="title" required minLength={3} disabled={pending} />
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-medium text-foreground">
+            {labels.scopeLabel}
+            <Textarea name="scope" required minLength={5} rows={4} disabled={pending} />
+          </label>
+          <div className="flex items-center justify-end gap-2">
+            <Button type="button" variant="outline" disabled={pending}>
+              {labels.cancel}
+            </Button>
+            <Button type="submit" disabled={pending}>
+              {pending ? labels.submit + "..." : labels.submit}
+            </Button>
+          </div>
+          {state?.error ? <p className="text-xs text-rose-600">{state.error}</p> : null}
+          {state?.success ? <p className="text-xs text-emerald-700">{labels.success}</p> : null}
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export { GenerateSopDialog };
+

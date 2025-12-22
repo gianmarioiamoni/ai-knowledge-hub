@@ -142,6 +142,30 @@
       "Open the RAG thread and validate answers with the team.",
       "Generate a SOP starting from a saved conversation."
     ]
+  },
+  "proceduresPage": {
+    "title": "Procedures",
+    "subtitle": "Generate and manage SOPs from your knowledge base.",
+    "description": "Create Standard Operating Procedures with structured steps, safety notes, and checklists. Export in Markdown or PDF.",
+    "generate": "Generate SOP",
+    "listTitle": "Generated SOPs",
+    "empty": "No procedures yet.",
+    "actions": {
+      "view": "View",
+      "exportMd": "Export Markdown",
+      "exportPdf": "Export PDF"
+    },
+    "form": {
+      "titleLabel": "Title",
+      "scopeLabel": "Scope / Context",
+      "submit": "Generate",
+      "cancel": "Cancel",
+      "success": "SOP generated successfully"
+    },
+    "breadcrumbs": {
+      "home": "Dashboard",
+      "procedures": "Procedures"
+    }
   }
 }
 

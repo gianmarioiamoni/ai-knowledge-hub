@@ -38,6 +38,15 @@ export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.E
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{t("title")}</p>
         <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{t("subtitle")}</h1>
         <p className="text-sm text-muted-foreground">{t("description")}</p>
+        <div className="flex flex-wrap gap-2 text-sm text-primary">
+          <a className="underline-offset-4 hover:underline" href="/documents">
+            {t("breadcrumbs.home")}
+          </a>
+          <span>·</span>
+          <a className="underline-offset-4 hover:underline" href="/procedures">
+            Procedures
+          </a>
+        </div>
       </div>
 
       <ChatShell

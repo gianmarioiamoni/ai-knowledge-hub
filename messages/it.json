@@ -142,6 +142,30 @@
       "Apri il thread RAG e valida le risposte con il team.",
       "Genera una SOP partendo da una conversazione salvata."
     ]
+  },
+  "proceduresPage": {
+    "title": "Procedure",
+    "subtitle": "Genera e gestisci SOP dalla tua knowledge base.",
+    "description": "Crea Standard Operating Procedures con passi strutturati, avvisi di sicurezza e checklist. Esporta in Markdown o PDF.",
+    "generate": "Genera SOP",
+    "listTitle": "SOP generate",
+    "empty": "Nessuna procedura.",
+    "actions": {
+      "view": "Visualizza",
+      "exportMd": "Esporta Markdown",
+      "exportPdf": "Esporta PDF"
+    },
+    "form": {
+      "titleLabel": "Titolo",
+      "scopeLabel": "Ambito / Contesto",
+      "submit": "Genera",
+      "cancel": "Annulla",
+      "success": "SOP generata con successo"
+    },
+    "breadcrumbs": {
+      "home": "Dashboard",
+      "procedures": "Procedure"
+    }
   }
 }
 
