@@ -9,9 +9,6 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "10mb",
     },
   },
-  serverActions: {
-    bodySizeLimit: "10mb",
-  },
 };
 
 export default withNextIntl(nextConfig);

@@ -1,7 +1,6 @@
 "use client";
 
-import { useFormStatus } from "react-dom";
-import { JSX, useActionState, useState, useRef } from "react";
+import { JSX, useActionState, useRef, useState, useTransition } from "react";
 import { handleUploadWithState } from "@/app/[locale]/documents/actions";
 
 type FormState = {
@@ -20,8 +19,12 @@ type UploadFormProps = {
   };
 };
 
-function SubmitButton({ labels }: { labels: UploadFormProps["labels"] }): JSX.Element {
-  const { pending } = useFormStatus();
+type SubmitButtonProps = {
+  labels: UploadFormProps["labels"];
+  pending: boolean;
+};
+
+function SubmitButton({ labels, pending }: SubmitButtonProps): JSX.Element {
   return (
     <button
       type="submit"
@@ -35,6 +38,7 @@ function SubmitButton({ labels }: { labels: UploadFormProps["labels"] }): JSX.El
 
 function UploadForm({ locale, labels }: UploadFormProps): JSX.Element {
   const [state, formAction] = useActionState<FormState, FormData>(handleUploadWithState, {});
+  const [pending, startTransition] = useTransition();
   const [localError, setLocalError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
@@ -49,7 +53,9 @@ function UploadForm({ locale, labels }: UploadFormProps): JSX.Element {
       return;
     }
     setLocalError(null);
-    formAction(formData);
+    startTransition(() => {
+      formAction(formData);
+    });
   };
 
   return (
@@ -71,7 +77,7 @@ function UploadForm({ locale, labels }: UploadFormProps): JSX.Element {
         <p className="text-xs text-muted-foreground">
           {labels.hintFormats} · {labels.hintSecurity}
         </p>
-        <SubmitButton labels={labels} />
+        <SubmitButton labels={labels} pending={pending} />
       </div>
       {state?.error ? <p className="text-xs text-rose-600">{state.error}</p> : null}
       {state?.success ? <p className="text-xs text-emerald-700">{state.success}</p> : null}

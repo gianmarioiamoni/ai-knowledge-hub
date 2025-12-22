@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createRequire } from "module";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
@@ -82,6 +81,12 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
 
   const documentId = insertDoc.id as string;
 
+  const parsePdf = await loadPdfParse();
+  if (!parsePdf) {
+    await service.from("documents").update({ status: "failed" }).eq("id", documentId);
+    return { error: "PDF parsing module not available. Please contact support." };
+  }
+
   try {
     await runIngestion({
       service,
@@ -90,6 +95,7 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
       organizationId,
       fileName: file.name,
       fileType: file.type,
+      parsePdf,
     });
     await service
       .from("documents")
@@ -114,6 +120,7 @@ type IngestionParams = {
   organizationId: string;
   fileName: string;
   fileType: string;
+  parsePdf: (data: Buffer) => Promise<{ text: string }>;
 };
 
 const runIngestion = async ({
@@ -123,9 +130,9 @@ const runIngestion = async ({
   organizationId,
   fileName,
   fileType,
+  parsePdf,
 }: IngestionParams) => {
-  const pdfParse = await loadPdfParse();
-  const parsed = await pdfParse(buffer);
+  const parsed = await parsePdf(buffer);
   const text = parsed.text?.trim() ?? "";
   if (!text) {
     throw new Error("No text extracted from PDF");
@@ -158,25 +165,34 @@ const runIngestion = async ({
   }
 };
 
-const loadPdfParse = async (): Promise<(data: Buffer) => Promise<{ text: string }>> => {
-  const require = createRequire(import.meta.url);
+const loadPdfParse = async (): Promise<((data: Buffer) => Promise<{ text: string }>) | null> => {
+  // Prefer the direct lib entry (avoids the debug block in index.js)
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const mod = require("pdf-parse");
-    const candidate = (mod as { default?: unknown }).default ?? mod;
-    if (typeof candidate === "function") {
-      return candidate as (data: Buffer) => Promise<{ text: string }>;
+    const mod = require("pdf-parse/lib/pdf-parse.js") as unknown;
+    if (typeof mod === "function") {
+      return mod as (data: Buffer) => Promise<{ text: string }>;
     }
-  } catch {
-    // ignore and fallback
+    if (typeof (mod as { default?: unknown }).default === "function") {
+      return (mod as { default: (data: Buffer) => Promise<{ text: string }> }).default;
+    }
+  } catch (error) {
+    console.warn("Require of pdf-parse/lib/pdf-parse.js failed, trying package root.", error);
   }
 
-  const mod = await import("pdf-parse").catch(() => null);
-  const candidate = (mod as unknown as { default?: unknown })?.default ?? mod;
-  if (typeof candidate === "function") {
-    return candidate as (data: Buffer) => Promise<{ text: string }>;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const mod = require("pdf-parse") as unknown;
+    if (typeof mod === "function") {
+      return mod as (data: Buffer) => Promise<{ text: string }>;
+    }
+    if (typeof (mod as { default?: unknown }).default === "function") {
+      return (mod as { default: (data: Buffer) => Promise<{ text: string }> }).default;
+    }
+  } catch (error) {
+    console.warn("Require of pdf-parse failed.", error);
   }
 
-  throw new Error("pdf-parse is not available");
+  return null;
 };
 

@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { JSX } from "react";
 import { handleUploadWithState } from "./actions";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
+import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { StatusBadge } from "@/components/documents/StatusBadge";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
@@ -26,9 +27,10 @@ export default async function DocumentsPage({
   const t = await getTranslations({ locale, namespace: "documentsPage" });
 
   const supabase = createSupabaseServerClient();
+  const service = createSupabaseServiceClient();
   const organizationId = await ensureUserOrganization({ supabase });
 
-  const { data: docs } = await supabase
+  const { data: docs } = await service
     .from("documents")
     .select("id,file_path,file_type,status,metadata,updated_at")
     .eq("organization_id", organizationId)

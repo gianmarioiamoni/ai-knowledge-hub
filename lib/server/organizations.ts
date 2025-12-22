@@ -49,6 +49,19 @@ export const ensureUserOrganization = async ({
     throw new Error(orgError?.message ?? "Unable to create organization");
   }
 
-  return orgInsert.id as string;
+  const orgId = orgInsert.id as string;
+
+  // Explicitly add the user as ORG_ADMIN (service role bypasses the trigger auth.uid()).
+  const { error: memberError } = await service.from("organization_members").insert({
+    user_id: userData.user.id,
+    organization_id: orgId,
+    role: "ORG_ADMIN",
+  });
+
+  if (memberError) {
+    throw new Error(memberError.message ?? "Unable to attach user to organization");
+  }
+
+  return orgId;
 };
 
