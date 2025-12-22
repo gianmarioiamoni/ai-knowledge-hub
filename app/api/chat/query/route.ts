@@ -131,7 +131,3 @@ const createAnswerStream = async ({ query, chunks, conversationId }: StreamParam
   return readable;
 };
 
-const encodeLine = (data: unknown): Uint8Array => {
-  return new TextEncoder().encode(`${JSON.stringify(data)}\n`);
-};
-

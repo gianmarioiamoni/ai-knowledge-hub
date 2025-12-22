@@ -85,6 +85,7 @@
     "contextEmpty": "Nessun contesto disponibile.",
     "sending": "Sto generando...",
     "stop": "Ferma",
+    "streaming": "Streaming...",
     "breadcrumbs": {
       "home": "Dashboard",
       "chat": "Chat"

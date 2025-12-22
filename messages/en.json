@@ -85,6 +85,7 @@
     "contextEmpty": "No context available.",
     "sending": "Generating...",
     "stop": "Stop",
+    "streaming": "Streaming...",
     "breadcrumbs": {
       "home": "Dashboard",
       "chat": "Chat"
