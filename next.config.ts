@@ -5,6 +5,14 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const nextConfig: NextConfig = {
   async headers() {
+    const isDev = process.env.NODE_ENV !== "production";
+    const scriptSrc = isDev
+      ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", "blob:"]
+      : ["'self'", "'unsafe-inline'", "blob:"];
+    const connectSrc = isDev
+      ? ["'self'", "https:", "http:", "ws:", "wss:"]
+      : ["'self'", "https:", "wss:"];
+
     return [
       {
         source: "/:path*",
@@ -18,11 +26,11 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self'",
+              `script-src ${scriptSrc.join(" ")}`,
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob:",
               "font-src 'self' data:",
-              "connect-src 'self' https:",
+              `connect-src ${connectSrc.join(" ")}`,
               "frame-ancestors 'none'",
             ].join("; "),
           },
