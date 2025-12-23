@@ -8,6 +8,7 @@ import { CommandHint } from "@/components/navigation/CommandHint";
 import { CommandLauncher } from "@/components/navigation/CommandLauncher";
 import { TopNav } from "@/components/navigation/TopNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { SentryClientInit } from "@/components/SentryClientInit";
 import "@/app/globals.css";
 
 const geistSans = Geist({
@@ -37,6 +38,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
+          <SentryClientInit />
           <div className="relative z-50 mx-auto flex w-full max-w-6xl items-center justify-end gap-3 px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
             <TopNav />
             <CommandHint />
