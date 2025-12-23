@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { renderSopMarkdown } from "@/lib/server/sop";
 import { renderSopPdf } from "@/lib/server/sopPdf";
 import { logError, logInfo } from "@/lib/server/logger";
+import { rateLimit } from "@/lib/server/rateLimit";
 import { z } from "zod";
 
 export const runtime = "nodejs";
@@ -14,10 +15,12 @@ export async function GET(request: Request): Promise<Response> {
     .object({
       id: z.string().uuid(),
       format: z.enum(["md", "pdf"]).default("md"),
+      locale: z.enum(["en", "it"]).default("en"),
     })
     .safeParse({
       id: url.searchParams.get("id"),
       format: url.searchParams.get("format") ?? "md",
+      locale: url.searchParams.get("locale") ?? "en",
     });
 
   if (!parsed.success) {
@@ -25,13 +28,38 @@ export async function GET(request: Request): Promise<Response> {
     return NextResponse.json({ error: "Invalid id or format" }, { status: 400 });
   }
 
-  const { id, format } = parsed.data;
+  const { id, format, locale } = parsed.data;
+  const messages = {
+    en: {
+      invalid: "Invalid id or format",
+      unauthorized: "Unauthorized",
+      noOrg: "No organization found",
+      notFound: "Procedure not found",
+      rateLimit: "Rate limit exceeded. Please try again later.",
+    },
+    it: {
+      invalid: "ID o formato non valido",
+      unauthorized: "Non autorizzato",
+      noOrg: "Nessuna organizzazione trovata",
+      notFound: "Procedura non trovata",
+      rateLimit: "Limite di richieste superato. Riprovare più tardi.",
+    },
+  } as const;
+  const t = messages[locale] ?? messages.en;
 
   const supabase = createSupabaseServerClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
     logError("Unauthorized export attempt", { route: "procedures/export" });
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: t.unauthorized }, { status: 401 });
+  }
+
+  const rl = rateLimit(`export:${userData.user.id}`, { limit: 20, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: t.rateLimit },
+      { status: 429, headers: { "Retry-After": Math.ceil((rl.resetAt - Date.now()) / 1000).toString() } }
+    );
   }
 
   const service = createSupabaseServiceClient();
@@ -44,7 +72,7 @@ export async function GET(request: Request): Promise<Response> {
 
   if (!membership?.organization_id) {
     logError("Export without organization", { userId: userData.user.id });
-    return NextResponse.json({ error: "No organization found" }, { status: 403 });
+    return NextResponse.json({ error: t.noOrg }, { status: 403 });
   }
 
   const { data, error } = await service
@@ -56,7 +84,7 @@ export async function GET(request: Request): Promise<Response> {
 
   if (error || !data) {
     logError("Procedure not found", { id, org: membership.organization_id });
-    return NextResponse.json({ error: "Procedure not found" }, { status: 404 });
+    return NextResponse.json({ error: t.notFound }, { status: 404 });
   }
 
   if (format === "pdf") {

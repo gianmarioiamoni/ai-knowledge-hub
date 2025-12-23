@@ -15,13 +15,13 @@ function ProcedureListActions({ procedure, labels, locale }: ProcedureListAction
         {labels.view}
       </Link>
       <a
-        href={`/api/procedures/export?id=${procedure.id}&format=md`}
+        href={`/api/procedures/export?id=${procedure.id}&format=md&locale=${locale}`}
         className="rounded-full bg-muted px-3 py-1 font-medium text-foreground hover:bg-muted/80"
       >
         {labels.exportMd}
       </a>
       <a
-        href={`/api/procedures/export?id=${procedure.id}&format=pdf`}
+        href={`/api/procedures/export?id=${procedure.id}&format=pdf&locale=${locale}`}
         className="rounded-full bg-muted px-3 py-1 font-medium text-foreground hover:bg-muted/80"
       >
         {labels.exportPdf}

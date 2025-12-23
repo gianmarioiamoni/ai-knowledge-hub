@@ -6,6 +6,18 @@ import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { generateSop } from "@/lib/server/sop";
+import { rateLimit } from "@/lib/server/rateLimit";
+
+const messages = {
+  en: {
+    unauthorized: "You must be logged in",
+    rateLimit: "Too many SOP requests. Please try again later.",
+  },
+  it: {
+    unauthorized: "Devi essere autenticato",
+    rateLimit: "Troppe richieste SOP. Riprova più tardi.",
+  },
+} as const;
 
 const generateSchema = z.object({
   locale: z.string().min(2),
@@ -34,7 +46,14 @@ export const handleGenerateSop = async (_prev: ActionResult, formData: FormData)
 
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
-    return { error: "You must be logged in" };
+    const locale = parsed.data.locale as keyof typeof messages;
+    return { error: messages[locale]?.unauthorized ?? "You must be logged in" };
+  }
+
+  const locale = parsed.data.locale as keyof typeof messages;
+  const rl = rateLimit(`sop-gen:${userData.user.id}`, { limit: 10, windowMs: 10 * 60_000 });
+  if (!rl.allowed) {
+    return { error: messages[locale]?.rateLimit ?? "Rate limit exceeded. Try later." };
   }
 
   const organizationId = await ensureUserOrganization({ supabase });
