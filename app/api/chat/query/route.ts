@@ -6,6 +6,8 @@ import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { embedQuery, searchSimilarChunks } from "@/lib/server/rag";
 import { createChatModel } from "@/lib/server/langchain";
 import { buildPrompt, encodeLine } from "@/lib/server/ragPrompt";
+import { rateLimit } from "@/lib/server/rateLimit";
+import { logError } from "@/lib/server/logger";
 
 const bodySchema = z.object({
   query: z.string().min(4, "Query too short"),
@@ -23,6 +25,14 @@ export async function POST(request: Request): Promise<NextResponse> {
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const rl = rateLimit(`chat:${userData.user.id}`, { limit: 20, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded. Please wait a moment and try again." },
+      { status: 429, headers: { "Retry-After": Math.ceil((rl.resetAt - Date.now()) / 1000).toString() } }
+    );
   }
 
   const service = createSupabaseServiceClient();
@@ -120,6 +130,7 @@ const createAnswerStream = async ({ query, chunks, conversationId }: StreamParam
           metadata: { chunks: chunks.slice(0, 3).map((c) => c.id) },
         });
       } catch (err) {
+        logError("Chat stream failed", { error: err instanceof Error ? err.message : String(err) });
         controller.enqueue(
           encodeLine({ type: "error", error: err instanceof Error ? err.message : "Stream error" })
         );
