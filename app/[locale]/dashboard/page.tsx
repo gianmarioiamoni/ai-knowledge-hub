@@ -12,6 +12,7 @@ import { StatusCard } from "@/components/dashboard/StatusCard";
 import { getIngestionStats } from "@/lib/server/documents";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
+import { getDashboardStats } from "@/lib/server/stats";
 
 export const dynamic = "force-dynamic";
 
@@ -35,12 +36,29 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
   const tCommon = await getTranslations({ locale, namespace: "common" });
   const organizationId = await ensureUserOrganization({ supabase });
   const ingestion = await getIngestionStats(organizationId);
+  const statsData = await getDashboardStats(organizationId, ingestion);
 
   const stats = [
-    { label: t("stats.documents"), value: "128", delta: t("stats.deltas.documents") },
-    { label: t("stats.conversations"), value: "3.4k", delta: t("stats.deltas.conversations") },
-    { label: t("stats.sops"), value: "640", delta: t("stats.deltas.sops") },
-    { label: t("stats.users"), value: "42", delta: t("stats.deltas.users") },
+    {
+      label: t("stats.documents"),
+      value: statsData.documents.toLocaleString(locale),
+      delta: t("stats.deltas.documents"),
+    },
+    {
+      label: t("stats.conversations"),
+      value: statsData.conversations.toLocaleString(locale),
+      delta: t("stats.deltas.conversations"),
+    },
+    {
+      label: t("stats.sops"),
+      value: statsData.procedures.toLocaleString(locale),
+      delta: t("stats.deltas.sops"),
+    },
+    {
+      label: t("stats.users"),
+      value: statsData.members.toLocaleString(locale),
+      delta: t("stats.deltas.users"),
+    },
   ];
 
   const pipeline = [
