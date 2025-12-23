@@ -6,6 +6,8 @@ import { listConversations, listMessages } from "@/lib/server/chat";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 
+export const dynamic = "force-dynamic";
+
 type ChatPageProps = {
   params: Promise<{ locale: string }>;
 };
@@ -16,7 +18,7 @@ export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.E
   const { data, error } = await supabase.auth.getUser();
 
   if (error || !data.user) {
-    return redirectToLogin(locale);
+      return redirectToLogin(locale);
   }
 
   const orgId = await ensureUserOrganization({ supabase });
@@ -71,8 +73,9 @@ export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.E
   );
 }
 
-function redirectToLogin(locale: string): never {
+function redirectToLogin(locale: string): JSX.Element {
   const { redirect } = require("next/navigation");
   redirect(`/${locale}/login`);
+  return <></>;
 }
 

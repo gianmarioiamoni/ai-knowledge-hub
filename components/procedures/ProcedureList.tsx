@@ -2,10 +2,11 @@
 
 import { JSX, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { handleDeleteSop, handleRenameSop } from "@/app/[locale]/procedures/actions";
+import { handleRenameSop } from "@/app/[locale]/procedures/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2, Pencil } from "lucide-react";
+import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 
 type ProcedureListProps = {
   procedures: Array<{
@@ -22,6 +23,7 @@ type ProcedureListProps = {
     edit: string;
     save: string;
     cancel: string;
+    confirmDelete?: string;
   };
   locale: string;
 };
@@ -32,7 +34,6 @@ function ProcedureList({ procedures, labels, locale }: ProcedureListProps): JSX.
   }
 
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [pendingId, setPendingId] = useState<string | null>(null);
 
   return (
     <div className="divide-y divide-border/70">
@@ -41,9 +42,11 @@ function ProcedureList({ procedures, labels, locale }: ProcedureListProps): JSX.
           <div className="space-y-1">
             {editingId === proc.id ? (
               <form
-                action={handleRenameSop}
+                action={async (formData) => {
+                  await handleRenameSop(formData);
+                  setEditingId(null);
+                }}
                 className="flex flex-col gap-2 sm:flex-row sm:items-center"
-                onSubmit={() => setPendingId(proc.id)}
               >
                 <input type="hidden" name="locale" value={locale} />
                 <input type="hidden" name="id" value={proc.id} />
@@ -53,10 +56,9 @@ function ProcedureList({ procedures, labels, locale }: ProcedureListProps): JSX.
                   className="w-full sm:w-64"
                   required
                   minLength={3}
-                  disabled={pendingId === proc.id}
                 />
                 <div className="flex gap-2">
-                  <Button type="submit" size="sm" disabled={pendingId === proc.id}>
+                  <Button type="submit" size="sm">
                     {labels.save}
                   </Button>
                   <Button
@@ -64,7 +66,6 @@ function ProcedureList({ procedures, labels, locale }: ProcedureListProps): JSX.
                     variant="outline"
                     size="sm"
                     onClick={() => setEditingId(null)}
-                    disabled={pendingId === proc.id}
                   >
                     {labels.cancel}
                   </Button>
@@ -98,25 +99,14 @@ function ProcedureList({ procedures, labels, locale }: ProcedureListProps): JSX.
             >
               {labels.exportPdf}
             </a>
-            <form
-              action={handleDeleteSop}
-              className="inline-flex"
-              onSubmit={() => setPendingId(proc.id)}
-            >
-              <input type="hidden" name="locale" value={locale} />
-              <input type="hidden" name="id" value={proc.id} />
-              <Button
-                type="submit"
-                variant="ghost"
-                size="icon"
-                title={labels.delete}
-                aria-label={labels.delete}
-                disabled={pendingId === proc.id}
-                className="text-rose-600 hover:text-rose-700"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </form>
+            <DeleteConfirmDialog
+              locale={locale}
+              id={proc.id}
+              title={proc.title}
+              label={labels.delete}
+              confirmText={labels.confirmDelete ?? labels.delete}
+              cancelLabel={labels.cancel}
+            />
             <Button
               type="button"
               variant="ghost"
@@ -124,7 +114,6 @@ function ProcedureList({ procedures, labels, locale }: ProcedureListProps): JSX.
               title={labels.edit}
               aria-label={labels.edit}
               onClick={() => setEditingId(proc.id)}
-              disabled={pendingId === proc.id}
             >
               <Pencil className="h-4 w-4" />
             </Button>

@@ -83,6 +83,7 @@ export default async function ProceduresPage({
             exportMd: t("actions.exportMd"),
             exportPdf: t("actions.exportPdf"),
             delete: t("actions.delete"),
+            confirmDelete: t("actions.confirmDelete", { title: "{title}" }),
             edit: t("actions.edit"),
             save: t("actions.save"),
             cancel: t("actions.cancel"),

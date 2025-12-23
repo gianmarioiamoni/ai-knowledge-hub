@@ -153,9 +153,7 @@ export default async function ProcedurePage({ params }: ProcedurePageProps): Pro
                 <h3 className="mt-3 text-lg font-semibold text-foreground" {...props} />
               ),
               p: ({ node, ...props }) => <p className="text-sm leading-6 text-foreground" {...props} />,
-              li: ({ node, ordered, ...props }) => (
-                <li className="text-sm leading-6 text-foreground" {...props} />
-              ),
+              li: ({ node, ...props }) => <li className="text-sm leading-6 text-foreground" {...props} />,
             }}
           >
             {content}

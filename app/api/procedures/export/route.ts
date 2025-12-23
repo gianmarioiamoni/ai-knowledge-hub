@@ -50,7 +50,8 @@ export async function GET(request: Request): Promise<Response> {
       content: data.content,
       sourceDocuments: data.source_documents ?? [],
     });
-    return new NextResponse(pdf, {
+    const pdfBytes = new Uint8Array(pdf);
+    return new NextResponse(pdfBytes, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${data.title || "sop"}.pdf"`,

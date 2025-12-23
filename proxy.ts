@@ -23,8 +23,9 @@ export default function proxy(request: NextRequest) {
 
   const response = intlProxy(request);
 
-  const [, maybeLocale] = request.nextUrl.pathname.split("/");
-  const hasLocale = routing.locales.includes(maybeLocale);
+  const [, maybeLocaleRaw] = request.nextUrl.pathname.split("/");
+  const maybeLocale = maybeLocaleRaw as string;
+  const hasLocale = routing.locales.includes(maybeLocale as (typeof routing.locales)[number]);
   if (hasLocale) {
     const cookieLocale = request.cookies.get("preferred_locale")?.value;
     if (cookieLocale !== maybeLocale) {

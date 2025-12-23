@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 
+export const dynamic = "force-dynamic";
+
 type LocalePageProps = {
   params: Promise<{ locale: string }>;
 };

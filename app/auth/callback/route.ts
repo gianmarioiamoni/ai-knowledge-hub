@@ -38,7 +38,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
   const cookieLocale = request.cookies.get("preferred_locale")?.value;
-  const locale = routing.locales.includes(cookieLocale ?? "") ? (cookieLocale as string) : routing.defaultLocale;
+  const candidate = cookieLocale ?? "";
+  const locale = routing.locales.includes(candidate as (typeof routing.locales)[number])
+    ? (candidate as (typeof routing.locales)[number])
+    : routing.defaultLocale;
   const next = requestUrl.searchParams.get("next") ?? `/${locale}/dashboard`;
 
   if (!code) {

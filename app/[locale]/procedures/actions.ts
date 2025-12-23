@@ -26,7 +26,7 @@ export const handleGenerateSop = async (_prev: ActionResult, formData: FormData)
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message ?? "Invalid input" };
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
 
   const supabase = createSupabaseServerClient();
@@ -65,7 +65,7 @@ const deleteSchema = z.object({
   id: z.string().uuid(),
 });
 
-export const handleDeleteSop = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {
+export const handleDeleteSop = async (formData: FormData): Promise<ActionResult> => {
   const parsed = deleteSchema.safeParse({
     locale: formData.get("locale"),
     id: formData.get("id"),
@@ -104,7 +104,7 @@ const renameSchema = z.object({
   title: z.string().min(3, "Title is required"),
 });
 
-export const handleRenameSop = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {
+export const handleRenameSop = async (formData: FormData): Promise<ActionResult> => {
   const parsed = renameSchema.safeParse({
     locale: formData.get("locale"),
     id: formData.get("id"),
@@ -112,7 +112,7 @@ export const handleRenameSop = async (_prev: ActionResult, formData: FormData): 
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message ?? "Invalid input" };
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
 
   const supabase = createSupabaseServerClient();

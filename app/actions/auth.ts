@@ -16,10 +16,13 @@ const credentialsSchema = z.object({
   password: z.string().min(6, "Password minima 6 caratteri"),
 });
 
-const getPreferredLocale = async (): Promise<string> => {
+const getPreferredLocale = async (): Promise<(typeof routing.locales)[number]> => {
   const cookieStore = await cookies();
   const cookieLocale = cookieStore.get("preferred_locale")?.value;
-  return routing.locales.includes(cookieLocale ?? "") ? (cookieLocale as string) : routing.defaultLocale;
+  const candidate = cookieLocale ?? "";
+  return routing.locales.includes(candidate as (typeof routing.locales)[number])
+    ? (candidate as (typeof routing.locales)[number])
+    : routing.defaultLocale;
 };
 
 export async function signInWithPassword(
@@ -32,7 +35,7 @@ export async function signInWithPassword(
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message ?? "Dati non validi" };
+    return { error: parsed.error.issues[0]?.message ?? "Dati non validi" };
   }
 
   const supabase = createSupabaseServerClient();
@@ -56,7 +59,7 @@ export async function signUpWithPassword(
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message ?? "Dati non validi" };
+    return { error: parsed.error.issues[0]?.message ?? "Dati non validi" };
   }
 
   const supabase = createSupabaseServerClient();

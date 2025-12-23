@@ -1,13 +1,5 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { routing } from "@/i18n/routing";
-
-export default function DashboardPage(): never {
-  const cookieLocale = cookies().get("preferred_locale")?.value;
-  const locale = routing.locales.includes(cookieLocale ?? "") ? cookieLocale : routing.defaultLocale;
-  redirect(`/${locale}/dashboard`);
-}
-import { redirect } from "next/navigation";
+import type { JSX } from "react";
 import {
   ArrowUpRight,
   FileSpreadsheet,
@@ -22,6 +14,8 @@ import { ProgressCard } from "@/components/dashboard/ProgressCard";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { StatusCard } from "@/components/dashboard/StatusCard";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
+
+export const dynamic = "force-dynamic";
 
 export default async function DashboardPage(): Promise<JSX.Element> {
   const supabase = createSupabaseServerClient();
@@ -71,14 +65,30 @@ export default async function DashboardPage(): Promise<JSX.Element> {
       </div>
 
       <div className="relative mx-auto flex max-w-6xl flex-col gap-8">
-        <HeaderBar email={email} actionSlot={logoutButton} />
+        <HeaderBar title="Dashboard" headline={email} actionSlot={logoutButton} />
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <BadgePills email={email} />
+          <BadgePills
+            badgeLabel="AI Knowledge Hub"
+            title="Dashboard"
+            headline={email}
+            subtitle="Controlla carichi, ingestion e conversazioni."
+            pills={[
+              { label: "Multi-tenant" },
+              { label: "RAG ready" },
+              { label: "SOP generator" },
+            ]}
+          />
         </div>
 
         <StatusCard title="Operativita immediata">
-          <QuickActions />
+          <QuickActions
+            labels={{
+              upload: "Vai a Documenti",
+              chat: "Apri Chat",
+              sop: "Genera SOP",
+            }}
+          />
         </StatusCard>
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -95,7 +105,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.9fr]">
           <StatusCard title="Pipeline ingestion & RAG">
             <p className="text-sm text-muted-foreground">
-              Dallo storage al retrieval: ogni fase e pronta e monitorabile.
+              Dallo storage al retrieval: ogni fase è pronta e monitorabile.
             </p>
             <div className="space-y-4">
               {pipeline.map((item, idx) => (

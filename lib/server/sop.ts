@@ -46,7 +46,10 @@ const generateSop = async (input: SopPromptInput): Promise<SopGenerated> => {
 
   const content =
     (response.output_text ??
-      response.output?.map((item) => ("content" in item ? (item.content as string) : "")).join("")) ?? "";
+      response.output
+        ?.map((item) => ("content" in item ? String((item as { content?: unknown }).content ?? "") : ""))
+        .join("")) ??
+    "";
 
   return {
     title: input.title,
@@ -59,5 +62,6 @@ const renderSopMarkdown = (sop: SopGenerated): string => {
   return [`# ${sop.title}`, "", sop.content.trim()].join("\n");
 };
 
-export { buildSopPrompt, generateSop, renderSopMarkdown, SopGenerated };
+export { buildSopPrompt, generateSop, renderSopMarkdown };
+export type { SopGenerated };
 

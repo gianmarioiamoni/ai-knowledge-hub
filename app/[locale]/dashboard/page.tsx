@@ -13,6 +13,8 @@ import { getIngestionStats } from "@/lib/server/documents";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 
+export const dynamic = "force-dynamic";
+
 type DashboardPageProps = {
   params: Promise<{ locale: string }> | { locale: string };
 };

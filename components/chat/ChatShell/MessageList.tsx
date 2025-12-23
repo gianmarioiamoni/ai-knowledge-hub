@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { JSX } from "react";
 import type { ChatMessage } from "./types";
 
 type MessageListProps = {

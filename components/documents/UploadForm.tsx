@@ -17,6 +17,7 @@ type UploadFormProps = {
     hintSecurity: string;
     uploading: string;
   };
+  action?: typeof handleUploadWithState;
 };
 
 type SubmitButtonProps = {
@@ -36,8 +37,8 @@ function SubmitButton({ labels, pending }: SubmitButtonProps): JSX.Element {
   );
 }
 
-function UploadForm({ locale, labels }: UploadFormProps): JSX.Element {
-  const [state, formAction] = useActionState<FormState, FormData>(handleUploadWithState, {});
+function UploadForm({ locale, labels, action = handleUploadWithState }: UploadFormProps): JSX.Element {
+  const [state, formAction] = useActionState<FormState, FormData>(action, {});
   const [pending, startTransition] = useTransition();
   const [localError, setLocalError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);

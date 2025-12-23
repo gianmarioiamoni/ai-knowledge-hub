@@ -6,9 +6,12 @@ export default getRequestConfig(async ({ locale }) => {
   const cookieStore = await cookies();
   const cookieLocale = cookieStore.get("preferred_locale")?.value;
   const fallbackLocale = routing.defaultLocale;
-  const isValidCookieLocale = cookieLocale && routing.locales.includes(cookieLocale);
+  const candidate = cookieLocale ?? "";
+  const isValidCookieLocale = routing.locales.includes(candidate as (typeof routing.locales)[number]);
 
-  const actualLocale = locale || (isValidCookieLocale ? cookieLocale : fallbackLocale);
+  const actualLocale =
+    locale ||
+    (isValidCookieLocale ? (candidate as (typeof routing.locales)[number]) : fallbackLocale);
   const messages = (await import(`../messages/${actualLocale}.json`)).default;
 
   return {

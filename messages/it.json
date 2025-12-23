@@ -157,7 +157,8 @@
       "delete": "Elimina",
       "edit": "Modifica titolo",
       "save": "Salva",
-      "cancel": "Annulla"
+      "cancel": "Annulla",
+      "confirmDelete": "Sei sicuro di voler eliminare “{title}”?"
     },
     "form": {
       "titleLabel": "Titolo",
