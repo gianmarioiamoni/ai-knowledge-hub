@@ -5,6 +5,13 @@
     "logout": "Logout",
     "multiTenantProtection": "Protezione multi-tenant attiva: RLS, Supabase Auth e storage sicuro per i tuoi dati."
   },
+  "cookies": {
+    "banner": {
+      "message": "Utilizziamo cookie per migliorare l'esperienza. Puoi accettare o rifiutare i cookie di analytics.",
+      "accept": "Accetta",
+      "decline": "Rifiuta"
+    }
+  },
   "auth": {
     "signin": "Accedi",
     "signup": "Crea account",

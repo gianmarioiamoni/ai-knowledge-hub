@@ -9,6 +9,7 @@ import { CommandLauncher } from "@/components/navigation/CommandLauncher";
 import { TopNav } from "@/components/navigation/TopNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SentryClientInit } from "@/components/SentryClientInit";
+import { CookieBanner } from "@/components/CookieBanner/CookieBanner";
 import "@/app/globals.css";
 
 const geistSans = Geist({
@@ -47,6 +48,11 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             <CommandPalette />
           </div>
           {children}
+          <CookieBanner
+            message={messages.cookies.banner.message}
+            acceptLabel={messages.cookies.banner.accept}
+            declineLabel={messages.cookies.banner.decline}
+          />
         </NextIntlClientProvider>
       </body>
     </html>
