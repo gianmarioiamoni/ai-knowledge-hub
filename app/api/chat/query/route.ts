@@ -10,7 +10,7 @@ import { rateLimit } from "@/lib/server/rateLimit";
 import { logError } from "@/lib/server/logger";
 
 const bodySchema = z.object({
-  query: z.string().min(4, "Query too short"),
+  query: z.string().min(4, "Query too short").max(1000, "Query too long"),
   conversationId: z.string().uuid().optional(),
 });
 

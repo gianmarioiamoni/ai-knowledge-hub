@@ -21,8 +21,8 @@ const messages = {
 
 const generateSchema = z.object({
   locale: z.string().min(2),
-  title: z.string().min(3, "Title is required"),
-  scope: z.string().min(5, "Scope is required"),
+  title: z.string().min(3, "Title is required").max(120, "Title too long"),
+  scope: z.string().min(5, "Scope is required").max(2000, "Scope too long"),
 });
 
 type ActionResult = {
