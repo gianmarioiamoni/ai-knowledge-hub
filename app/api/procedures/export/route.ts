@@ -3,21 +3,34 @@ import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { renderSopMarkdown } from "@/lib/server/sop";
 import { renderSopPdf } from "@/lib/server/sopPdf";
+import { logError, logInfo } from "@/lib/server/logger";
+import { z } from "zod";
 
 export const runtime = "nodejs";
 
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
-  const id = url.searchParams.get("id");
-  const format = url.searchParams.get("format") ?? "md";
+  const parsed = z
+    .object({
+      id: z.string().uuid(),
+      format: z.enum(["md", "pdf"]).default("md"),
+    })
+    .safeParse({
+      id: url.searchParams.get("id"),
+      format: url.searchParams.get("format") ?? "md",
+    });
 
-  if (!id) {
-    return NextResponse.json({ error: "Missing id" }, { status: 400 });
+  if (!parsed.success) {
+    logError("Invalid export params", { issues: parsed.error.issues });
+    return NextResponse.json({ error: "Invalid id or format" }, { status: 400 });
   }
+
+  const { id, format } = parsed.data;
 
   const supabase = createSupabaseServerClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
+    logError("Unauthorized export attempt", { route: "procedures/export" });
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -30,6 +43,7 @@ export async function GET(request: Request): Promise<Response> {
     .maybeSingle();
 
   if (!membership?.organization_id) {
+    logError("Export without organization", { userId: userData.user.id });
     return NextResponse.json({ error: "No organization found" }, { status: 403 });
   }
 
@@ -41,6 +55,7 @@ export async function GET(request: Request): Promise<Response> {
     .single();
 
   if (error || !data) {
+    logError("Procedure not found", { id, org: membership.organization_id });
     return NextResponse.json({ error: "Procedure not found" }, { status: 404 });
   }
 
@@ -51,6 +66,7 @@ export async function GET(request: Request): Promise<Response> {
       sourceDocuments: data.source_documents ?? [],
     });
     const pdfBytes = new Uint8Array(pdf);
+    logInfo("SOP export PDF", { id, org: membership.organization_id });
     return new NextResponse(pdfBytes, {
       headers: {
         "Content-Type": "application/pdf",
@@ -65,6 +81,7 @@ export async function GET(request: Request): Promise<Response> {
     content: data.content,
     sourceDocuments: data.source_documents ?? [],
   });
+  logInfo("SOP export MD", { id, org: membership.organization_id });
   return new NextResponse(md, {
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",
