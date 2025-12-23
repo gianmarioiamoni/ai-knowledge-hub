@@ -252,6 +252,12 @@ Status: completato
 - RLS policies  
 - Controlli sicurezza  
 
+Status parziale (implementato):
+- Metriche dashboard con dati reali (docs, conversazioni, SOP, members, ingestion).
+- Logging centralizzato con hook Sentry opzionale (`SENTRY_DSN`); errori API/azioni loggati.
+- Rate limiting: chat query, fetch messaggi, export SOP, generate SOP.
+- CSP/HSTS/headers di sicurezza configurati in `next.config.ts`.
+
 ### PHASE 5 – Finalization & Portfolio Packaging (1–2 settimane)
 - Documentazione  
 - Test unitari/integration (mock OpenAI)  
