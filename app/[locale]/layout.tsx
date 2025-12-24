@@ -1,8 +1,10 @@
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { routing } from "@/i18n/routing";
+import { buildMetadata } from "@/lib/seo";
 import { CommandPalette } from "@/components/navigation/CommandPalette";
 import { CommandHint } from "@/components/navigation/CommandHint";
 import { CommandLauncher } from "@/components/navigation/CommandLauncher";
@@ -32,6 +34,17 @@ type LocaleLayoutProps = {
   params: Promise<{ locale: string }>;
 };
 
+export async function generateMetadata({ params }: LocaleLayoutProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "seo" });
+  return buildMetadata({
+    locale,
+    title: t("defaultTitle"),
+    description: t("defaultDescription"),
+    path: "",
+  });
+}
+
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const { locale } = await params;
   const messages = await getMessages({ locale });
@@ -54,13 +67,13 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             acceptLabel={messages.cookies.banner.accept}
             declineLabel={messages.cookies.banner.decline}
             policyLabel={messages.cookies.banner.policy}
-            policyHref="/privacy"
+            policyHref={`/${locale}/privacy`}
             manageLabel={messages.cookies.banner.manage}
           />
           <FooterLinks
             privacyLabel={messages.cookies.banner.policy}
             cookiesLabel={messages.cookies.banner.manage}
-            cookiesHref={undefined}
+            locale={locale}
           />
         </NextIntlClientProvider>
       </body>

@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
 import { JSX } from "react";
 import { redirect } from "@/i18n/navigation";
 import { signOut } from "@/app/actions/auth";
@@ -13,12 +14,24 @@ import { getIngestionStats } from "@/lib/server/documents";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { getDashboardStats } from "@/lib/server/stats";
+import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
 type DashboardPageProps = {
   params: Promise<{ locale: string }> | { locale: string };
 };
+
+export async function generateMetadata({ params }: DashboardPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "dashboard" });
+  return buildMetadata({
+    locale,
+    title: t("title"),
+    description: t("subtitle"),
+    path: "/dashboard",
+  });
+}
 
 export default async function DashboardPage({ params }: DashboardPageProps): Promise<JSX.Element> {
   const { locale } = await params;

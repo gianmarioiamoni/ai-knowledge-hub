@@ -204,6 +204,11 @@
         "body": "For privacy requests, email gianmarioiamoni1@gmail.com."
       }
     }
+  },
+  "seo": {
+    "siteName": "AI Knowledge Hub",
+    "defaultTitle": "AI Knowledge Hub",
+    "defaultDescription": "Multi-tenant AI knowledge base with RAG, SOP generation, Supabase Auth, Storage and pgvector."
   }
 }
 

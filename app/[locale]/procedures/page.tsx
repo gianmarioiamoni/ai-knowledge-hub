@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
 import { JSX } from "react";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
@@ -8,6 +9,7 @@ import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { Card } from "@/components/ui/card";
 import { ProcedureList } from "@/components/procedures/ProcedureList";
 import { GenerateSopDialog } from "@/components/procedures/GenerateSopDialog";
+import { buildMetadata } from "@/lib/seo";
 
 type ProcedureRow = {
   id: string;
@@ -16,6 +18,21 @@ type ProcedureRow = {
   source_documents: string[];
   created_at: string;
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "proceduresPage" });
+  return buildMetadata({
+    locale,
+    title: t("title"),
+    description: t("description"),
+    path: "/procedures",
+  });
+}
 
 export default async function ProceduresPage({
   params,
@@ -41,7 +58,7 @@ export default async function ProceduresPage({
     <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 py-10 sm:px-8 lg:px-0">
       <Breadcrumbs
         items={[
-          { label: t("breadcrumbs.home"), href: "/dashboard" },
+          { label: t("breadcrumbs.home"), href: `/${locale}/dashboard` },
           { label: t("breadcrumbs.procedures") },
         ]}
       />

@@ -1,16 +1,29 @@
 import { getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
 import { JSX } from "react";
 import { ChatShell } from "@/components/chat/ChatShell";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { listConversations, listMessages } from "@/lib/server/chat";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
+import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
 type ChatPageProps = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: ChatPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "chatPage" });
+  return buildMetadata({
+    locale,
+    title: t("title"),
+    description: t("description"),
+    path: "/chat",
+  });
+}
 
 export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.Element> {
   const { locale } = await params;
@@ -32,7 +45,7 @@ export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.E
     <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-10 sm:px-8 lg:px-0">
       <Breadcrumbs
         items={[
-          { label: t("breadcrumbs.home"), href: "/dashboard" },
+          { label: t("breadcrumbs.home"), href: `/${locale}/dashboard` },
           { label: t("breadcrumbs.chat") },
         ]}
       />
@@ -41,11 +54,11 @@ export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.E
         <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{t("subtitle")}</h1>
         <p className="text-sm text-muted-foreground">{t("description")}</p>
         <div className="flex flex-wrap gap-2 text-sm text-primary">
-          <a className="underline-offset-4 hover:underline" href="/documents">
+          <a className="underline-offset-4 hover:underline" href={`/${locale}/documents`}>
             {t("breadcrumbs.home")}
           </a>
           <span>·</span>
-          <a className="underline-offset-4 hover:underline" href="/procedures">
+          <a className="underline-offset-4 hover:underline" href={`/${locale}/procedures`}>
             Procedures
           </a>
         </div>

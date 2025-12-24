@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
 import { JSX } from "react";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { BadgeBar } from "@/components/login/BadgeBar";
@@ -7,10 +8,23 @@ import { Hero } from "@/components/login/Hero";
 import { SellingPoints } from "@/components/login/SellingPoints";
 import { StatsGrid } from "@/components/login/StatsGrid";
 import type { Stat } from "@/components/login/StatsGrid";
+import { buildMetadata } from "@/lib/seo";
 
 type LoginPageProps = {
   params: Promise<{ locale: string }> | { locale: string };
 };
+
+export async function generateMetadata({ params }: LoginPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "loginPage" });
+  const title = `${t("title")} ${t("highlight")}`.trim();
+  return buildMetadata({
+    locale,
+    title,
+    description: t("description"),
+    path: "/login",
+  });
+}
 
 export default async function LoginPage({ params }: LoginPageProps): Promise<JSX.Element> {
   const { locale } = await params;
