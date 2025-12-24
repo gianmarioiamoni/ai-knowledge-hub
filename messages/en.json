@@ -127,6 +127,7 @@
   "dashboard": {
     "title": "Dashboard",
     "user": "Hi, {email}",
+    "profileTooltip": "Open user profile",
     "headline": "Everything you need to orchestrate knowledge and AI.",
     "subtitle": "Monitor, quick actions and pipeline status ingestion → retrieval → SOP. Multi-tenant secured with Supabase Auth, Storage and RLS.",
     "tenant": "Isolated tenant",

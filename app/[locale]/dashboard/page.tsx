@@ -128,7 +128,7 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
             headlinePrefix={greetingPrefix}
             headlineLinkLabel={email}
             headlineHref="/profile"
-            headlineTooltip={t("title")}
+            headlineTooltip={t("profileTooltip")}
             actionSlot={logoutButton}
           />
           <SuperAdminPanel labels={adminLabels} />
@@ -151,7 +151,7 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
           headlinePrefix={greetingPrefix}
           headlineLinkLabel={email}
           headlineHref="/profile"
-          headlineTooltip={t("title")}
+          headlineTooltip={t("profileTooltip")}
           actionSlot={logoutButton}
         />
 
