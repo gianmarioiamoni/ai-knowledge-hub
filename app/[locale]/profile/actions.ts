@@ -58,26 +58,27 @@ const addDays = (days: number): string => {
   return d.toISOString();
 };
 
-const buildPlanMeta = (planId: string, existing?: PlanMetadata): PlanMetadata => {
+const buildPlanMeta = (planId: string, billing: "monthly" | "annual", existing?: PlanMetadata): PlanMetadata => {
   if (planId === "trial") {
     return {
       id: "trial",
       trialEndsAt: existing?.trialEndsAt ?? addDays(30),
+      billingCycle: billing,
     };
   }
   if (planId === "cancel") {
-    // If has remaining trial, keep trial; otherwise mark expired to force selection
     const expires = existing?.trialEndsAt ? new Date(existing.trialEndsAt).getTime() : 0;
     const hasTrialLeft = expires > Date.now();
     return hasTrialLeft
-      ? { id: "trial", trialEndsAt: existing?.trialEndsAt }
-      : { id: "expired" };
+      ? { id: "trial", trialEndsAt: existing?.trialEndsAt, billingCycle: billing }
+      : { id: "expired", billingCycle: billing };
   }
-  return { id: planId, trialEndsAt: undefined };
+  return { id: planId, trialEndsAt: undefined, billingCycle: billing };
 };
 
 export const setPlan = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {
   const planId = (formData.get("planId") as string) ?? "trial";
+  const billingCycle = ((formData.get("billingCycle") as string) ?? "monthly") as "monthly" | "annual";
   const supabase = createSupabaseServerClient();
   const { data, error: getErr } = await supabase.auth.getUser();
   if (getErr || !data.user) {
@@ -85,7 +86,7 @@ export const setPlan = async (_prev: ActionResult, formData: FormData): Promise<
   }
 
   const currentPlan = (data.user.user_metadata as { plan?: PlanMetadata } | null)?.plan;
-  const planMeta = buildPlanMeta(planId, currentPlan);
+  const planMeta = buildPlanMeta(planId, billingCycle, currentPlan);
 
   const { error } = await supabase.auth.updateUser({
     data: {

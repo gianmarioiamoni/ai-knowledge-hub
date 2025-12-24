@@ -2,11 +2,29 @@ import { getTranslations } from "next-intl/server";
 import { JSX } from "react";
 import { PlansSection } from "@/components/subscriptions/PlansSection";
 import type { Plan } from "@/components/subscriptions/PlansSection/types";
+import type { PlanMetadata } from "@/lib/server/subscriptions";
+import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { setPlan } from "../profile/actions";
 
 export default async function PlansPage({ params }: { params: Promise<{ locale: string }> }): Promise<JSX.Element> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "plans" });
+  const supabase = createSupabaseServerClient();
+  const { data } = await supabase.auth.getUser();
+  const planMeta = (data.user?.user_metadata as { plan?: PlanMetadata } | undefined)?.plan;
+  const parsePlanId = (value?: string): Plan["id"] => {
+    if (value === "smb" || value === "enterprise" || value === "trial") return value;
+    return "trial";
+  };
+  const currentPlan = planMeta
+    ? {
+      planId: parsePlanId(planMeta.id),
+      billingCycle: planMeta.billingCycle ?? "monthly",
+    }
+    : {
+      planId: "trial" as Plan["id"],
+      billingCycle: "monthly" as const,
+    };
 
   const plans: Plan[] = [
     {
@@ -61,10 +79,12 @@ export default async function PlansPage({ params }: { params: Promise<{ locale: 
           select: t("labels.select"),
           selected: t("labels.selected"),
         }}
-        onSelect={async (planId) => {
+        currentPlan={currentPlan}
+        onSelect={async (planId, billingCycle) => {
           "use server";
           const formData = new FormData();
           formData.append("planId", planId);
+          formData.append("billingCycle", billingCycle);
           await setPlan({}, formData);
         }}
       />

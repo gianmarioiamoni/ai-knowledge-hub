@@ -5,6 +5,7 @@ import type { Plan } from "./types";
 
 type UsePlanSelectionArgs = {
   defaultPlan?: Plan["id"];
+  currentPlan?: { planId: Plan["id"]; billingCycle?: "monthly" | "annual" };
   onSelect?: (planId: Plan["id"], billingCycle: "monthly" | "annual") => Promise<void>;
 };
 
@@ -16,13 +17,19 @@ type UsePlanSelectionResult = {
   handleSelect: (planId: Plan["id"], cycle?: "monthly" | "annual") => Promise<void>;
 };
 
-const usePlanSelection = ({ defaultPlan = "trial", onSelect }: UsePlanSelectionArgs): UsePlanSelectionResult => {
-  const [selected, setSelected] = useState<Plan["id"] | null>(defaultPlan);
+const usePlanSelection = ({
+  defaultPlan = "trial",
+  currentPlan,
+  onSelect,
+}: UsePlanSelectionArgs): UsePlanSelectionResult => {
+  const initialPlan = currentPlan?.planId ?? defaultPlan;
+  const [selected, setSelected] = useState<Plan["id"] | null>(initialPlan);
   const [message, setMessage] = useState<string | null>(null);
   const [billingCycle, setBillingCycleState] = useState<Record<Plan["id"], "monthly" | "annual">>({
-    trial: "monthly",
-    smb: "monthly",
-    enterprise: "monthly",
+    trial: currentPlan?.planId === "trial" && currentPlan.billingCycle ? currentPlan.billingCycle : "monthly",
+    smb: currentPlan?.planId === "smb" && currentPlan.billingCycle ? currentPlan.billingCycle : "monthly",
+    enterprise:
+      currentPlan?.planId === "enterprise" && currentPlan.billingCycle ? currentPlan.billingCycle : "monthly",
   });
 
   const setBillingCycle = (planId: Plan["id"], cycle: "monthly" | "annual") => {

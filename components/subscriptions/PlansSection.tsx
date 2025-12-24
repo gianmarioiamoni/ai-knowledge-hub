@@ -6,8 +6,11 @@ import type { Plan, PlansSectionProps } from "./PlansSection/types";
 import { usePlanSelection } from "./PlansSection/usePlanSelection";
 import type { PlanSelectionState } from "./PlansSection/types";
 
-function PlansSection({ plans, labels, onSelect }: PlansSectionProps): JSX.Element {
-  const { selected, message, billingCycle, setBillingCycle, handleSelect } = usePlanSelection({ onSelect });
+function PlansSection({ plans, labels, currentPlan, onSelect }: PlansSectionProps): JSX.Element {
+  const { selected, message, billingCycle, setBillingCycle, handleSelect } = usePlanSelection({
+    currentPlan,
+    onSelect,
+  });
   const selectionState: PlanSelectionState = { billingCycle };
 
   return (

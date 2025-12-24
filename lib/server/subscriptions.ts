@@ -4,11 +4,13 @@ import { redirect } from "@/i18n/navigation";
 type PlanMetadata = {
   id?: string;
   trialEndsAt?: string;
+  billingCycle?: "monthly" | "annual";
 };
 
 type PlanStatus = {
   planId: string | null;
   trialEndsAt?: string | null;
+  billingCycle?: "monthly" | "annual";
   expired: boolean;
 };
 
@@ -16,6 +18,7 @@ const getPlanStatus = (user: User): PlanStatus => {
   const meta = (user.user_metadata as { plan?: PlanMetadata } | null)?.plan ?? {};
   const planId = meta.id ?? "trial";
   const trialEndsAt = meta.trialEndsAt ?? null;
+  const billingCycle = meta.billingCycle;
   let expired = false;
   if (planId === "trial" && trialEndsAt) {
     expired = new Date(trialEndsAt).getTime() < Date.now();
@@ -23,7 +26,7 @@ const getPlanStatus = (user: User): PlanStatus => {
   if (planId === null || planId === "expired") {
     expired = true;
   }
-  return { planId, trialEndsAt, expired };
+  return { planId, trialEndsAt, billingCycle, expired };
 };
 
 const isUnlimitedRole = (user: User): boolean => {

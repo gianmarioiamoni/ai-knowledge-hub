@@ -19,6 +19,10 @@ type PlansSectionLabels = {
 type PlansSectionProps = {
   plans: Plan[];
   labels: PlansSectionLabels;
+  currentPlan?: {
+    planId: Plan["id"];
+    billingCycle?: "monthly" | "annual";
+  };
   onSelect?: (planId: Plan["id"], billingCycle: "monthly" | "annual") => Promise<void>;
 };
 

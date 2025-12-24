@@ -5,6 +5,7 @@ import type { PlanMetadata } from "@/lib/server/subscriptions";
 
 const bodySchema = z.object({
   planId: z.enum(["trial", "smb", "enterprise", "cancel"]),
+  billingCycle: z.enum(["monthly", "annual"]).default("monthly"),
 });
 
 const addDays = (days: number): string => {
@@ -13,19 +14,26 @@ const addDays = (days: number): string => {
   return d.toISOString();
 };
 
-const buildPlanMeta = (planId: string, current?: PlanMetadata): PlanMetadata => {
+const buildPlanMeta = (
+  planId: string,
+  billing: "monthly" | "annual",
+  current?: PlanMetadata,
+): PlanMetadata => {
   if (planId === "trial") {
     return {
       id: "trial",
       trialEndsAt: current?.trialEndsAt ?? addDays(30),
+      billingCycle: billing,
     };
   }
   if (planId === "cancel") {
     const expires = current?.trialEndsAt ? new Date(current.trialEndsAt).getTime() : 0;
     const hasTrialLeft = expires > Date.now();
-    return hasTrialLeft ? { id: "trial", trialEndsAt: current?.trialEndsAt } : { id: "expired" };
+    return hasTrialLeft
+      ? { id: "trial", trialEndsAt: current?.trialEndsAt, billingCycle: billing }
+      : { id: "expired", billingCycle: billing };
   }
-  return { id: planId, trialEndsAt: undefined };
+  return { id: planId, trialEndsAt: undefined, billingCycle: billing };
 };
 
 export async function POST(request: Request) {
@@ -42,7 +50,7 @@ export async function POST(request: Request) {
   }
 
   const currentPlan = (data.user.user_metadata as { plan?: PlanMetadata } | null)?.plan;
-  const planMeta = buildPlanMeta(parsed.data.planId, currentPlan);
+  const planMeta = buildPlanMeta(parsed.data.planId, parsed.data.billingCycle, currentPlan);
 
   const { error } = await supabase.auth.updateUser({
     data: { plan: { ...planMeta, updatedAt: new Date().toISOString() } },
