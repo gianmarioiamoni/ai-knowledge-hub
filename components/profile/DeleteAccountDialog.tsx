@@ -46,9 +46,11 @@ function DeleteAccountDialog({ labels }: DeleteAccountDialogProps): JSX.Element 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="destructive" className="w-auto">
-          {labels.title}
-        </Button>
+        <div className="flex justify-start">
+          <Button variant="destructive" className="w-fit self-start px-4">
+            {labels.title}
+          </Button>
+        </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
