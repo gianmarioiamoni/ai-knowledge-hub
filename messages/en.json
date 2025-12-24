@@ -235,7 +235,14 @@
     "title": "Admin stats",
     "subtitle": "Detailed metrics for super admins.",
     "description": "View platform-wide usage: users, documents, conversations, ingestion health, and procedures across tenants.",
-    "placeholder": "Metrics view coming soon."
+    "placeholder": "Metrics view coming soon.",
+    "users": "Users",
+    "banned": "Banned: {count}",
+    "orgs": "Organizations",
+    "members": "Members: {count}",
+    "documents": "Documents",
+    "conversations": "Conversations",
+    "procedures": "Procedures: {count}"
   }
 }
 

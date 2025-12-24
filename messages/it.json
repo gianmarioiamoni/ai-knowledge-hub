@@ -235,7 +235,14 @@
     "title": "Statistiche admin",
     "subtitle": "Metriche dettagliate per i super admin.",
     "description": "Visualizza l’uso della piattaforma: utenti, documenti, conversazioni, stato ingestion e procedure tra i tenant.",
-    "placeholder": "Vista metriche in arrivo."
+    "placeholder": "Vista metriche in arrivo.",
+    "users": "Utenti",
+    "banned": "Disabilitati: {count}",
+    "orgs": "Organizzazioni",
+    "members": "Membri: {count}",
+    "documents": "Documenti",
+    "conversations": "Conversazioni",
+    "procedures": "Procedure: {count}"
   }
 }
 
