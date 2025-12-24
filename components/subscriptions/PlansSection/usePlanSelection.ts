@@ -5,25 +5,37 @@ import type { Plan } from "./types";
 
 type UsePlanSelectionArgs = {
   defaultPlan?: Plan["id"];
-  onSelect?: (planId: Plan["id"]) => Promise<void>;
+  onSelect?: (planId: Plan["id"], billingCycle: "monthly" | "annual") => Promise<void>;
 };
 
 type UsePlanSelectionResult = {
   selected: Plan["id"] | null;
   message: string | null;
-  handleSelect: (planId: Plan["id"]) => Promise<void>;
+  billingCycle: Record<Plan["id"], "monthly" | "annual">;
+  setBillingCycle: (planId: Plan["id"], cycle: "monthly" | "annual") => void;
+  handleSelect: (planId: Plan["id"], cycle?: "monthly" | "annual") => Promise<void>;
 };
 
 const usePlanSelection = ({ defaultPlan = "trial", onSelect }: UsePlanSelectionArgs): UsePlanSelectionResult => {
   const [selected, setSelected] = useState<Plan["id"] | null>(defaultPlan);
   const [message, setMessage] = useState<string | null>(null);
+  const [billingCycle, setBillingCycleState] = useState<Record<Plan["id"], "monthly" | "annual">>({
+    trial: "monthly",
+    smb: "monthly",
+    enterprise: "monthly",
+  });
 
-  const handleSelect = async (planId: Plan["id"]) => {
+  const setBillingCycle = (planId: Plan["id"], cycle: "monthly" | "annual") => {
+    setBillingCycleState((prev) => ({ ...prev, [planId]: cycle }));
+  };
+
+  const handleSelect = async (planId: Plan["id"], cycle?: "monthly" | "annual") => {
     setSelected(planId);
     if (onSelect) {
       setMessage(null);
       try {
-        await onSelect(planId);
+        const effectiveCycle = cycle ?? billingCycle[planId] ?? "monthly";
+        await onSelect(planId, effectiveCycle);
         setMessage("ok");
       } catch {
         setMessage("error");
@@ -31,7 +43,7 @@ const usePlanSelection = ({ defaultPlan = "trial", onSelect }: UsePlanSelectionA
     }
   };
 
-  return { selected, message, handleSelect };
+  return { selected, message, billingCycle, setBillingCycle, handleSelect };
 };
 
 export { usePlanSelection };

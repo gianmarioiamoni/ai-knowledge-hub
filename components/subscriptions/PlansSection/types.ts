@@ -6,6 +6,7 @@ type Plan = {
   annual: string;
   limits: string[];
   highlight?: boolean;
+  hasBillingCycle?: boolean;
 };
 
 type PlansSectionLabels = {
@@ -18,8 +19,12 @@ type PlansSectionLabels = {
 type PlansSectionProps = {
   plans: Plan[];
   labels: PlansSectionLabels;
-  onSelect?: (planId: Plan["id"]) => Promise<void>;
+  onSelect?: (planId: Plan["id"], billingCycle: "monthly" | "annual") => Promise<void>;
 };
 
-export type { Plan, PlansSectionLabels, PlansSectionProps };
+type PlanSelectionState = {
+  billingCycle: Record<Plan["id"], "monthly" | "annual">;
+};
+
+export type { Plan, PlansSectionLabels, PlansSectionProps, PlanSelectionState };
 
