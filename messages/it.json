@@ -149,6 +149,7 @@
     "super": {
       "title": "Super admin",
       "subtitle": "Gestisci tutti gli utenti di ogni tenant.",
+      "statsNav": "Statistiche admin",
       "email": "Email",
       "role": "Ruolo",
       "status": "Stato",
@@ -229,6 +230,12 @@
     "siteName": "AI Knowledge Hub",
     "defaultTitle": "AI Knowledge Hub",
     "defaultDescription": "Piattaforma AI multi-tenant per knowledge base con RAG, generazione SOP, Supabase Auth, Storage e pgvector."
+  },
+  "adminStats": {
+    "title": "Statistiche admin",
+    "subtitle": "Metriche dettagliate per i super admin.",
+    "description": "Visualizza l’uso della piattaforma: utenti, documenti, conversazioni, stato ingestion e procedure tra i tenant.",
+    "placeholder": "Vista metriche in arrivo."
   }
 }
 

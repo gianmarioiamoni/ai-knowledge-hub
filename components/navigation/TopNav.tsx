@@ -9,16 +9,14 @@ type NavItem = {
   href: string;
 };
 
-const navItems: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Documents", href: "/documents" },
-  { label: "Chat", href: "/chat" },
-  { label: "Procedures", href: "/procedures" },
-];
+type TopNavProps = {
+  items?: NavItem[];
+};
 
-function TopNav(): JSX.Element {
+function TopNav({ items }: TopNavProps): JSX.Element {
   const pathname = usePathname();
   const router = useRouter();
+  const navItems = items ?? [];
 
   return (
     <nav className="hidden items-center gap-1 sm:flex">
@@ -43,5 +41,6 @@ function TopNav(): JSX.Element {
   );
 }
 
+export type { NavItem, TopNavProps };
 export { TopNav };
 

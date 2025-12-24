@@ -34,6 +34,13 @@ export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.E
       return redirectToLogin(locale);
   }
 
+  const role = (data.user.user_metadata as { role?: string } | null)?.role;
+  if (role === "SUPER_ADMIN") {
+    const { redirect } = require("next/navigation");
+    redirect(`/${locale}/admin-stats`);
+    return <></>;
+  }
+
   const orgId = await ensureUserOrganization({ supabase });
   const conversations = await listConversations(orgId, data.user.id);
   const initialConversationId = conversations[0]?.id;

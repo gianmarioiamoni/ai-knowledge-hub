@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { routing } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/seo";
+import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { CommandPalette } from "@/components/navigation/CommandPalette";
 import { CommandHint } from "@/components/navigation/CommandHint";
 import { CommandLauncher } from "@/components/navigation/CommandLauncher";
@@ -48,6 +49,28 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const { locale } = await params;
   const messages = await getMessages({ locale });
+  const supabase = createSupabaseServerClient();
+  const { data } = await supabase.auth.getUser();
+  const role = (data.user?.user_metadata as { role?: string } | null)?.role ?? null;
+
+  const tDashboard = await getTranslations({ locale, namespace: "dashboard" });
+  const tDocuments = await getTranslations({ locale, namespace: "documentsPage" });
+  const tChat = await getTranslations({ locale, namespace: "chatPage" });
+  const tProcedures = await getTranslations({ locale, namespace: "proceduresPage" });
+
+  const defaultNav = [
+    { label: tDashboard("title"), href: "/dashboard" },
+    { label: tDocuments("title"), href: "/documents" },
+    { label: tChat("title"), href: "/chat" },
+    { label: tProcedures("title"), href: "/procedures" },
+  ];
+
+  const superNav = [
+    { label: tDashboard("title"), href: "/dashboard" },
+    { label: tDashboard("super.statsNav"), href: "/admin-stats" },
+  ];
+
+  const navItems = role === "SUPER_ADMIN" ? superNav : defaultNav;
 
   return (
     <html lang={locale}>
@@ -55,7 +78,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SentryClientInit />
           <div className="relative z-50 mx-auto flex w-full max-w-6xl items-center justify-end gap-3 px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
-            <TopNav />
+            <TopNav items={navItems} />
             <CommandHint />
             <CommandLauncher />
             <LanguageSwitcher />

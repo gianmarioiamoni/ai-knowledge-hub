@@ -149,6 +149,7 @@
     "super": {
       "title": "Super admin",
       "subtitle": "Manage all users across tenants.",
+      "statsNav": "Admin stats",
       "email": "Email",
       "role": "Role",
       "status": "Status",
@@ -229,6 +230,12 @@
     "siteName": "AI Knowledge Hub",
     "defaultTitle": "AI Knowledge Hub",
     "defaultDescription": "Multi-tenant AI knowledge base with RAG, SOP generation, Supabase Auth, Storage and pgvector."
+  },
+  "adminStats": {
+    "title": "Admin stats",
+    "subtitle": "Detailed metrics for super admins.",
+    "description": "View platform-wide usage: users, documents, conversations, ingestion health, and procedures across tenants.",
+    "placeholder": "Metrics view coming soon."
   }
 }
 

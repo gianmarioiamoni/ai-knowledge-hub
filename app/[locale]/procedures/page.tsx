@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { JSX } from "react";
+import { redirect } from "@/i18n/navigation";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
@@ -43,6 +44,18 @@ export default async function ProceduresPage({
   const t = await getTranslations({ locale, namespace: "proceduresPage" });
 
   const supabase = createSupabaseServerClient();
+  const { data, error } = await supabase.auth.getUser();
+  const user = data.user;
+
+  if (error || !user) {
+    redirect({ href: "/login", locale });
+  }
+
+  const role = (user?.user_metadata as { role?: string } | null)?.role;
+  if (role === "SUPER_ADMIN") {
+    redirect({ href: "/admin-stats", locale });
+  }
+
   const service = createSupabaseServiceClient();
   const organizationId = await ensureUserOrganization({ supabase });
 
