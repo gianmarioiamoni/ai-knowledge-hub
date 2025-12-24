@@ -1,3 +1,5 @@
+{
+  "profile": {
   "profile": {
     "title": "Profile",
     "subtitle": "Manage your account details.",
@@ -22,7 +24,6 @@
       "confirmLabel": "Are you sure you want to delete your account?"
     }
   },
-{
   "common": {
     "secureAccess": "Secure access with Supabase",
     "or": "or",
