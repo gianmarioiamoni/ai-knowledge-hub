@@ -41,7 +41,8 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/jest": "^29.5.12",
+    "@types/jest": "^29.5.14",
+    "@types/webpack": "^5.28.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
