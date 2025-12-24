@@ -23,10 +23,12 @@ type PlansSectionProps = {
     select: string;
     selected: string;
   };
+  onSelect?: (planId: Plan["id"]) => Promise<void>;
 };
 
-function PlansSection({ plans, labels }: PlansSectionProps): JSX.Element {
+function PlansSection({ plans, labels, onSelect }: PlansSectionProps): JSX.Element {
   const [selected, setSelected] = useState<Plan["id"] | null>("trial");
+  const [message, setMessage] = useState<string | null>(null);
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
@@ -75,10 +77,24 @@ function PlansSection({ plans, labels }: PlansSectionProps): JSX.Element {
               <Button
                 className="w-full"
                 variant={plan.highlight ? "default" : "secondary"}
-                onClick={() => setSelected(plan.id)}
+                onClick={async () => {
+                  setSelected(plan.id);
+                  if (onSelect) {
+                    setMessage(null);
+                    try {
+                      await onSelect(plan.id);
+                      setMessage(labels.selected);
+                    } catch {
+                      setMessage("Error");
+                    }
+                  }
+                }}
               >
                 {labels.select}
               </Button>
+              {message && isSelected ? (
+                <p className="mt-1 text-xs text-muted-foreground">{message}</p>
+              ) : null}
             </div>
           </Card>
         );

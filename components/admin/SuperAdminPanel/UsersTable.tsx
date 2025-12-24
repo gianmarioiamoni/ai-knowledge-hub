@@ -20,6 +20,7 @@ function UsersTable({ rows, labels, isPending, onAction, onDelete }: UsersTableP
           <tr>
             <th className="px-3 py-2 text-left font-semibold text-foreground">{labels.email}</th>
             <th className="px-3 py-2 text-left font-semibold text-foreground">{labels.role}</th>
+            <th className="px-3 py-2 text-left font-semibold text-foreground">Plan</th>
             <th className="px-3 py-2 text-left font-semibold text-foreground">{labels.status}</th>
             <th className="px-3 py-2 text-left font-semibold text-foreground">{labels.created}</th>
             <th className="px-3 py-2 text-left font-semibold text-foreground">{labels.actions}</th>
@@ -30,6 +31,7 @@ function UsersTable({ rows, labels, isPending, onAction, onDelete }: UsersTableP
             <tr key={user.id}>
               <td className="px-3 py-2 text-foreground">{user.email ?? "—"}</td>
               <td className="px-3 py-2 text-muted-foreground">{user.role ?? "—"}</td>
+              <td className="px-3 py-2 text-muted-foreground">{user.plan ?? "—"}</td>
               <td className="px-3 py-2">
                 <span
                   className={

@@ -4,6 +4,7 @@ type AdminUserRow = {
   role: string | null;
   banned: boolean;
   createdAt: string | null;
+  plan: string | null;
   statusLabel?: string;
 };
 

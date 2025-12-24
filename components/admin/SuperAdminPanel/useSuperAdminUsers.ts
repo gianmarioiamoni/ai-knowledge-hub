@@ -66,6 +66,7 @@ const useSuperAdminUsers = (labels: SuperAdminLabels) => {
       users.map((u) => ({
         ...u,
         statusLabel: u.banned ? labels.banned : labels.active,
+        plan: u.plan ?? (u.role === "SUPER_ADMIN" || u.role === "ORG_ADMIN" ? "unlimited" : "trial"),
       })),
     [users, labels.active, labels.banned]
   );

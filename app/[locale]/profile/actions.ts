@@ -51,3 +51,27 @@ export const deleteAccount = async (): Promise<ActionResult> => {
   redirect("/login");
 };
 
+const addDays = (days: number): string => {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString();
+};
+
+export const setPlan = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {
+  const planId = (formData.get("planId") as string) ?? "trial";
+  const supabase = createSupabaseServerClient();
+  const { error } = await supabase.auth.updateUser({
+    data: {
+      plan: {
+        id: planId,
+        trialEndsAt: planId === "trial" ? addDays(30) : undefined,
+        updatedAt: new Date().toISOString(),
+      },
+    },
+  });
+  if (error) {
+    return { error: error.message };
+  }
+  return { success: "updated" };
+};
+

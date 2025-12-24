@@ -9,6 +9,7 @@ type AdminUser = {
   role: string | null;
   banned: boolean;
   createdAt: string | null;
+  plan: string | null;
 };
 
 const listAllUsers = async (): Promise<AdminUser[]> => {
@@ -24,6 +25,7 @@ const listAllUsers = async (): Promise<AdminUser[]> => {
     role: (u.user_metadata as { role?: string } | null)?.role ?? null,
     banned: Boolean((u as { banned_until?: string | null }).banned_until),
     createdAt: u.created_at ?? null,
+    plan: (u.user_metadata as { plan?: { id?: string } } | null)?.plan?.id ?? null,
   }));
 };
 

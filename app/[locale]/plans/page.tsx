@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { JSX } from "react";
 import { PlansSection, type Plan } from "@/components/subscriptions/PlansSection";
+import { setPlan } from "../profile/actions";
 
 export default async function PlansPage({ params }: { params: Promise<{ locale: string }> }): Promise<JSX.Element> {
   const { locale } = await params;
@@ -58,6 +59,12 @@ export default async function PlansPage({ params }: { params: Promise<{ locale: 
           annual: t("labels.annual"),
           select: t("labels.select"),
           selected: t("labels.selected"),
+        }}
+        onSelect={async (planId) => {
+          "use server";
+          const formData = new FormData();
+          formData.append("planId", planId);
+          await setPlan({}, formData);
         }}
       />
     </div>
