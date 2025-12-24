@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
+import type { PlanMetadata } from "@/lib/server/subscriptions";
 
 type ActionResult = { error?: string; success?: string };
 
@@ -57,16 +58,41 @@ const addDays = (days: number): string => {
   return d.toISOString();
 };
 
+const buildPlanMeta = (planId: string, existing?: PlanMetadata): PlanMetadata => {
+  if (planId === "trial") {
+    return {
+      id: "trial",
+      trialEndsAt: existing?.trialEndsAt ?? addDays(30),
+    };
+  }
+  if (planId === "cancel") {
+    // If has remaining trial, keep trial; otherwise mark expired to force selection
+    const expires = existing?.trialEndsAt ? new Date(existing.trialEndsAt).getTime() : 0;
+    const hasTrialLeft = expires > Date.now();
+    return hasTrialLeft
+      ? { id: "trial", trialEndsAt: existing?.trialEndsAt }
+      : { id: "expired" };
+  }
+  return { id: planId, trialEndsAt: undefined };
+};
+
 export const setPlan = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {
   const planId = (formData.get("planId") as string) ?? "trial";
   const supabase = createSupabaseServerClient();
+  const { data, error: getErr } = await supabase.auth.getUser();
+  if (getErr || !data.user) {
+    return { error: "Not authenticated" };
+  }
+
+  const currentPlan = (data.user.user_metadata as { plan?: PlanMetadata } | null)?.plan;
+  const planMeta = buildPlanMeta(planId, currentPlan);
+
   const { error } = await supabase.auth.updateUser({
     data: {
       plan: {
-        id: planId,
-        trialEndsAt: planId === "trial" ? addDays(30) : undefined,
+        ...planMeta,
         updatedAt: new Date().toISOString(),
-      },
+      } satisfies PlanMetadata & { updatedAt: string },
     },
   });
   if (error) {

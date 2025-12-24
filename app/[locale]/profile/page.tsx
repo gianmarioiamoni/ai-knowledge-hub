@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { JSX } from "react";
 import { redirect } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
+import { getPlanStatus, isUnlimitedRole } from "@/lib/server/subscriptions";
 import { ChangePasswordForm } from "@/components/profile/ChangePasswordForm";
 import { DeleteAccountDialog } from "@/components/profile/DeleteAccountDialog";
 import { Card } from "@/components/ui/card";
@@ -22,6 +23,12 @@ export default async function ProfilePage({
 
   const t = await getTranslations({ locale, namespace: "profile" });
   const role = (user?.user_metadata as { role?: string } | null)?.role ?? "USER";
+  const plan = getPlanStatus(user!);
+  const planLabel = isUnlimitedRole(user!)
+    ? "unlimited"
+    : plan.planId === "trial" && plan.expired
+      ? "trial_expired"
+      : plan.planId ?? "trial";
 
   return (
     <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-12">
@@ -31,7 +38,7 @@ export default async function ProfilePage({
       </div>
 
       <Card className="border border-white/40 bg-white/70 p-6 backdrop-blur dark:border-white/10 dark:bg-white/5">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-3">
           <div className="flex flex-col gap-1">
             <p className="text-sm text-muted-foreground">{t("email")}</p>
             <p className="text-base font-semibold text-foreground">{user?.email}</p>
@@ -39,6 +46,13 @@ export default async function ProfilePage({
           <div className="flex flex-col gap-1">
             <p className="text-sm text-muted-foreground">{t("role")}</p>
             <p className="text-base font-semibold text-foreground">{role}</p>
+          </div>
+          <div className="flex flex-col gap-1">
+            <p className="text-sm text-muted-foreground">{t("plan")}</p>
+            <p className="text-base font-semibold text-foreground">
+              {planLabel}
+              {plan.trialEndsAt ? ` (trial ends ${new Date(plan.trialEndsAt).toLocaleDateString()})` : ""}
+            </p>
           </div>
           <div className="flex flex-col gap-1">
             <p className="text-sm text-muted-foreground">{t("created")}</p>
