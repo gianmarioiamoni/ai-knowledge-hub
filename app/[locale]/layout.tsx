@@ -57,12 +57,14 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const tDocuments = await getTranslations({ locale, namespace: "documentsPage" });
   const tChat = await getTranslations({ locale, namespace: "chatPage" });
   const tProcedures = await getTranslations({ locale, namespace: "proceduresPage" });
+  const tPlans = await getTranslations({ locale, namespace: "plans" });
 
   const defaultNav = [
     { label: tDashboard("title"), href: "/dashboard" },
     { label: tDocuments("title"), href: "/documents" },
     { label: tChat("title"), href: "/chat" },
     { label: tProcedures("title"), href: "/procedures" },
+    { label: tPlans("title"), href: "/plans" },
   ];
 
   const superNav = [
