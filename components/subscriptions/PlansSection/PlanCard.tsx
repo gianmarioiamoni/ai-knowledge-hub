@@ -4,6 +4,7 @@ import type { JSX } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { Plan, PlansSectionLabels } from "./types";
+import { PlanPricing } from "./PlanPricing";
 
 type PlanCardProps = {
   plan: Plan;
@@ -32,16 +33,7 @@ function PlanCard({ plan, labels, isSelected, message, onSelect }: PlanCardProps
         ) : null}
       </div>
 
-      <div className="flex items-baseline gap-3">
-        <div className="flex flex-col">
-          <p className="text-2xl font-semibold text-foreground">{plan.monthly}</p>
-          <p className="text-xs text-muted-foreground">{labels.monthly}</p>
-        </div>
-        <div className="flex flex-col">
-          <p className="text-2xl font-semibold text-foreground">{plan.annual}</p>
-          <p className="text-xs text-muted-foreground">{labels.annual}</p>
-        </div>
-      </div>
+      <PlanPricing monthly={plan.monthly} annual={plan.annual} monthlyLabel={labels.monthly} annualLabel={labels.annual} />
 
       <ul className="space-y-1 text-sm text-muted-foreground">
         {plan.limits.map((item) => (
