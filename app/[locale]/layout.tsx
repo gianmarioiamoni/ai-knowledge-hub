@@ -5,7 +5,6 @@ import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { routing } from "@/i18n/routing";
 import { buildMetadata } from "@/lib/seo";
-import { ensureSuperAdmin } from "@/lib/server/bootstrapSuperAdmin";
 import { CommandPalette } from "@/components/navigation/CommandPalette";
 import { CommandHint } from "@/components/navigation/CommandHint";
 import { CommandLauncher } from "@/components/navigation/CommandLauncher";
@@ -49,7 +48,6 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const { locale } = await params;
   const messages = await getMessages({ locale });
-  await ensureSuperAdmin();
 
   return (
     <html lang={locale}>
