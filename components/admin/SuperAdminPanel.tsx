@@ -4,6 +4,14 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import type { JSX } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type AdminUserRow = {
   id: string;
@@ -33,6 +41,7 @@ type SuperAdminPanelProps = {
     active: string;
     error: string;
     ok: string;
+    cancel?: string;
   };
 };
 
@@ -41,6 +50,7 @@ function SuperAdminPanel({ labels }: SuperAdminPanelProps): JSX.Element {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [deleteTarget, setDeleteTarget] = useState<AdminUserRow | null>(null);
 
   const loadUsers = async () => {
     setLoading(true);
@@ -137,7 +147,7 @@ function SuperAdminPanel({ labels }: SuperAdminPanelProps): JSX.Element {
                         size="sm"
                         variant="secondary"
                         onClick={() => handleAction("promote", user.id)}
-                        disabled={isPending}
+                        disabled={isPending || (user.role ?? "").toUpperCase() === "ORG_ADMIN"}
                       >
                         {labels.promote}
                       </Button>
@@ -145,13 +155,14 @@ function SuperAdminPanel({ labels }: SuperAdminPanelProps): JSX.Element {
                         size="sm"
                         variant="outline"
                         onClick={() => handleAction("demote", user.id)}
-                        disabled={isPending}
+                        disabled={isPending || (user.role ?? "").toUpperCase() !== "ORG_ADMIN"}
                       >
                         {labels.demote}
                       </Button>
                       <Button
                         size="sm"
-                        variant="destructive"
+                        variant="outline"
+                        className="border-amber-500 text-amber-700 hover:bg-amber-50"
                         onClick={() => handleAction(user.banned ? "enable" : "disable", user.id)}
                         disabled={isPending}
                       >
@@ -160,7 +171,7 @@ function SuperAdminPanel({ labels }: SuperAdminPanelProps): JSX.Element {
                       <Button
                         size="sm"
                         variant="destructive"
-                        onClick={() => handleAction("delete", user.id)}
+                        onClick={() => setDeleteTarget(user)}
                         disabled={isPending}
                       >
                         {labels.delete}
@@ -180,6 +191,33 @@ function SuperAdminPanel({ labels }: SuperAdminPanelProps): JSX.Element {
           </table>
         </div>
       </Card>
+
+      <Dialog open={Boolean(deleteTarget)} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{labels.delete}</DialogTitle>
+            <DialogDescription>
+              {deleteTarget ? `${labels.delete}: ${deleteTarget.email ?? deleteTarget.id}` : null}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
+              {labels.cancel ?? "Cancel"}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (deleteTarget) {
+                  handleAction("delete", deleteTarget.id);
+                }
+                setDeleteTarget(null);
+              }}
+            >
+              {labels.delete}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

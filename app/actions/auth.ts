@@ -42,6 +42,10 @@ export async function signInWithPassword(
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
+    const lowered = error.message.toLowerCase();
+    if (lowered.includes("banned") || lowered.includes("disable")) {
+      return { error: "Account disabilitato. Contatta l'amministratore." };
+    }
     return { error: error.message };
   }
 
