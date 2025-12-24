@@ -54,11 +54,6 @@ function PlanActions({
       >
         {labels.select}
       </Button>
-      {message && isSelected ? (
-        <p className="mt-1 text-xs text-muted-foreground">
-          {message === "ok" ? labels.selected : "Error"}
-        </p>
-      ) : null}
     </div>
   );
 }
