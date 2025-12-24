@@ -43,9 +43,9 @@ const updateUserRole = async (userId: string, role: string | null): Promise<User
 
 const setUserBan = async (userId: string, banned: boolean): Promise<void> => {
   const supabase = createSupabaseServiceClient();
-  const until = banned ? "2999-01-01T00:00:00.000Z" : null;
-  // @ts-expect-error banned_until is a documented but not typed field in supabase-js
-  const { error } = await supabase.auth.admin.updateUserById(userId, { banned_until: until });
+  const ban_duration = banned ? "87600h" : "none"; // ~10 years or remove ban
+  // ban_duration is supported by GoTrue but not typed in supabase-js
+  const { error } = await supabase.auth.admin.updateUserById(userId, { ban_duration } as Record<string, unknown>);
   if (error) {
     logError("admin.banUser failed", { error: error.message, userId });
     throw error;

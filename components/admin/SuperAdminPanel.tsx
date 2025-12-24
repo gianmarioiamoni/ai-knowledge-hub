@@ -137,7 +137,17 @@ function SuperAdminPanel({ labels }: SuperAdminPanelProps): JSX.Element {
                 <tr key={user.id}>
                   <td className="px-3 py-2 text-foreground">{user.email ?? "—"}</td>
                   <td className="px-3 py-2 text-muted-foreground">{user.role ?? "—"}</td>
-                  <td className="px-3 py-2 text-muted-foreground">{user.statusLabel}</td>
+                  <td className="px-3 py-2">
+                    <span
+                      className={
+                        user.banned
+                          ? "rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700"
+                          : "rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700"
+                      }
+                    >
+                      {user.statusLabel}
+                    </span>
+                  </td>
                   <td className="px-3 py-2 text-muted-foreground">
                     {user.createdAt ? new Date(user.createdAt).toLocaleString() : "—"}
                   </td>
