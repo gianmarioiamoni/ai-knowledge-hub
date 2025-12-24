@@ -19,13 +19,19 @@ type PlanCardProps = {
 function PlanCard({ plan, labels, isSelected, message, onSelect }: PlanCardProps): JSX.Element {
   return (
     <Card
-      className={`flex flex-col gap-4 border border-white/50 bg-white/80 p-5 shadow-sm backdrop-blur transition hover:-translate-y-1 hover:shadow ${
+      className={`flex h-full flex-col gap-4 border border-white/50 bg-white/80 p-5 shadow-sm backdrop-blur transition hover:-translate-y-1 hover:shadow ${
         plan.highlight ? "ring-2 ring-primary/60" : ""
       }`}
     >
-      <PlanHeader plan={plan} labels={labels} isSelected={isSelected} />
-
-      <PlanPricing monthly={plan.monthly} annual={plan.annual} monthlyLabel={labels.monthly} annualLabel={labels.annual} />
+      <div className="flex flex-col gap-3 min-h-[140px]">
+        <PlanHeader plan={plan} labels={labels} isSelected={isSelected} />
+        <PlanPricing
+          monthly={plan.monthly}
+          annual={plan.annual}
+          monthlyLabel={labels.monthly}
+          annualLabel={labels.annual}
+        />
+      </div>
 
       <PlanLimits limits={plan.limits} />
 
