@@ -40,6 +40,32 @@ export default async function AdminStatsPage({
         <StatCard label={t("documents")} value={stats.documentsTotal} hint={t("procedures", { count: stats.proceduresTotal })} />
         <StatCard label={t("conversations")} value={stats.conversationsTotal} hint={t("procedures", { count: stats.proceduresTotal })} />
       </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card className="border border-white/40 bg-white/70 p-4 backdrop-blur dark:border-white/10 dark:bg-white/5">
+          <h2 className="text-base font-semibold text-foreground">{t("docsByStatus")}</h2>
+          <div className="mt-3 space-y-2">
+            {Object.keys(stats.documentsByStatus).length === 0 ? (
+              <p className="text-sm text-muted-foreground">{t("noData")}</p>
+            ) : (
+              Object.entries(stats.documentsByStatus).map(([status, count]) => (
+                <div key={status} className="flex items-center justify-between text-sm">
+                  <span className="capitalize text-muted-foreground">{status}</span>
+                  <span className="font-semibold text-foreground">{count}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </Card>
+
+        <Card className="border border-white/40 bg-white/70 p-4 backdrop-blur dark:border-white/10 dark:bg-white/5">
+          <h2 className="text-base font-semibold text-foreground">{t("conversations7d")}</h2>
+          <BarChart data={stats.conversations7d} />
+          <div className="mt-3">
+            <h3 className="text-base font-semibold text-foreground">{t("procedures7d")}</h3>
+            <BarChart data={stats.procedures7d} tone="secondary" />
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }
@@ -53,6 +79,41 @@ function StatCard({ label, value, hint }: { label: string; value: number; hint: 
         <p className="text-xs text-muted-foreground">{hint}</p>
       </div>
     </Card>
+  );
+}
+
+function BarChart({
+  data,
+  tone = "primary",
+}: {
+  data: Array<{ label: string; count: number }>;
+  tone?: "primary" | "secondary";
+}): JSX.Element {
+  const max = Math.max(...data.map((d) => d.count), 1);
+  const barClass =
+    tone === "primary"
+      ? "bg-primary/80"
+      : "bg-accent/70";
+
+  return (
+    <div className="mt-3 space-y-2">
+      {data.length === 0 ? (
+        <p className="text-sm text-muted-foreground">—</p>
+      ) : (
+        data.map((d) => (
+          <div key={d.label} className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="w-12">{d.label}</span>
+            <div className="h-2 flex-1 rounded-full bg-border">
+              <div
+                className={`h-2 rounded-full ${barClass}`}
+                style={{ width: `${(d.count / max) * 100}%` }}
+              />
+            </div>
+            <span className="w-8 text-right text-foreground">{d.count}</span>
+          </div>
+        ))
+      )}
+    </div>
   );
 }
 
