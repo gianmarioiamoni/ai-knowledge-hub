@@ -1,4 +1,3 @@
-    "plan": "Piano",
 {
   "profile": {
     "title": "Profilo",
@@ -6,6 +5,7 @@
     "email": "Email",
     "role": "Ruolo",
     "created": "Creato il",
+    "plan": "Piano",
     "changePassword": {
       "title": "Cambia password",
       "newPassword": "Nuova password",

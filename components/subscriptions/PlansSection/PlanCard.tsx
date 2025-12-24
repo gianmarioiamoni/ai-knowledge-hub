@@ -3,10 +3,10 @@
 import type { JSX } from "react";
 import { Card } from "@/components/ui/card";
 import type { Plan, PlansSectionLabels } from "./types";
-import { PlanPricing } from "./PlanPricing";
-import { PlanHeader } from "./PlanHeader";
-import { PlanLimits } from "./PlanLimits";
-import { PlanActions } from "./PlanActions";
+import { PlanPricing } from "./PlanCard/PlanPricing";
+import { PlanHeader } from "./PlanCard/PlanHeader";
+import { PlanLimits } from "./PlanCard/PlanLimits";
+import { PlanActions } from "./PlanCard/PlanActions";
 
 type PlanCardProps = {
   plan: Plan;
