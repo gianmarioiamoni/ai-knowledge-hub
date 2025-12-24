@@ -9,6 +9,8 @@ type CookieBannerProps = {
   declineLabel: string;
   policyLabel?: string;
   policyHref?: string;
+  manageLabel?: string;
+  onManage?: () => void;
 };
 
 const CONSENT_KEY = "cookie_consent";
@@ -20,6 +22,8 @@ function CookieBanner({
   declineLabel,
   policyLabel,
   policyHref = "/privacy",
+  manageLabel,
+  onManage,
 }: CookieBannerProps): JSX.Element | null {
   const [visible, setVisible] = useState(false);
 
@@ -28,6 +32,12 @@ function CookieBanner({
     if (!consent) {
       setVisible(true);
     }
+  }, []);
+
+  useEffect(() => {
+    const handler = () => setVisible(true);
+    window.addEventListener("open-cookie-banner", handler);
+    return () => window.removeEventListener("open-cookie-banner", handler);
   }, []);
 
   const setConsent = (value: "accepted" | "declined") => {
@@ -45,11 +55,22 @@ function CookieBanner({
     <div className="fixed inset-x-0 bottom-4 z-50 mx-auto flex max-w-4xl flex-col gap-3 rounded-2xl border border-border/80 bg-background/95 p-4 shadow-lg backdrop-blur sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-col gap-1 text-sm text-foreground">
         <p>{message}</p>
-        {policyLabel ? (
-          <a className="text-primary underline underline-offset-2" href={policyHref}>
-            {policyLabel}
-          </a>
-        ) : null}
+        <div className="flex flex-wrap items-center gap-3">
+          {policyLabel ? (
+            <a className="text-primary underline underline-offset-2" href={policyHref}>
+              {policyLabel}
+            </a>
+          ) : null}
+          {manageLabel ? (
+            <button
+              type="button"
+              className="text-primary underline underline-offset-2"
+              onClick={onManage}
+            >
+              {manageLabel}
+            </button>
+          ) : null}
+        </div>
       </div>
       <div className="flex items-center gap-2">
         <Button size="sm" onClick={() => setConsent("declined")} variant="outline">

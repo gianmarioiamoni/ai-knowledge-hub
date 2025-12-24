@@ -10,7 +10,8 @@
       "message": "We use cookies to improve the experience. You can accept or reject analytics cookies.",
       "accept": "Accept",
       "decline": "Reject",
-      "policy": "Privacy & Cookies policy"
+      "policy": "Privacy & Cookies policy",
+      "manage": "Manage cookies"
     }
   },
   "auth": {

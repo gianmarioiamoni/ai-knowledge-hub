@@ -10,6 +10,7 @@ import { TopNav } from "@/components/navigation/TopNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SentryClientInit } from "@/components/SentryClientInit";
 import { CookieBanner } from "@/components/CookieBanner/CookieBanner";
+import { FooterLinks } from "@/components/navigation/FooterLinks";
 import "@/app/globals.css";
 
 const geistSans = Geist({
@@ -54,6 +55,15 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             declineLabel={messages.cookies.banner.decline}
             policyLabel={messages.cookies.banner.policy}
             policyHref="/privacy"
+            manageLabel={messages.cookies.banner.manage}
+            onManage={() => {
+              const event = new Event("open-cookie-banner");
+              window.dispatchEvent(event);
+            }}
+          />
+          <FooterLinks
+            privacyLabel={messages.cookies.banner.policy}
+            cookiesLabel={messages.cookies.banner.manage}
           />
         </NextIntlClientProvider>
       </body>
