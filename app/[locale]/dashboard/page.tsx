@@ -122,7 +122,12 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
         </div>
 
         <div className="relative mx-auto flex max-w-6xl flex-col gap-8">
-          <HeaderBar title={t("title")} headline={t("user", { email })} actionSlot={logoutButton} />
+          <HeaderBar
+            title={t("title")}
+            headline={t("user", { email })}
+            headlineHref={`/${locale}/profile`}
+            actionSlot={logoutButton}
+          />
           <SuperAdminPanel labels={adminLabels} />
         </div>
       </div>
@@ -141,6 +146,7 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
         <HeaderBar
           title={t("title")}
           headline={t("user", { email })}
+          headlineHref={`/${locale}/profile`}
           actionSlot={logoutButton}
         />
 

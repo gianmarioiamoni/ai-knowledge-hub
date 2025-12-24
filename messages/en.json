@@ -1,3 +1,27 @@
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your account details.",
+    "email": "Email",
+    "role": "Role",
+    "created": "Created at",
+    "changePassword": {
+      "title": "Change password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "submit": "Update password",
+      "success": "Password updated",
+      "error": "Update failed"
+    },
+    "delete": {
+      "title": "Delete account",
+      "description": "This will permanently delete your account and associated data. This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "success": "Account deleted",
+      "error": "Delete failed",
+      "confirmLabel": "Are you sure you want to delete your account?"
+    }
+  },
 {
   "common": {
     "secureAccess": "Secure access with Supabase",

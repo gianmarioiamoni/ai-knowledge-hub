@@ -1,3 +1,27 @@
+  "profile": {
+    "title": "Profilo",
+    "subtitle": "Gestisci i tuoi dati account.",
+    "email": "Email",
+    "role": "Ruolo",
+    "created": "Creato il",
+    "changePassword": {
+      "title": "Cambia password",
+      "newPassword": "Nuova password",
+      "confirmPassword": "Conferma password",
+      "submit": "Aggiorna password",
+      "success": "Password aggiornata",
+      "error": "Aggiornamento fallito"
+    },
+    "delete": {
+      "title": "Elimina account",
+      "description": "Questo eliminerà definitivamente il tuo account e i dati associati. L'azione è irreversibile.",
+      "confirm": "Elimina",
+      "cancel": "Annulla",
+      "success": "Account eliminato",
+      "error": "Eliminazione fallita",
+      "confirmLabel": "Sei sicuro di voler eliminare il tuo account?"
+    }
+  },
 {
   "common": {
     "secureAccess": "Accesso sicuro con Supabase",
