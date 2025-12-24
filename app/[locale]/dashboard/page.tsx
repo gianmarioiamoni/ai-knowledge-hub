@@ -46,9 +46,10 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
   }
 
   const email = user.email ?? "User";
-  const superAdmin = (user.user_metadata as { role?: string } | null)?.role === "SUPER_ADMIN";
   const t = await getTranslations({ locale, namespace: "dashboard" });
   const tCommon = await getTranslations({ locale, namespace: "common" });
+  const greetingPrefix = t("user", { email: "" }).trim() || "Hi,";
+  const superAdmin = (user.user_metadata as { role?: string } | null)?.role === "SUPER_ADMIN";
   const organizationId = await ensureUserOrganization({ supabase });
   const ingestion = await getIngestionStats(organizationId);
   const statsData = await getDashboardStats(organizationId, ingestion);
@@ -124,8 +125,10 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
         <div className="relative mx-auto flex max-w-6xl flex-col gap-8">
           <HeaderBar
             title={t("title")}
-            headline={t("user", { email })}
+            headlinePrefix={greetingPrefix}
+            headlineLinkLabel={email}
             headlineHref={`/${locale}/profile`}
+            headlineTooltip={t("title")}
             actionSlot={logoutButton}
           />
           <SuperAdminPanel labels={adminLabels} />
@@ -145,8 +148,10 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
       <div className="relative mx-auto flex max-w-6xl flex-col gap-8">
         <HeaderBar
           title={t("title")}
-          headline={t("user", { email })}
+          headlinePrefix={greetingPrefix}
+          headlineLinkLabel={email}
           headlineHref={`/${locale}/profile`}
+          headlineTooltip={t("title")}
           actionSlot={logoutButton}
         />
 

@@ -1,6 +1,5 @@
 {
   "profile": {
-  "profile": {
     "title": "Profilo",
     "subtitle": "Gestisci i tuoi dati account.",
     "email": "Email",
@@ -23,8 +22,7 @@
       "error": "Eliminazione fallita",
       "confirmLabel": "Sei sicuro di voler eliminare il tuo account?"
     }
-  },
-{
+},
   "common": {
     "secureAccess": "Accesso sicuro con Supabase",
     "or": "oppure",
