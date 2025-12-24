@@ -52,6 +52,8 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             message={messages.cookies.banner.message}
             acceptLabel={messages.cookies.banner.accept}
             declineLabel={messages.cookies.banner.decline}
+            policyLabel={messages.cookies.banner.policy}
+            policyHref="/privacy"
           />
         </NextIntlClientProvider>
       </body>

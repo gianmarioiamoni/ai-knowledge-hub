@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import * as Sentry from "@sentry/browser";
+import { getCookieConsent } from "@/lib/client/cookieConsent";
 
 type SentryClientInitProps = {
   dsn?: string;
@@ -16,6 +17,7 @@ function SentryClientInit({
 }: SentryClientInitProps): null {
   useEffect(() => {
     if (!dsn) return;
+    if (getCookieConsent() !== "accepted") return;
     if (Sentry.getCurrentHub().getClient()) return;
     Sentry.init({
       dsn,

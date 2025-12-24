@@ -9,7 +9,8 @@
     "banner": {
       "message": "We use cookies to improve the experience. You can accept or reject analytics cookies.",
       "accept": "Accept",
-      "decline": "Reject"
+      "decline": "Reject",
+      "policy": "Privacy & Cookies policy"
     }
   },
   "auth": {
@@ -178,6 +179,29 @@
     "breadcrumbs": {
       "home": "Dashboard",
       "procedures": "Procedures"
+    }
+  },
+  "privacy": {
+    "title": "Privacy & Cookies",
+    "headline": "Your data, your control.",
+    "intro": "We process only what is needed to provide the service. You can reject analytics cookies at any time from the banner.",
+    "sections": {
+      "data": {
+        "title": "What we store",
+        "body": "Account data via Supabase Auth, uploaded documents in Supabase Storage, embeddings in pgvector, conversations and SOPs in Postgres. Access is scoped by organization (RLS)."
+      },
+      "cookies": {
+        "title": "Cookies",
+        "body": "Strictly necessary cookies for auth/session. Analytics cookies are disabled until you accept them in the banner."
+      },
+      "rights": {
+        "title": "Your rights",
+        "body": "You can request access or deletion of your data. For organization data, contact your admin."
+      },
+      "contacts": {
+        "title": "Contacts",
+        "body": "For privacy requests, contact the project owner."
+      }
     }
   }
 }

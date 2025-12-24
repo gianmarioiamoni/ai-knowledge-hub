@@ -9,7 +9,8 @@
     "banner": {
       "message": "Utilizziamo cookie per migliorare l'esperienza. Puoi accettare o rifiutare i cookie di analytics.",
       "accept": "Accetta",
-      "decline": "Rifiuta"
+      "decline": "Rifiuta",
+      "policy": "Informativa Privacy & Cookie"
     }
   },
   "auth": {
@@ -178,6 +179,29 @@
     "breadcrumbs": {
       "home": "Dashboard",
       "procedures": "Procedure"
+    }
+  },
+  "privacy": {
+    "title": "Privacy & Cookie",
+    "headline": "I tuoi dati, sotto controllo.",
+    "intro": "Trattiamo solo i dati necessari per erogare il servizio. Puoi rifiutare i cookie di analytics in qualsiasi momento dal banner.",
+    "sections": {
+      "data": {
+        "title": "Cosa conserviamo",
+        "body": "Dati account via Supabase Auth, documenti caricati su Supabase Storage, embeddings in pgvector, conversazioni e SOP in Postgres. L’accesso è isolato per organizzazione (RLS)."
+      },
+      "cookies": {
+        "title": "Cookie",
+        "body": "Cookie strettamente necessari per autenticazione/sessione. I cookie di analytics restano disabilitati finché non li accetti nel banner."
+      },
+      "rights": {
+        "title": "I tuoi diritti",
+        "body": "Puoi richiedere accesso o cancellazione dei tuoi dati. Per i dati dell’organizzazione contatta il tuo admin."
+      },
+      "contacts": {
+        "title": "Contatti",
+        "body": "Per richieste privacy, contatta il project owner."
+      }
     }
   }
 }
