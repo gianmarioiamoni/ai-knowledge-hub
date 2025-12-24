@@ -242,7 +242,11 @@
     "members": "Members: {count}",
     "documents": "Documents",
     "conversations": "Conversations",
-    "procedures": "Procedures: {count}"
+    "procedures": "Procedures: {count}",
+    "docsByStatus": "Documents by status",
+    "conversations7d": "Conversations (last 7 days)",
+    "procedures7d": "Procedures (last 7 days)",
+    "noData": "No data available"
   }
 }
 

@@ -242,7 +242,11 @@
     "members": "Membri: {count}",
     "documents": "Documenti",
     "conversations": "Conversazioni",
-    "procedures": "Procedure: {count}"
+    "procedures": "Procedure: {count}",
+    "docsByStatus": "Documenti per stato",
+    "conversations7d": "Conversazioni (ultimi 7 giorni)",
+    "procedures7d": "Procedure (ultimi 7 giorni)",
+    "noData": "Nessun dato disponibile"
   }
 }
 
