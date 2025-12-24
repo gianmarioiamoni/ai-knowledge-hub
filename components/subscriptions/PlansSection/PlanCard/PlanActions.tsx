@@ -34,6 +34,7 @@ function PlanActions({
             variant={currentCycle === "monthly" ? "default" : "outline"}
             size="sm"
             onClick={() => onCycleChange("monthly")}
+            disabled={isSelected}
           >
             {labels.monthly}
           </Button>
@@ -42,6 +43,7 @@ function PlanActions({
             variant={currentCycle === "annual" ? "default" : "outline"}
             size="sm"
             onClick={() => onCycleChange("annual")}
+            disabled={isSelected}
           >
             {labels.annual}
           </Button>
@@ -51,6 +53,7 @@ function PlanActions({
         className="w-full"
         variant={plan.highlight ? "default" : "secondary"}
         onClick={() => onSelect(currentCycle)}
+        disabled={isSelected}
       >
         {labels.select}
       </Button>
