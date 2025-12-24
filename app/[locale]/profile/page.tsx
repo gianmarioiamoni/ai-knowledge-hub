@@ -21,10 +21,17 @@ export default async function ProfilePage({
     redirect({ href: "/login", locale });
   }
 
+  // Allow profile view to see plan, but if expired enforce redirect
+  const planStatus = getPlanStatus(user!);
+  const isUnlimited = isUnlimitedRole(user!);
+  if (!isUnlimited && planStatus.expired && planStatus.planId !== "trial") {
+    redirect({ href: "/plans", locale });
+  }
+
   const t = await getTranslations({ locale, namespace: "profile" });
   const role = (user?.user_metadata as { role?: string } | null)?.role ?? "USER";
-  const plan = getPlanStatus(user!);
-  const planLabel = isUnlimitedRole(user!)
+  const plan = planStatus;
+  const planLabel = isUnlimited
     ? "unlimited"
     : plan.planId === "trial" && plan.expired
       ? "trial_expired"

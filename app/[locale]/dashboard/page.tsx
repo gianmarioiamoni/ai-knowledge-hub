@@ -16,6 +16,7 @@ import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { getDashboardStats } from "@/lib/server/stats";
 import { buildMetadata } from "@/lib/seo";
+import { ensureActivePlan } from "@/lib/server/subscriptions";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +45,8 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
     redirect({ href: "/login", locale });
     return null as never;
   }
+
+  ensureActivePlan(user, locale);
 
   const email = user.email ?? "User";
   const t = await getTranslations({ locale, namespace: "dashboard" });

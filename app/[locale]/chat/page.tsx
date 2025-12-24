@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { listConversations, listMessages } from "@/lib/server/chat";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
+import { ensureActivePlan } from "@/lib/server/subscriptions";
 import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -33,6 +34,8 @@ export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.E
   if (error || !data.user) {
       return redirectToLogin(locale);
   }
+
+  ensureActivePlan(data.user, locale);
 
   const role = (data.user.user_metadata as { role?: string } | null)?.role;
   if (role === "SUPER_ADMIN") {

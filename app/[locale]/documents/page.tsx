@@ -6,6 +6,7 @@ import { handleUploadWithState } from "./actions";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { ensureUserOrganization } from "@/lib/server/organizations";
+import { ensureActivePlan } from "@/lib/server/subscriptions";
 import { StatusBadge } from "@/components/documents/StatusBadge";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { Card } from "@/components/ui/card";
@@ -51,6 +52,8 @@ export default async function DocumentsPage({
   if (error || !user) {
     redirect({ href: "/login", locale });
   }
+
+  ensureActivePlan(user!, locale);
 
   const role = (user?.user_metadata as { role?: string } | null)?.role;
   if (role === "SUPER_ADMIN") {

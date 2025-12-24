@@ -6,6 +6,7 @@ import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { handleGenerateSop } from "./actions";
+import { ensureActivePlan } from "@/lib/server/subscriptions";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { Card } from "@/components/ui/card";
 import { ProcedureList } from "@/components/procedures/ProcedureList";
@@ -50,6 +51,8 @@ export default async function ProceduresPage({
   if (error || !user) {
     redirect({ href: "/login", locale });
   }
+
+  ensureActivePlan(user!, locale);
 
   const role = (user?.user_metadata as { role?: string } | null)?.role;
   if (role === "SUPER_ADMIN") {
