@@ -11,18 +11,21 @@ function ProcedureListActions({ procedure, labels, locale }: ProcedureListAction
       <Link
         href={`/procedures/${procedure.id}`}
         className="rounded-full bg-primary/10 px-3 py-1 font-medium text-primary hover:bg-primary/20"
+        aria-label={`${labels.view} ${procedure.title}`}
       >
         {labels.view}
       </Link>
       <a
         href={`/api/procedures/export?id=${procedure.id}&format=md&locale=${locale}`}
         className="rounded-full bg-muted px-3 py-1 font-medium text-foreground hover:bg-muted/80"
+        aria-label={`${labels.exportMd} ${procedure.title}`}
       >
         {labels.exportMd}
       </a>
       <a
         href={`/api/procedures/export?id=${procedure.id}&format=pdf&locale=${locale}`}
         className="rounded-full bg-muted px-3 py-1 font-medium text-foreground hover:bg-muted/80"
+        aria-label={`${labels.exportPdf} ${procedure.title}`}
       >
         {labels.exportPdf}
       </a>

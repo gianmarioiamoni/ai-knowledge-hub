@@ -1,6 +1,6 @@
 "use client";
 
-import { JSX, useEffect, useState } from "react";
+import { JSX, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 type CookieBannerProps = {
@@ -24,6 +24,7 @@ function CookieBanner({
   manageLabel,
 }: CookieBannerProps): JSX.Element | null {
   const [visible, setVisible] = useState(false);
+  const acceptButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const consent = window.localStorage.getItem(CONSENT_KEY);
@@ -47,10 +48,21 @@ function CookieBanner({
     setVisible(false);
   };
 
+  useEffect(() => {
+    if (visible) {
+      acceptButtonRef.current?.focus();
+    }
+  }, [visible]);
+
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-4 z-50 mx-auto flex max-w-4xl flex-col gap-3 rounded-2xl border border-border/80 bg-background/95 p-4 shadow-lg backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+    <div
+      className="fixed inset-x-0 bottom-4 z-50 mx-auto flex max-w-4xl flex-col gap-3 rounded-2xl border border-border/80 bg-background/95 p-4 shadow-lg backdrop-blur sm:flex-row sm:items-center sm:justify-between"
+      role="region"
+      aria-live="polite"
+      aria-label={policyLabel ?? "Cookie consent"}
+    >
       <div className="flex flex-col gap-1 text-sm text-foreground">
         <p>{message}</p>
         <div className="flex flex-wrap items-center gap-3">
@@ -74,7 +86,7 @@ function CookieBanner({
         <Button size="sm" onClick={() => setConsent("declined")} variant="outline">
           {declineLabel}
         </Button>
-        <Button size="sm" onClick={() => setConsent("accepted")}>
+        <Button size="sm" onClick={() => setConsent("accepted")} ref={acceptButtonRef}>
           {acceptLabel}
         </Button>
       </div>
