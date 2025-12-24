@@ -127,7 +127,7 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
             title={t("title")}
             headlinePrefix={greetingPrefix}
             headlineLinkLabel={email}
-            headlineHref={`/${locale}/profile`}
+            headlineHref="/profile"
             headlineTooltip={t("title")}
             actionSlot={logoutButton}
           />
@@ -150,7 +150,7 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
           title={t("title")}
           headlinePrefix={greetingPrefix}
           headlineLinkLabel={email}
-          headlineHref={`/${locale}/profile`}
+          headlineHref="/profile"
           headlineTooltip={t("title")}
           actionSlot={logoutButton}
         />
