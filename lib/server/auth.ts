@@ -20,6 +20,13 @@ const requireSessionUser = async (): Promise<User> => {
   return user;
 };
 
-export { getSessionUser, requireSessionUser };
+const isSuperAdmin = (user: User | null): boolean => {
+  if (!user) return false;
+  const metaRole = (user.user_metadata as { role?: string } | null)?.role;
+  const appRole = (user.app_metadata as { role?: string } | null)?.role;
+  return metaRole === "SUPER_ADMIN" || appRole === "SUPER_ADMIN";
+};
+
+export { getSessionUser, requireSessionUser, isSuperAdmin };
 
 
