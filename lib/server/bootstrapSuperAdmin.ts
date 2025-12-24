@@ -4,8 +4,14 @@ import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 
 const ensureSuperAdmin = async (): Promise<void> => {
   const { SUPERADMIN_EMAIL, SUPERADMIN_PASSWORD, SUPERADMIN_NAME } = env;
+  const hasCreds = Boolean(SUPERADMIN_EMAIL && SUPERADMIN_PASSWORD && SUPERADMIN_NAME);
 
-  if (!SUPERADMIN_EMAIL || !SUPERADMIN_PASSWORD || !SUPERADMIN_NAME) {
+  logInfo("ensureSuperAdmin invoked", {
+    hasCreds,
+  });
+
+  if (!hasCreds) {
+    logInfo("ensureSuperAdmin skipped: missing env trio", {});
     return;
   }
 
@@ -27,11 +33,11 @@ const ensureSuperAdmin = async (): Promise<void> => {
       logInfo("Super admin already exists", { email: SUPERADMIN_EMAIL });
       return;
     }
-    logError("Failed to create super admin", { error: error.message });
+    logError("Failed to create super admin", { error: error.message, status: error.status });
     throw error;
   }
 
-  logInfo("Super admin ensured", { email: SUPERADMIN_EMAIL });
+  logInfo("Super admin ensured (created)", { email: SUPERADMIN_EMAIL });
 };
 
 export { ensureSuperAdmin };

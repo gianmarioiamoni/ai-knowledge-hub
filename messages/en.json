@@ -146,6 +146,26 @@
       "sop": "SOP generator",
       "sopDesc": "Operational templates with checklist and warnings."
     },
+    "super": {
+      "title": "Super admin",
+      "subtitle": "Manage all users across tenants.",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "created": "Created",
+      "actions": "Actions",
+      "loading": "Loading...",
+      "refresh": "Refresh",
+      "promote": "Promote admin",
+      "demote": "Demote",
+      "disable": "Disable",
+      "enable": "Enable",
+      "delete": "Delete",
+      "banned": "Banned",
+      "active": "Active",
+      "error": "Unexpected error",
+      "ok": "Done"
+    },
     "actions": [
       "Upload new manuals or internal procedures.",
       "Open the RAG thread and validate answers with the team.",

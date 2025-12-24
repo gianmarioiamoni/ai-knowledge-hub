@@ -146,6 +146,26 @@
       "sop": "SOP generator",
       "sopDesc": "Template operativi con checklist e avvisi."
     },
+    "super": {
+      "title": "Super admin",
+      "subtitle": "Gestisci tutti gli utenti di ogni tenant.",
+      "email": "Email",
+      "role": "Ruolo",
+      "status": "Stato",
+      "created": "Creato",
+      "actions": "Azioni",
+      "loading": "Caricamento...",
+      "refresh": "Aggiorna",
+      "promote": "Promuovi admin",
+      "demote": "Retrocedi",
+      "disable": "Disabilita",
+      "enable": "Abilita",
+      "delete": "Elimina",
+      "banned": "Disabilitato",
+      "active": "Attivo",
+      "error": "Errore inatteso",
+      "ok": "Fatto"
+    },
     "actions": [
       "Carica nuovi manuali o procedure interne.",
       "Apri il thread RAG e valida le risposte con il team.",

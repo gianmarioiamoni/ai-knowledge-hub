@@ -10,6 +10,7 @@ import { IngestionCard } from "@/components/dashboard/IngestionCard";
 import { ProgressCard } from "@/components/dashboard/ProgressCard";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { StatusCard } from "@/components/dashboard/StatusCard";
+import { SuperAdminPanel } from "@/components/admin/SuperAdminPanel";
 import { getIngestionStats } from "@/lib/server/documents";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
@@ -45,6 +46,7 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
   }
 
   const email = user.email ?? "User";
+  const superAdmin = (user.user_metadata as { role?: string } | null)?.role === "SUPER_ADMIN";
   const t = await getTranslations({ locale, namespace: "dashboard" });
   const tCommon = await getTranslations({ locale, namespace: "common" });
   const organizationId = await ensureUserOrganization({ supabase });
@@ -88,6 +90,31 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
       <Button variant="outline">{tCommon("logout")}</Button>
     </form>
   );
+
+  if (superAdmin) {
+    const adminLabels = {
+      title: t("super.title"),
+      subtitle: t("super.subtitle"),
+      email: t("super.email"),
+      role: t("super.role"),
+      status: t("super.status"),
+      created: t("super.created"),
+      actions: t("super.actions"),
+      loading: t("super.loading"),
+      refresh: t("super.refresh"),
+      promote: t("super.promote"),
+      demote: t("super.demote"),
+      disable: t("super.disable"),
+      enable: t("super.enable"),
+      delete: t("super.delete"),
+      banned: t("super.banned"),
+      active: t("super.active"),
+      error: t("super.error"),
+      ok: t("super.ok"),
+    };
+
+    return <SuperAdminPanel labels={adminLabels} />;
+  }
 
   return (
     <div className="relative min-h-screen overflow-hidden px-6 py-12">
