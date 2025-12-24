@@ -33,7 +33,10 @@ export async function POST(request: Request) {
     switch (payload.action) {
       case "list": {
         const users = await listAllUsers();
-        return NextResponse.json({ users });
+        const filtered = users.filter(
+          (u) => u.id !== user.id && (u.role ?? "").toUpperCase() !== "SUPER_ADMIN"
+        );
+        return NextResponse.json({ users: filtered });
       }
       case "promote": {
         await updateUserRole(payload.userId, "ORG_ADMIN");
