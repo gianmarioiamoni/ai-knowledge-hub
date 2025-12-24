@@ -60,6 +60,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           <FooterLinks
             privacyLabel={messages.cookies.banner.policy}
             cookiesLabel={messages.cookies.banner.manage}
+            cookiesHref={undefined}
           />
         </NextIntlClientProvider>
       </body>

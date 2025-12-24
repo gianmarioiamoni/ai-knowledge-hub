@@ -9,15 +9,26 @@ type FooterLinksProps = {
   cookiesHref?: string;
 };
 
-function FooterLinks({ privacyLabel, cookiesLabel, cookiesHref = "/privacy" }: FooterLinksProps): JSX.Element {
+function FooterLinks({ privacyLabel, cookiesLabel, cookiesHref }: FooterLinksProps): JSX.Element {
+  const openBanner = () => {
+    const event = new Event("open-cookie-banner");
+    window.dispatchEvent(event);
+  };
+
   return (
     <div className="mx-auto flex max-w-6xl items-center justify-end gap-4 px-6 pb-6 text-sm text-muted-foreground">
       <Link href="/privacy" className="hover:text-foreground underline underline-offset-2">
         {privacyLabel}
       </Link>
-      <a href={cookiesHref} className="hover:text-foreground underline underline-offset-2">
-        {cookiesLabel}
-      </a>
+      {cookiesHref ? (
+        <a href={cookiesHref} className="hover:text-foreground underline underline-offset-2">
+          {cookiesLabel}
+        </a>
+      ) : (
+        <button type="button" className="hover:text-foreground underline underline-offset-2" onClick={openBanner}>
+          {cookiesLabel}
+        </button>
+      )}
     </div>
   );
 }
