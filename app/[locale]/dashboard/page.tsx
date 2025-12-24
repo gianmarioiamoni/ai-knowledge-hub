@@ -113,7 +113,20 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
       ok: t("super.ok"),
     };
 
-    return <SuperAdminPanel labels={adminLabels} />;
+    return (
+      <div className="relative min-h-screen overflow-hidden px-6 py-12">
+        <div className="pointer-events-none absolute inset-0 opacity-70">
+          <div className="absolute -left-28 -top-32 h-[36rem] w-[36rem] rounded-full bg-primary/18 blur-[120px]" />
+          <div className="absolute right-[-18rem] top-[-12rem] h-[28rem] w-[28rem] rounded-full bg-accent/18 blur-[120px]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.18)_1px,transparent_0)] bg-[size:44px_44px] mix-blend-screen dark:opacity-20" />
+        </div>
+
+        <div className="relative mx-auto flex max-w-6xl flex-col gap-8">
+          <HeaderBar title={t("title")} headline={t("user", { email })} actionSlot={logoutButton} />
+          <SuperAdminPanel labels={adminLabels} />
+        </div>
+      </div>
+    );
   }
 
   return (
