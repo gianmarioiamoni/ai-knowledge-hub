@@ -23,6 +23,50 @@
       "confirmLabel": "Are you sure you want to delete your account?"
     }
   },
+  "plans": {
+    "title": "Pricing",
+    "subtitle": "Choose the right plan for your team.",
+    "description": "Switch plan anytime. Annual plans include savings compared to monthly billing.",
+    "labels": {
+      "monthly": "Monthly",
+      "annual": "Annual (billed yearly)",
+      "select": "Select plan",
+      "selected": "Selected"
+    },
+    "trial": {
+      "name": "Trial",
+      "desc": "30 days full features.",
+      "price": "€0",
+      "limits": {
+        "docs": "Up to 50 documents",
+        "chat": "Up to 500 chat messages",
+        "procedures": "Up to 50 procedures"
+      }
+    },
+    "smb": {
+      "name": "SMB",
+      "desc": "For small teams and SMBs.",
+      "monthly": "€79/mo",
+      "annual": "€790/yr (save 17%)",
+      "limits": {
+        "docs": "Up to 1,000 documents",
+        "chat": "Up to 10,000 chat messages",
+        "procedures": "Up to 500 procedures"
+      }
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "desc": "For large organizations.",
+      "monthly": "€290/mo",
+      "annual": "€2,900/yr (save 17%)",
+      "limits": {
+        "docs": "Up to 10,000 documents",
+        "chat": "Up to 100,000 chat messages",
+        "procedures": "Up to 5,000 procedures",
+        "support": "SLA support & dedicated onboarding"
+      }
+    }
+  },
   "common": {
     "secureAccess": "Secure access with Supabase",
     "or": "or",

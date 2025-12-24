@@ -29,6 +29,50 @@
     "logout": "Logout",
     "multiTenantProtection": "Protezione multi-tenant attiva: RLS, Supabase Auth e storage sicuro per i tuoi dati."
   },
+  "plans": {
+    "title": "Prezzi",
+    "subtitle": "Scegli il piano giusto per il tuo team.",
+    "description": "Puoi cambiare piano in qualsiasi momento. I piani annuali includono un risparmio rispetto al mensile.",
+    "labels": {
+      "monthly": "Mensile",
+      "annual": "Annuale (fatturato anno)",
+      "select": "Seleziona piano",
+      "selected": "Selezionato"
+    },
+    "trial": {
+      "name": "Trial",
+      "desc": "30 giorni con tutte le funzioni.",
+      "price": "€0",
+      "limits": {
+        "docs": "Fino a 50 documenti",
+        "chat": "Fino a 500 messaggi chat",
+        "procedures": "Fino a 50 procedure"
+      }
+    },
+    "smb": {
+      "name": "PMI",
+      "desc": "Per piccoli team e PMI.",
+      "monthly": "€79/mese",
+      "annual": "€790/anno (risparmi 17%)",
+      "limits": {
+        "docs": "Fino a 1.000 documenti",
+        "chat": "Fino a 10.000 messaggi chat",
+        "procedures": "Fino a 500 procedure"
+      }
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "desc": "Per organizzazioni grandi.",
+      "monthly": "€290/mese",
+      "annual": "€2.900/anno (risparmi 17%)",
+      "limits": {
+        "docs": "Fino a 10.000 documenti",
+        "chat": "Fino a 100.000 messaggi chat",
+        "procedures": "Fino a 5.000 procedure",
+        "support": "Supporto SLA e onboarding dedicato"
+      }
+    }
+  },
   "cookies": {
     "banner": {
       "message": "Utilizziamo cookie per migliorare l'esperienza. Puoi accettare o rifiutare i cookie di analytics.",
