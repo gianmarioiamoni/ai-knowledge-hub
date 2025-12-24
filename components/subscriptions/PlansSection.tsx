@@ -1,34 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import type { JSX } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-
-type Plan = {
-  id: "trial" | "smb" | "enterprise";
-  name: string;
-  description: string;
-  monthly: string;
-  annual: string;
-  limits: string[];
-  highlight?: boolean;
-};
-
-type PlansSectionProps = {
-  plans: Plan[];
-  labels: {
-    monthly: string;
-    annual: string;
-    select: string;
-    selected: string;
-  };
-  onSelect?: (planId: Plan["id"]) => Promise<void>;
-};
+import type { Plan, PlansSectionProps } from "./PlansSection/types";
+import { usePlanSelection } from "./PlansSection/usePlanSelection";
 
 function PlansSection({ plans, labels, onSelect }: PlansSectionProps): JSX.Element {
-  const [selected, setSelected] = useState<Plan["id"] | null>("trial");
-  const [message, setMessage] = useState<string | null>(null);
+  const { selected, message, handleSelect } = usePlanSelection({ onSelect });
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
@@ -77,23 +56,14 @@ function PlansSection({ plans, labels, onSelect }: PlansSectionProps): JSX.Eleme
               <Button
                 className="w-full"
                 variant={plan.highlight ? "default" : "secondary"}
-                onClick={async () => {
-                  setSelected(plan.id);
-                  if (onSelect) {
-                    setMessage(null);
-                    try {
-                      await onSelect(plan.id);
-                      setMessage(labels.selected);
-                    } catch {
-                      setMessage("Error");
-                    }
-                  }
-                }}
+                onClick={() => handleSelect(plan.id)}
               >
                 {labels.select}
               </Button>
               {message && isSelected ? (
-                <p className="mt-1 text-xs text-muted-foreground">{message}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {message === "ok" ? labels.selected : "Error"}
+                </p>
               ) : null}
             </div>
           </Card>
@@ -103,6 +73,5 @@ function PlansSection({ plans, labels, onSelect }: PlansSectionProps): JSX.Eleme
   );
 }
 
-export type { Plan };
 export { PlansSection };
 

@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { JSX } from "react";
-import { PlansSection, type Plan } from "@/components/subscriptions/PlansSection";
+import { PlansSection } from "@/components/subscriptions/PlansSection";
+import type { Plan } from "@/components/subscriptions/PlansSection/types";
 import { setPlan } from "../profile/actions";
 
 export default async function PlansPage({ params }: { params: Promise<{ locale: string }> }): Promise<JSX.Element> {
