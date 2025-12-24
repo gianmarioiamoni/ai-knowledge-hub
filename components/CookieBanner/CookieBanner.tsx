@@ -10,7 +10,6 @@ type CookieBannerProps = {
   policyLabel?: string;
   policyHref?: string;
   manageLabel?: string;
-  onManage?: () => void;
 };
 
 const CONSENT_KEY = "cookie_consent";
@@ -23,7 +22,6 @@ function CookieBanner({
   policyLabel,
   policyHref = "/privacy",
   manageLabel,
-  onManage,
 }: CookieBannerProps): JSX.Element | null {
   const [visible, setVisible] = useState(false);
 
@@ -65,7 +63,7 @@ function CookieBanner({
             <button
               type="button"
               className="text-primary underline underline-offset-2"
-              onClick={onManage}
+              onClick={() => setVisible(true)}
             >
               {manageLabel}
             </button>

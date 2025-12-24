@@ -56,10 +56,6 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             policyLabel={messages.cookies.banner.policy}
             policyHref="/privacy"
             manageLabel={messages.cookies.banner.manage}
-            onManage={() => {
-              const event = new Event("open-cookie-banner");
-              window.dispatchEvent(event);
-            }}
           />
           <FooterLinks
             privacyLabel={messages.cookies.banner.policy}
