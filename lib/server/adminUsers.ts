@@ -29,10 +29,11 @@ const listAllUsers = async (): Promise<AdminUser[]> => {
 
 const updateUserRole = async (userId: string, role: string | null): Promise<User> => {
   const supabase = createSupabaseServiceClient();
-  const { data, error } = await supabase.auth.admin.updateUserById(userId, {
-    user_metadata: role ? { role } : {},
-    app_metadata: role ? { role } : {},
-  });
+  const payload = role
+    ? { user_metadata: { role }, app_metadata: { role } }
+    : { user_metadata: { role: null }, app_metadata: { role: null } };
+
+  const { data, error } = await supabase.auth.admin.updateUserById(userId, payload);
   if (error || !data.user) {
     logError("admin.updateUserById failed", { error: error?.message, userId });
     throw error ?? new Error("Failed to update user");
