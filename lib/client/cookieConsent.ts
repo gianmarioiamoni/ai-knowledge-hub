@@ -12,3 +12,5 @@ const getCookieConsent = (): "accepted" | "declined" | null => {
 
 export { getCookieConsent, CONSENT_KEY };
 
+
+

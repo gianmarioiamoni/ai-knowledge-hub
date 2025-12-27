@@ -59,3 +59,5 @@ const buildMetadata = ({ locale, title, description, path = "" }: SeoInput): Met
 
 export { buildMetadata, getBaseUrl };
 
+
+
