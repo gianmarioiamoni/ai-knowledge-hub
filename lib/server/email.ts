@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import type { Transporter } from "nodemailer";
 import { env } from "@/lib/env";
 
 type SendEmailInput = {
@@ -9,18 +10,59 @@ type SendEmailInput = {
   replyTo?: string;
 };
 
-const transporter = nodemailer.createTransport({
-  host: env.SMTP_HOST,
-  port: Number(env.SMTP_PORT),
-  auth: {
-    user: env.SMTP_USER,
-    pass: env.SMTP_PASSWORD,
-  },
-});
+type EmailConfig = {
+  host: string;
+  port: number;
+  user: string;
+  pass: string;
+  from: string;
+};
+
+let cachedTransporter: Transporter | null = null;
+
+const getEmailConfig = (): EmailConfig => {
+  if (env.GMAIL_USER && env.GMAIL_APP_PASSWORD) {
+    return {
+      host: "smtp.gmail.com",
+      port: 587,
+      user: env.GMAIL_USER,
+      pass: env.GMAIL_APP_PASSWORD,
+      from: env.GMAIL_USER,
+    };
+  }
+
+  if (env.SMTP_HOST && env.SMTP_PORT && env.SMTP_USER && env.SMTP_PASSWORD && env.SMTP_FROM) {
+    return {
+      host: env.SMTP_HOST,
+      port: Number(env.SMTP_PORT),
+      user: env.SMTP_USER,
+      pass: env.SMTP_PASSWORD,
+      from: env.SMTP_FROM,
+    };
+  }
+
+  throw new Error("Email configuration missing");
+};
+
+const getTransporter = (): Transporter => {
+  if (cachedTransporter) return cachedTransporter;
+  const config = getEmailConfig();
+  cachedTransporter = nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    auth: {
+      user: config.user,
+      pass: config.pass,
+    },
+  });
+  return cachedTransporter;
+};
 
 const sendEmail = async ({ to, subject, text, html, replyTo }: SendEmailInput): Promise<void> => {
+  const config = getEmailConfig();
+  const transporter = getTransporter();
   await transporter.sendMail({
-    from: env.SMTP_FROM,
+    from: config.from,
     to,
     subject,
     text,
@@ -65,12 +107,16 @@ const buildUserContent = (payload: ContactMessage): { subject: string; text: str
 };
 
 const sendContactEmails = async (payload: ContactMessage): Promise<void> => {
+  const adminEmail = env.ADMIN_EMAIL ?? env.SUPERADMIN_EMAIL;
+  if (!adminEmail) {
+    throw new Error("Admin email not configured");
+  }
   const adminContent = buildAdminContent(payload);
   const userContent = buildUserContent(payload);
 
   await Promise.all([
     sendEmail({
-      to: env.SUPERADMIN_EMAIL,
+      to: adminEmail,
       subject: adminContent.subject,
       text: adminContent.text,
       replyTo: payload.email,

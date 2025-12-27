@@ -7,12 +7,15 @@ const envSchema = z
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, "Supabase anon key is required"),
     SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, "Supabase service role key is required"),
     OPENAI_API_KEY: z.string().min(1, "OpenAI API key is required"),
-    SMTP_HOST: z.string().min(1, "SMTP host is required"),
-    SMTP_PORT: z.string().min(1, "SMTP port is required"),
-    SMTP_USER: z.string().min(1, "SMTP user is required"),
-    SMTP_PASSWORD: z.string().min(1, "SMTP password is required"),
-    SMTP_FROM: z.string().min(1, "SMTP from email is required"),
-    SUPERADMIN_EMAIL: z.string().email("Super admin email is required"),
+    SMTP_HOST: z.string().optional(),
+    SMTP_PORT: z.string().optional(),
+    SMTP_USER: z.string().optional(),
+    SMTP_PASSWORD: z.string().optional(),
+    SMTP_FROM: z.string().optional(),
+    GMAIL_USER: z.string().email().optional(),
+    GMAIL_APP_PASSWORD: z.string().optional(),
+    ADMIN_EMAIL: z.string().email().optional(),
+    SUPERADMIN_EMAIL: z.string().email().optional(),
     STRIPE_SECRET_KEY: z.string().min(1, "Stripe secret key is required"),
     STRIPE_WEBHOOK_SECRET: z.string().min(1, "Stripe webhook secret is required"),
     STRIPE_PRICE_SMB_MONTHLY: z.string().min(1, "Stripe price id for SMB monthly is required"),
@@ -26,6 +29,23 @@ const envSchema = z
     SUPERADMIN_NAME: z.string().min(1).optional(),
   })
   .superRefine((value, ctx) => {
+    const hasGmail = Boolean(value.GMAIL_USER && value.GMAIL_APP_PASSWORD);
+    const smtpFields = [value.SMTP_HOST, value.SMTP_PORT, value.SMTP_USER, value.SMTP_PASSWORD, value.SMTP_FROM];
+    const hasSmtp = smtpFields.every((v) => Boolean(v));
+
+    if (!hasGmail && !hasSmtp) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Provide either Gmail credentials (GMAIL_USER + GMAIL_APP_PASSWORD) or SMTP_* settings",
+      });
+    }
+    if (!value.ADMIN_EMAIL && !value.SUPERADMIN_EMAIL) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "ADMIN_EMAIL or SUPERADMIN_EMAIL is required for notifications",
+      });
+    }
+
     const provided = [value.SUPERADMIN_EMAIL, value.SUPERADMIN_PASSWORD, value.SUPERADMIN_NAME].filter(
       (v) => v !== undefined
     ).length;
