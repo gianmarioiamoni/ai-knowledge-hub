@@ -5,12 +5,14 @@ type PlanMetadata = {
   id?: string;
   trialEndsAt?: string;
   billingCycle?: "monthly" | "annual";
+  renewalAt?: string | null;
 };
 
 type PlanStatus = {
   planId: string | null;
   trialEndsAt?: string | null;
   billingCycle?: "monthly" | "annual";
+  renewalAt?: string | null;
   expired: boolean;
 };
 
@@ -19,6 +21,7 @@ const getPlanStatus = (user: User): PlanStatus => {
   const planId = meta.id ?? "trial";
   const trialEndsAt = meta.trialEndsAt ?? null;
   const billingCycle = meta.billingCycle;
+  const renewalAt = meta.renewalAt ?? null;
   let expired = false;
   if (planId === "trial" && trialEndsAt) {
     expired = new Date(trialEndsAt).getTime() < Date.now();
@@ -26,7 +29,7 @@ const getPlanStatus = (user: User): PlanStatus => {
   if (planId === null || planId === "expired") {
     expired = true;
   }
-  return { planId, trialEndsAt, billingCycle, expired };
+  return { planId, trialEndsAt, billingCycle, renewalAt, expired };
 };
 
 const isUnlimitedRole = (user: User): boolean => {

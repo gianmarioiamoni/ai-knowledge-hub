@@ -58,22 +58,32 @@ const addDays = (days: number): string => {
   return d.toISOString();
 };
 
+const computeRenewalAt = (billing: "monthly" | "annual"): string => {
+  return addDays(billing === "monthly" ? 30 : 365);
+};
+
 const buildPlanMeta = (planId: string, billing: "monthly" | "annual", existing?: PlanMetadata): PlanMetadata => {
   if (planId === "trial") {
     return {
       id: "trial",
       trialEndsAt: existing?.trialEndsAt ?? addDays(30),
       billingCycle: billing,
+      renewalAt: existing?.trialEndsAt ?? addDays(30),
     };
   }
   if (planId === "cancel") {
     const expires = existing?.trialEndsAt ? new Date(existing.trialEndsAt).getTime() : 0;
     const hasTrialLeft = expires > Date.now();
     return hasTrialLeft
-      ? { id: "trial", trialEndsAt: existing?.trialEndsAt, billingCycle: billing }
-      : { id: "expired", billingCycle: billing };
+      ? { id: "trial", trialEndsAt: existing?.trialEndsAt, billingCycle: billing, renewalAt: existing?.trialEndsAt }
+      : { id: "expired", billingCycle: billing, renewalAt: null };
   }
-  return { id: planId, trialEndsAt: undefined, billingCycle: billing };
+  return {
+    id: planId,
+    trialEndsAt: undefined,
+    billingCycle: billing,
+    renewalAt: computeRenewalAt(billing),
+  };
 };
 
 export const setPlan = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {

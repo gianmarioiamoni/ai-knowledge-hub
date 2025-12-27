@@ -6,6 +6,36 @@
     "role": "Ruolo",
     "created": "Creato il",
     "plan": "Piano",
+    "nextRenewal": "Prossima scadenza",
+    "planManage": "Gestisci piano",
+    "planNotAvailable": "Non disponibile",
+    "planLabels": {
+      "trial": "Trial",
+      "trialExpired": "Trial scaduto",
+      "smb": "PMI",
+      "enterprise": "Enterprise",
+      "expired": "Scaduto",
+      "unlimited": "Illimitato (admin)",
+      "unknown": "Non disponibile"
+    },
+    "planDate": {
+      "renewal": "Si rinnova il {date}",
+      "trial": "Il trial termina il {date}"
+    },
+    "cancel": {
+      "cta": "Disiscriviti dal piano",
+      "title": "Vuoi disiscriverti dal piano?",
+      "description": "Potrai usare il piano fino alla fine del periodo di fatturazione corrente. Dopo sarai spostato su trial o dovrai sottoscrivere di nuovo un abbonamento.",
+      "warnings": {
+        "trialFallback": "Se hai ancora giorni di trial, verrai assegnato al trial alla fine del periodo corrente.",
+        "accessLost": "Alla scadenza dovrai sottoscrivere un abbonamento per mantenere l’accesso completo.",
+        "cleanup": "Documenti, chat e procedure oltre i limiti del trial verranno rimossi."
+      },
+      "confirm": "Conferma disiscrizione",
+      "cancel": "Mantieni il piano",
+      "success": "Piano disdetto",
+      "error": "Non è stato possibile disdire ora. Riprova."
+    },
     "changePassword": {
       "title": "Cambia password",
       "newPassword": "Nuova password",

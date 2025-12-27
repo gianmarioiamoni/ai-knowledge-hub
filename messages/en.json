@@ -6,6 +6,36 @@
     "role": "Role",
     "created": "Created at",
     "plan": "Plan",
+    "nextRenewal": "Next renewal",
+    "planManage": "Manage plan",
+    "planNotAvailable": "Not available",
+    "planLabels": {
+      "trial": "Trial",
+      "trialExpired": "Trial expired",
+      "smb": "SMB",
+      "enterprise": "Enterprise",
+      "expired": "Expired",
+      "unlimited": "Unlimited (admin)",
+      "unknown": "Not available"
+    },
+    "planDate": {
+      "renewal": "Renews on {date}",
+      "trial": "Trial ends on {date}"
+    },
+    "cancel": {
+      "cta": "Cancel subscription",
+      "title": "Cancel current plan?",
+      "description": "You will keep access until the end of the current billing period. After that you will be moved to the trial plan or will need to subscribe again.",
+      "warnings": {
+        "trialFallback": "If you still have trial days, you will be assigned to the trial at the end of this period.",
+        "accessLost": "Once the current period ends, you must subscribe again to keep premium access.",
+        "cleanup": "Documents, chats and procedures exceeding the trial limits will be removed."
+      },
+      "confirm": "Confirm cancellation",
+      "cancel": "Keep plan",
+      "success": "Plan cancelled",
+      "error": "Unable to cancel now. Please try again."
+    },
     "changePassword": {
       "title": "Change password",
       "newPassword": "New password",
