@@ -98,6 +98,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           <FooterLinks
             privacyLabel={messages.cookies.banner.policy}
             cookiesLabel={messages.cookies.banner.manage}
+            contactLabel={messages.contact?.link ?? "Contact"}
             locale={locale}
           />
         </NextIntlClientProvider>

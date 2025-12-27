@@ -147,6 +147,27 @@
       "ui": "Shadcn UI + Tailwind 4"
     }
   },
+  "contact": {
+    "link": "Contact",
+    "title": "Contact us",
+    "subtitle": "Send a message to our team.",
+    "note": "We reply within 2 business days. Please include details to help us respond faster.",
+    "topic": "Topic",
+    "selectTopic": "Select a topic",
+    "subject": "Subject",
+    "message": "Message",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "submit": "Send message",
+    "success": "Message sent. We will reply within 2 business days.",
+    "error": "Unable to send now. Please try again.",
+    "topics": {
+      "technical": "Technical request",
+      "commercial": "Commercial request",
+      "billing": "Billing",
+      "other": "Other"
+    }
+  },
   "documentsPage": {
     "title": "Documents",
     "subtitle": "Upload and ingest your knowledge base, ready for RAG.",

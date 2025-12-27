@@ -8,18 +8,31 @@ type FooterLinksProps = {
   cookiesLabel: string;
   cookiesHref?: string;
   locale?: string;
+  contactLabel?: string;
 };
 
-function FooterLinks({ privacyLabel, cookiesLabel, cookiesHref, locale }: FooterLinksProps): JSX.Element {
+function FooterLinks({
+  privacyLabel,
+  cookiesLabel,
+  cookiesHref,
+  locale,
+  contactLabel,
+}: FooterLinksProps): JSX.Element {
   const openBanner = () => {
     const event = new Event("open-cookie-banner");
     window.dispatchEvent(event);
   };
 
   const privacyHref = locale ? `/${locale}/privacy` : "/privacy";
+  const contactHref = locale ? `/${locale}/contact` : "/contact";
 
   return (
     <div className="mx-auto flex max-w-6xl items-center justify-end gap-4 px-6 pb-6 text-sm text-muted-foreground">
+      {contactLabel ? (
+        <Link href={contactHref} className="hover:text-foreground underline underline-offset-2">
+          {contactLabel}
+        </Link>
+      ) : null}
       <Link href={privacyHref} className="hover:text-foreground underline underline-offset-2">
         {privacyLabel}
       </Link>

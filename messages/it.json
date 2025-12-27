@@ -147,6 +147,27 @@
       "ui": "UI Shadcn + Tailwind 4"
     }
   },
+  "contact": {
+    "link": "Contatti",
+    "title": "Contattaci",
+    "subtitle": "Invia un messaggio al nostro team.",
+    "note": "Rispondiamo entro 2 giorni lavorativi. Inserisci i dettagli utili per una risposta più veloce.",
+    "topic": "Argomento",
+    "selectTopic": "Seleziona un argomento",
+    "subject": "Oggetto",
+    "message": "Messaggio",
+    "email": "Email",
+    "phone": "Telefono (opzionale)",
+    "submit": "Invia messaggio",
+    "success": "Messaggio inviato. Risponderemo entro 2 giorni lavorativi.",
+    "error": "Impossibile inviare ora. Riprova.",
+    "topics": {
+      "technical": "Richiesta tecnica",
+      "commercial": "Richiesta commerciale",
+      "billing": "Fatturazione",
+      "other": "Altro"
+    }
+  },
   "documentsPage": {
     "title": "Documenti",
     "subtitle": "Carica e ingesta la knowledge base pronta per il RAG.",
