@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { redirect as nextRedirect } from "next/navigation";
 import { redirect } from "@/i18n/navigation";
 import { getPriceId, stripe, type BillingCycle, type PaidPlanId, type PlanId } from "@/lib/server/stripe";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
@@ -13,14 +14,13 @@ type StartCheckoutInput = {
   locale: string;
 };
 
-const resolveOrigin = (): string => {
-  const headerStore = headers();
-  return (
-    headerStore.get("origin") ??
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    process.env.NEXT_PUBLIC_SUPABASE_URL ??
-    "http://localhost:3000"
-  );
+const resolveOrigin = async (): Promise<string> => {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? null;
+  if (siteUrl) return siteUrl.replace(/\/$/, "");
+  const headerStore = await headers();
+  const origin = headerStore.get("origin");
+  if (origin) return origin.replace(/\/$/, "");
+  return "http://localhost:3000";
 };
 
 const ensureCustomer = async (supabaseUserId: string, email: string | null, existingPlan?: PlanMetadata) => {
@@ -75,7 +75,7 @@ const startPlanCheckout = async ({ planId, billingCycle, locale }: StartCheckout
     });
   }
 
-  const origin = resolveOrigin();
+  const origin = await resolveOrigin();
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer: customerId,
@@ -107,7 +107,7 @@ const startPlanCheckout = async ({ planId, billingCycle, locale }: StartCheckout
     throw new Error("stripe_session_missing_url");
   }
 
-  redirect(session.url);
+  nextRedirect(session.url);
 };
 
 export { startPlanCheckout };

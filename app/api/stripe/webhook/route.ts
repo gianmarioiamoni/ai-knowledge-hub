@@ -54,7 +54,8 @@ const buildPlanFromSubscription = (subscription: Stripe.Subscription): PlanPatch
 };
 
 export async function POST(request: Request): Promise<NextResponse> {
-  const signature = headers().get("stripe-signature");
+  const headerStore = await headers();
+  const signature = headerStore.get("stripe-signature");
   const body = await request.text();
 
   if (!signature) {
