@@ -1,7 +1,7 @@
 "use client";
 
 import { type JSX, useState, useTransition } from "react";
-import { setPlan } from "@/app/[locale]/profile/actions";
+import { cancelStripeSubscription } from "@/app/[locale]/profile/actions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,7 +15,6 @@ import {
 import { useRouter } from "@/i18n/navigation";
 
 type CancelPlanDialogProps = {
-  billingCycle: "monthly" | "annual";
   labels: {
     cta: string;
     title: string;
@@ -28,7 +27,7 @@ type CancelPlanDialogProps = {
   };
 };
 
-function CancelPlanDialog({ billingCycle, labels }: CancelPlanDialogProps): JSX.Element {
+function CancelPlanDialog({ labels }: CancelPlanDialogProps): JSX.Element {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -37,10 +36,7 @@ function CancelPlanDialog({ billingCycle, labels }: CancelPlanDialogProps): JSX.
   const handleConfirm = (): void => {
     setError(null);
     startTransition(async () => {
-      const formData = new FormData();
-      formData.append("planId", "cancel");
-      formData.append("billingCycle", billingCycle);
-      const result = await setPlan({}, formData);
+      const result = await cancelStripeSubscription();
       if (result.error) {
         setError(labels.error);
         return;

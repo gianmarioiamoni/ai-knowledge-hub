@@ -5,6 +5,7 @@ import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import type { PlanMetadata } from "@/lib/server/subscriptions";
+import { stripe } from "@/lib/server/stripe";
 
 type ActionResult = { error?: string; success?: string };
 
@@ -69,20 +70,41 @@ const buildPlanMeta = (planId: string, billing: "monthly" | "annual", existing?:
       trialEndsAt: existing?.trialEndsAt ?? addDays(30),
       billingCycle: billing,
       renewalAt: existing?.trialEndsAt ?? addDays(30),
+      subscriptionId: null,
+      customerId: existing?.customerId,
+      cancelAtPeriodEnd: false,
     };
   }
   if (planId === "cancel") {
     const expires = existing?.trialEndsAt ? new Date(existing.trialEndsAt).getTime() : 0;
     const hasTrialLeft = expires > Date.now();
     return hasTrialLeft
-      ? { id: "trial", trialEndsAt: existing?.trialEndsAt, billingCycle: billing, renewalAt: existing?.trialEndsAt }
-      : { id: "expired", billingCycle: billing, renewalAt: null };
+      ? {
+          id: "trial",
+          trialEndsAt: existing?.trialEndsAt,
+          billingCycle: billing,
+          renewalAt: existing?.trialEndsAt,
+          subscriptionId: null,
+          customerId: existing?.customerId,
+          cancelAtPeriodEnd: false,
+        }
+      : {
+          id: "expired",
+          billingCycle: billing,
+          renewalAt: null,
+          subscriptionId: null,
+          customerId: existing?.customerId,
+          cancelAtPeriodEnd: false,
+        };
   }
   return {
     id: planId,
     trialEndsAt: undefined,
     billingCycle: billing,
     renewalAt: computeRenewalAt(billing),
+    subscriptionId: existing?.subscriptionId ?? null,
+    customerId: existing?.customerId,
+    cancelAtPeriodEnd: false,
   };
 };
 
@@ -109,6 +131,49 @@ export const setPlan = async (_prev: ActionResult, formData: FormData): Promise<
   if (error) {
     return { error: error.message };
   }
+  return { success: "updated" };
+};
+
+export const cancelStripeSubscription = async (): Promise<ActionResult> => {
+  const supabase = createSupabaseServerClient();
+  const { data, error: getErr } = await supabase.auth.getUser();
+  const user = data.user;
+  if (getErr || !user) {
+    return { error: "Not authenticated" };
+  }
+
+  const planMeta = (user.user_metadata as { plan?: PlanMetadata } | null)?.plan;
+  const subscriptionId = planMeta?.subscriptionId;
+  const billingCycle = planMeta?.billingCycle ?? "monthly";
+
+  if (subscriptionId) {
+    try {
+      await stripe.subscriptions.update(subscriptionId, {
+        cancel_at_period_end: true,
+        metadata: {
+          supabaseUserId: user.id,
+        },
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Stripe cancellation failed";
+      return { error: message };
+    }
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    data: {
+      ...((user.user_metadata as Record<string, unknown> | null) ?? {}),
+      plan: {
+        ...planMeta,
+        cancelAtPeriodEnd: true,
+        billingCycle,
+      },
+    },
+  });
+  if (error) {
+    return { error: error.message };
+  }
+
   return { success: "updated" };
 };
 

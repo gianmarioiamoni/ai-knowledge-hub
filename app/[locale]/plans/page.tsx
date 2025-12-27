@@ -4,7 +4,7 @@ import { PlansSection } from "@/components/subscriptions/PlansSection";
 import type { Plan } from "@/components/subscriptions/PlansSection/types";
 import type { PlanMetadata } from "@/lib/server/subscriptions";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
-import { setPlan } from "../profile/actions";
+import { startPlanCheckout } from "./actions";
 
 export default async function PlansPage({ params }: { params: Promise<{ locale: string }> }): Promise<JSX.Element> {
   const { locale } = await params;
@@ -82,10 +82,7 @@ export default async function PlansPage({ params }: { params: Promise<{ locale: 
         currentPlan={currentPlan}
         onSelect={async (planId, billingCycle) => {
           "use server";
-          const formData = new FormData();
-          formData.append("planId", planId);
-          formData.append("billingCycle", billingCycle);
-          await setPlan({}, formData);
+          await startPlanCheckout({ planId, billingCycle, locale });
         }}
       />
     </div>

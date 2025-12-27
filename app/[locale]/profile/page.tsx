@@ -102,7 +102,6 @@ export default async function ProfilePage({
             </Button>
             {isPaidPlan ? (
               <CancelPlanDialog
-                billingCycle={plan.billingCycle ?? "monthly"}
                 labels={{
                   cta: t("cancel.cta"),
                   title: t("cancel.title"),
