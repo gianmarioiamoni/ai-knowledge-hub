@@ -103,6 +103,19 @@
       "plans": { "title": "Plans", "body": "Manage subscription and trial." }
     }
   },
+  "pricing": {
+    "title": "Pricing",
+    "subtitle": "Choose the right plan for your team.",
+    "description": "View plans and limits. Subscribe after logging in.",
+    "noteTrial": "Trial: 30 days full features.",
+    "notePaid": "Paid plans billed monthly or annually.",
+    "cta": {
+      "title": "Ready to start?",
+      "description": "Create an account or log in to subscribe.",
+      "login": "Log in",
+      "contact": "Contact sales"
+    }
+  },
   "plans": {
     "title": "Pricing",
     "subtitle": "Choose the right plan for your team.",

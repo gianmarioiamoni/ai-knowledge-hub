@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { clsx } from "clsx";
 import { JSX } from "react";
-import { LifeBuoyIcon } from "lucide-react";
+import { CircleHelpIcon } from "lucide-react";
 
 type NavItem = {
   label: string;
@@ -47,7 +47,7 @@ function TopNav({ items, helpHref, helpLabel }: TopNavProps): JSX.Element {
           title={helpLabel ?? "Help Center"}
           className="inline-flex items-center justify-center rounded-full bg-white/80 p-2 text-foreground ring-1 ring-border transition hover:-translate-y-0.5 hover:shadow-sm"
         >
-          <LifeBuoyIcon className="size-4" />
+          <CircleHelpIcon className="size-4" />
         </button>
       ) : null}
     </nav>

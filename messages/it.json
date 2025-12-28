@@ -109,6 +109,19 @@
       "plans": { "title": "Plans", "body": "Gestisci abbonamento e trial." }
     }
   },
+  "pricing": {
+    "title": "Pricing",
+    "subtitle": "Scegli il piano giusto per il tuo team.",
+    "description": "Consulta piani e limiti. La sottoscrizione richiede l’accesso.",
+    "noteTrial": "Trial: 30 giorni con tutte le funzioni.",
+    "notePaid": "Piani a pagamento, fatturazione mensile o annuale.",
+    "cta": {
+      "title": "Pronto a iniziare?",
+      "description": "Crea un account o accedi per sottoscrivere.",
+      "login": "Accedi",
+      "contact": "Contatta sales"
+    }
+  },
   "plans": {
     "title": "Prezzi",
     "subtitle": "Scegli il piano giusto per il tuo team.",

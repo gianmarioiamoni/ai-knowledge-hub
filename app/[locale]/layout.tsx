@@ -52,6 +52,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const supabase = createSupabaseServerClient();
   const { data } = await supabase.auth.getUser();
   const role = (data.user?.user_metadata as { role?: string } | null)?.role ?? null;
+  const isAuthenticated = Boolean(data.user);
 
   const tDashboard = await getTranslations({ locale, namespace: "dashboard" });
   const tDocuments = await getTranslations({ locale, namespace: "documentsPage" });
@@ -68,12 +69,14 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     { label: tPlans("title"), href: "/plans" },
   ];
 
+  const publicNav = [{ label: tPlans("title"), href: "/pricing" }];
+
   const superNav = [
     { label: tDashboard("title"), href: "/dashboard" },
     { label: tDashboard("super.statsNav"), href: "/admin-stats" },
   ];
 
-  const navItems = role === "SUPER_ADMIN" ? superNav : defaultNav;
+  const navItems = isAuthenticated ? (role === "SUPER_ADMIN" ? superNav : defaultNav) : publicNav;
 
   return (
     <html lang={locale}>
