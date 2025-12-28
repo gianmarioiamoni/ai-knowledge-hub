@@ -11,7 +11,9 @@ type HelpPageProps = {
 };
 
 const manualHrefByLocale = (locale: string): string =>
-  locale === "it" ? "/manuals/user-manual-it.md" : "/manuals/user-manual-en.md";
+  locale === "it"
+    ? "https://github.com/gianmarioiamoni/ai-knowledge-hub/blob/main/docs/USER_MANUAL_IT.md"
+    : "https://github.com/gianmarioiamoni/ai-knowledge-hub/blob/main/docs/USER_MANUAL.md";
 
 export default async function HelpPage({ params }: HelpPageProps): Promise<JSX.Element> {
   const { locale } = await params;
@@ -59,7 +61,7 @@ export default async function HelpPage({ params }: HelpPageProps): Promise<JSX.E
             </div>
           </div>
           <Button asChild variant="secondary" className="w-fit">
-            <Link href={`/${locale}/contact`}>{t("cards.contact.cta")}</Link>
+            <Link href="/contact">{t("cards.contact.cta")}</Link>
           </Button>
         </Card>
 
@@ -97,28 +99,28 @@ export default async function HelpPage({ params }: HelpPageProps): Promise<JSX.E
         <h2 className="text-xl font-semibold text-foreground">{t("quick.title")}</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <Link
-            href={`/${locale}/documents`}
+            href="/documents"
             className="rounded-lg border bg-white/70 p-4 text-sm leading-6 transition hover:-translate-y-0.5 hover:shadow-sm"
           >
             <p className="font-semibold text-foreground">{t("quick.documents.title")}</p>
             <p className="text-muted-foreground">{t("quick.documents.body")}</p>
           </Link>
           <Link
-            href={`/${locale}/chat`}
+            href="/chat"
             className="rounded-lg border bg-white/70 p-4 text-sm leading-6 transition hover:-translate-y-0.5 hover:shadow-sm"
           >
             <p className="font-semibold text-foreground">{t("quick.chat.title")}</p>
             <p className="text-muted-foreground">{t("quick.chat.body")}</p>
           </Link>
           <Link
-            href={`/${locale}/procedures`}
+            href="/procedures"
             className="rounded-lg border bg-white/70 p-4 text-sm leading-6 transition hover:-translate-y-0.5 hover:shadow-sm"
           >
             <p className="font-semibold text-foreground">{t("quick.procedures.title")}</p>
             <p className="text-muted-foreground">{t("quick.procedures.body")}</p>
           </Link>
           <Link
-            href={`/${locale}/plans`}
+            href="/plans"
             className="rounded-lg border bg-white/70 p-4 text-sm leading-6 transition hover:-translate-y-0.5 hover:shadow-sm"
           >
             <p className="font-semibold text-foreground">{t("quick.plans.title")}</p>
