@@ -12,8 +12,8 @@ type HelpPageProps = {
 
 const manualHrefByLocale = (locale: string): string =>
   locale === "it"
-    ? "https://github.com/gianmarioiamoni/ai-knowledge-hub/blob/main/docs/USER_MANUAL_IT.md"
-    : "https://github.com/gianmarioiamoni/ai-knowledge-hub/blob/main/docs/USER_MANUAL.md";
+    ? "https://raw.githubusercontent.com/gianmarioiamoni/ai-knowledge-hub/main/docs/USER_MANUAL_IT.md"
+    : "https://raw.githubusercontent.com/gianmarioiamoni/ai-knowledge-hub/main/docs/USER_MANUAL.md";
 
 export default async function HelpPage({ params }: HelpPageProps): Promise<JSX.Element> {
   const { locale } = await params;
