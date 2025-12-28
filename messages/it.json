@@ -60,6 +60,55 @@
     "logout": "Logout",
     "multiTenantProtection": "Protezione multi-tenant attiva: RLS, Supabase Auth e storage sicuro per i tuoi dati."
   },
+  "help": {
+    "title": "Help Center",
+    "subtitle": "Come usare al meglio AI Knowledge Hub.",
+    "description": "Guide, FAQ e link rapidi al supporto.",
+    "cards": {
+      "manual": {
+        "title": "Manuale utente",
+        "description": "Leggi la guida completa nella tua lingua.",
+        "cta": "Apri il manuale"
+      },
+      "contact": {
+        "title": "Serve aiuto?",
+        "description": "Inviaci una richiesta. Rispondiamo entro 2 giorni lavorativi.",
+        "cta": "Vai a Contact"
+      },
+      "support": {
+        "title": "Supporto",
+        "description": "Puoi contattare il team admin/support in qualsiasi momento.",
+        "email": "L’admin viene notificato all’invio del contact form.",
+        "sla": "Risposte entro 2 giorni lavorativi."
+      }
+    },
+    "faq": {
+      "title": "FAQ",
+      "ingestion": {
+        "q": "Come ingesto i documenti?",
+        "a": "Vai su Documents e carica PDF. Stati: pending → processing → ingested. Una volta ingestati, sono ricercabili in Chat e usabili per le SOP."
+      },
+      "chat": {
+        "q": "Come miglioro la qualità delle risposte?",
+        "a": "Verifica che l’ingestion sia completa, fai domande concise e fornisci contesto (titoli, nomi di processi)."
+      },
+      "sop": {
+        "q": "Come creo una SOP?",
+        "a": "Apri Procedures, inserisci titolo e ambito/contesto, genera, poi esporta in Markdown/PDF o modifica il titolo."
+      },
+      "plans": {
+        "q": "Cosa succede se annullo?",
+        "a": "L’accesso resta attivo fino a fine periodo. Il trial termina alla sua scadenza."
+      }
+    },
+    "quick": {
+      "title": "Link rapidi",
+      "documents": { "title": "Documents", "body": "Carica e monitora l’ingestion." },
+      "chat": { "title": "Chat (RAG)", "body": "Fai domande sulla tua knowledge base." },
+      "procedures": { "title": "Procedures (SOP)", "body": "Genera ed esporta SOP." },
+      "plans": { "title": "Plans", "body": "Gestisci abbonamento e trial." }
+    }
+  },
   "plans": {
     "title": "Prezzi",
     "subtitle": "Scegli il piano giusto per il tuo team.",

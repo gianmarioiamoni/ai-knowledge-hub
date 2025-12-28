@@ -54,6 +54,55 @@
       "confirmLabel": "Are you sure you want to delete your account?"
     }
   },
+  "help": {
+    "title": "Help Center",
+    "subtitle": "How to use AI Knowledge Hub effectively.",
+    "description": "Guides, FAQs, and quick links to support.",
+    "cards": {
+      "manual": {
+        "title": "User manual",
+        "description": "Read the full guide for your language.",
+        "cta": "Open manual"
+      },
+      "contact": {
+        "title": "Need more help?",
+        "description": "Send us a request. We reply within 2 business days.",
+        "cta": "Go to contact"
+      },
+      "support": {
+        "title": "Support",
+        "description": "You can reach the admin/support team anytime.",
+        "email": "Admin is notified on contact submissions.",
+        "sla": "Responses within 2 business days."
+      }
+    },
+    "faq": {
+      "title": "FAQs",
+      "ingestion": {
+        "q": "How do I ingest documents?",
+        "a": "Go to Documents and upload PDFs. Status flows pending → processing → ingested. Once ingested, they are searchable in Chat and usable for SOPs."
+      },
+      "chat": {
+        "q": "How do I improve answer quality?",
+        "a": "Ensure ingestion is complete, ask concise questions, and provide context (titles, process names)."
+      },
+      "sop": {
+        "q": "How do I create a SOP?",
+        "a": "Open Procedures, provide title and scope/context, generate, then export to Markdown/PDF or edit the title."
+      },
+      "plans": {
+        "q": "What happens if I cancel?",
+        "a": "Access remains until the end of the current period. Trial ends on its expiry date."
+      }
+    },
+    "quick": {
+      "title": "Quick links",
+      "documents": { "title": "Documents", "body": "Upload and track ingestion." },
+      "chat": { "title": "Chat (RAG)", "body": "Ask questions on your ingested knowledge." },
+      "procedures": { "title": "Procedures (SOP)", "body": "Generate and export SOPs." },
+      "plans": { "title": "Plans", "body": "Manage subscription and trial." }
+    }
+  },
   "plans": {
     "title": "Pricing",
     "subtitle": "Choose the right plan for your team.",

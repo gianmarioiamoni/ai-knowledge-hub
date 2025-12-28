@@ -58,6 +58,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const tChat = await getTranslations({ locale, namespace: "chatPage" });
   const tProcedures = await getTranslations({ locale, namespace: "proceduresPage" });
   const tPlans = await getTranslations({ locale, namespace: "plans" });
+  const tHelp = await getTranslations({ locale, namespace: "help" });
 
   const defaultNav = [
     { label: tDashboard("title"), href: "/dashboard" },
@@ -80,7 +81,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SentryClientInit />
           <div className="relative z-50 mx-auto flex w-full max-w-6xl items-center justify-end gap-3 px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
-            <TopNav items={navItems} />
+            <TopNav items={navItems} helpHref={`/${locale}/help`} helpLabel={tHelp("title")} />
             <CommandHint />
             <CommandLauncher />
             <LanguageSwitcher />
