@@ -21,6 +21,7 @@ type EmailConfig = {
 
 let cachedTransporter: Transporter | null = null;
 const SITE_NAME = "AI Knowledge Hub";
+const adminEmail = env.ADMIN_EMAIL ?? env.SUPERADMIN_EMAIL;
 
 const getEmailConfig = (): EmailConfig => {
   if (env.GMAIL_USER && env.GMAIL_APP_PASSWORD) {
@@ -120,7 +121,6 @@ const buildUserContent = (payload: ContactMessage): { subject: string; text: str
 };
 
 const sendContactEmails = async (payload: ContactMessage): Promise<void> => {
-  const adminEmail = env.ADMIN_EMAIL ?? env.SUPERADMIN_EMAIL;
   if (!adminEmail) {
     throw new Error("Admin email not configured");
   }
@@ -143,6 +143,63 @@ const sendContactEmails = async (payload: ContactMessage): Promise<void> => {
 };
 
 export type { ContactMessage };
-export { sendEmail, sendContactEmails };
+const sendAdminNewUser = async (email: string): Promise<void> => {
+  if (!adminEmail) return;
+  const subject = `${SITE_NAME} – New user signup`;
+  const text = [`A new user signed up:`, `Email: ${email}`, ``].join("\n");
+  await sendEmail({ to: adminEmail, subject, text });
+};
+
+const sendAdminSubscriptionChange = async (payload: {
+  userEmail: string | null;
+  planId: string | null;
+  billingCycle?: string | null;
+}): Promise<void> => {
+  if (!adminEmail) return;
+  const subject = `${SITE_NAME} – Subscription update`;
+  const text = [
+    `User: ${payload.userEmail ?? "unknown"}`,
+    `Plan: ${payload.planId ?? "unknown"}`,
+    `Billing: ${payload.billingCycle ?? "unknown"}`,
+  ].join("\n");
+  await sendEmail({ to: adminEmail, subject, text });
+};
+
+const sendAdminAccountDeleted = async (email: string): Promise<void> => {
+  if (!adminEmail) return;
+  const subject = `${SITE_NAME} – Account deleted`;
+  const text = [`User deleted account: ${email}`].join("\n");
+  await sendEmail({ to: adminEmail, subject, text });
+};
+
+const sendUserPlanReminder = async (payload: {
+  to: string;
+  daysLeft: number;
+  planId: string | null;
+  renewalAt?: string | null;
+}): Promise<void> => {
+  const subject = `${SITE_NAME} — Your plan renews soon`;
+  const text = [
+    `Hi,`,
+    `your plan "${payload.planId ?? "current plan"}" will renew/expire in ${payload.daysLeft} day${
+      payload.daysLeft === 1 ? "" : "s"
+    }.`,
+    payload.renewalAt ? `Date: ${payload.renewalAt}` : "",
+    ``,
+    `If you need changes, update your plan from the dashboard.`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+  await sendEmail({ to: payload.to, subject, text });
+};
+
+export {
+  sendEmail,
+  sendContactEmails,
+  sendAdminNewUser,
+  sendAdminSubscriptionChange,
+  sendAdminAccountDeleted,
+  sendUserPlanReminder,
+};
 
 

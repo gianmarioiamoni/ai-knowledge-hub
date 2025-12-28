@@ -6,6 +6,7 @@ import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import type { PlanMetadata } from "@/lib/server/subscriptions";
 import { stripe } from "@/lib/server/stripe";
+import { sendAdminAccountDeleted } from "@/lib/server/email";
 
 type ActionResult = { error?: string; success?: string };
 
@@ -49,6 +50,10 @@ export const deleteAccount = async (): Promise<ActionResult> => {
     return { error: delError.message };
   }
 
+  if (user.email) {
+    await sendAdminAccountDeleted(user.email).catch(() => {});
+  }
+
   await supabase.auth.signOut();
   redirect("/login");
 };
@@ -73,6 +78,8 @@ const buildPlanMeta = (planId: string, billing: "monthly" | "annual", existing?:
       subscriptionId: null,
       customerId: existing?.customerId,
       cancelAtPeriodEnd: false,
+      reminder3DaysSent: false,
+      reminder1DaySent: false,
     };
   }
   if (planId === "cancel") {
@@ -87,6 +94,8 @@ const buildPlanMeta = (planId: string, billing: "monthly" | "annual", existing?:
           subscriptionId: null,
           customerId: existing?.customerId,
           cancelAtPeriodEnd: false,
+          reminder3DaysSent: false,
+          reminder1DaySent: false,
         }
       : {
           id: "expired",
@@ -95,6 +104,8 @@ const buildPlanMeta = (planId: string, billing: "monthly" | "annual", existing?:
           subscriptionId: null,
           customerId: existing?.customerId,
           cancelAtPeriodEnd: false,
+          reminder3DaysSent: false,
+          reminder1DaySent: false,
         };
   }
   return {
@@ -105,6 +116,8 @@ const buildPlanMeta = (planId: string, billing: "monthly" | "annual", existing?:
     subscriptionId: existing?.subscriptionId ?? null,
     customerId: existing?.customerId,
     cancelAtPeriodEnd: false,
+    reminder3DaysSent: false,
+    reminder1DaySent: false,
   };
 };
 

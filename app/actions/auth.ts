@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
+import { sendAdminNewUser } from "@/lib/server/email";
 import { routing } from "@/i18n/routing";
 
 type AuthFormState = {
@@ -67,10 +68,14 @@ export async function signUpWithPassword(
   }
 
   const supabase = createSupabaseServerClient();
-  const { error } = await supabase.auth.signUp(parsed.data);
+  const { data, error } = await supabase.auth.signUp(parsed.data);
 
   if (error) {
     return { error: error.message };
+  }
+
+  if (data.user?.email) {
+    await sendAdminNewUser(data.user.email).catch(() => {});
   }
 
   const locale = await getPreferredLocale();

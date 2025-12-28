@@ -16,6 +16,7 @@ const envSchema = z
     GMAIL_APP_PASSWORD: z.string().optional(),
     ADMIN_EMAIL: z.string().email().optional(),
     SUPERADMIN_EMAIL: z.string().email().optional(),
+    CRON_SECRET: z.string().optional(),
     STRIPE_SECRET_KEY: z.string().min(1, "Stripe secret key is required"),
     STRIPE_WEBHOOK_SECRET: z.string().min(1, "Stripe webhook secret is required"),
     STRIPE_PRICE_SMB_MONTHLY: z.string().min(1, "Stripe price id for SMB monthly is required"),

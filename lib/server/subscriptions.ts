@@ -9,6 +9,8 @@ type PlanMetadata = {
   subscriptionId?: string | null;
   customerId?: string | null;
   cancelAtPeriodEnd?: boolean;
+  reminder3DaysSent?: boolean;
+  reminder1DaySent?: boolean;
 };
 
 type PlanStatus = {

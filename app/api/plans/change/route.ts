@@ -29,20 +29,37 @@ const buildPlanMeta = (
       trialEndsAt: current?.trialEndsAt ?? addDays(30),
       billingCycle: billing,
       renewalAt: current?.trialEndsAt ?? addDays(30),
+      reminder3DaysSent: false,
+      reminder1DaySent: false,
     };
   }
   if (planId === "cancel") {
     const expires = current?.trialEndsAt ? new Date(current.trialEndsAt).getTime() : 0;
     const hasTrialLeft = expires > Date.now();
     return hasTrialLeft
-      ? { id: "trial", trialEndsAt: current?.trialEndsAt, billingCycle: billing, renewalAt: current?.trialEndsAt }
-      : { id: "expired", billingCycle: billing, renewalAt: null };
+      ? {
+          id: "trial",
+          trialEndsAt: current?.trialEndsAt,
+          billingCycle: billing,
+          renewalAt: current?.trialEndsAt,
+          reminder3DaysSent: false,
+          reminder1DaySent: false,
+        }
+      : {
+          id: "expired",
+          billingCycle: billing,
+          renewalAt: null,
+          reminder3DaysSent: false,
+          reminder1DaySent: false,
+        };
   }
   return {
     id: planId,
     trialEndsAt: undefined,
     billingCycle: billing,
     renewalAt: computeRenewalAt(billing),
+    reminder3DaysSent: false,
+    reminder1DaySent: false,
   };
 };
 

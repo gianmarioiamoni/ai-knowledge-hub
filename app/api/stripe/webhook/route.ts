@@ -5,6 +5,7 @@ import { resolvePlanFromPriceId, stripe } from "@/lib/server/stripe";
 import type { PlanMetadata } from "@/lib/server/subscriptions";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { env } from "@/lib/env";
+import { sendAdminSubscriptionChange } from "@/lib/server/email";
 
 type PlanPatch = PlanMetadata & { id: string };
 
@@ -12,12 +13,12 @@ const upsertUserPlan = async (
   supabaseUserId: string,
   planPatch: PlanPatch,
   stripeCustomerId?: string | null,
-): Promise<void> => {
+): Promise<{ email: string | null }> => {
   const supabase = createSupabaseServiceClient();
   const { data } = await supabase.auth.admin.getUserById(supabaseUserId);
   const existingMeta = (data.user?.user_metadata as Record<string, unknown> | null) ?? {};
   const existingPlan = (existingMeta.plan as PlanMetadata | undefined) ?? {};
-  const nextPlan: PlanMetadata = { ...existingPlan, ...planPatch };
+  const nextPlan: PlanMetadata = { ...existingPlan, ...planPatch, reminder3DaysSent: false, reminder1DaySent: false };
 
   const nextMetadata: Record<string, unknown> = {
     ...existingMeta,
@@ -30,6 +31,7 @@ const upsertUserPlan = async (
   await supabase.auth.admin.updateUserById(supabaseUserId, {
     user_metadata: nextMetadata,
   });
+  return { email: data.user?.email ?? null };
 };
 
 const buildPlanFromSubscription = (subscription: Stripe.Subscription): PlanPatch | null => {
@@ -81,7 +83,12 @@ export async function POST(request: Request): Promise<NextResponse> {
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         const plan = buildPlanFromSubscription(subscription);
         if (plan) {
-          await upsertUserPlan(supabaseUserId, plan, customerId);
+          const { email } = await upsertUserPlan(supabaseUserId, plan, customerId);
+          await sendAdminSubscriptionChange({
+            userEmail: email,
+            planId: plan.id,
+            billingCycle: plan.billingCycle,
+          }).catch(() => {});
         }
         break;
       }
@@ -91,7 +98,12 @@ export async function POST(request: Request): Promise<NextResponse> {
         if (!supabaseUserId) break;
         const plan = buildPlanFromSubscription(subscription);
         if (plan) {
-          await upsertUserPlan(supabaseUserId, plan);
+          const { email } = await upsertUserPlan(supabaseUserId, plan);
+          await sendAdminSubscriptionChange({
+            userEmail: email,
+            planId: plan.id,
+            billingCycle: plan.billingCycle,
+          }).catch(() => {});
         }
         break;
       }
@@ -99,7 +111,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         const subscription = event.data.object as Stripe.Subscription;
         const supabaseUserId = subscription.metadata?.supabaseUserId;
         if (!supabaseUserId) break;
-        await upsertUserPlan(supabaseUserId, {
+        const { email } = await upsertUserPlan(supabaseUserId, {
           id: "expired",
           billingCycle: subscription.metadata?.billingCycle as PlanPatch["billingCycle"],
           renewalAt: null,
@@ -108,6 +120,11 @@ export async function POST(request: Request): Promise<NextResponse> {
           customerId: typeof subscription.customer === "string" ? subscription.customer : subscription.customer?.id,
           cancelAtPeriodEnd: false,
         });
+        await sendAdminSubscriptionChange({
+          userEmail: email,
+          planId: "expired",
+          billingCycle: subscription.metadata?.billingCycle as PlanPatch["billingCycle"],
+        }).catch(() => {});
         break;
       }
       default:
