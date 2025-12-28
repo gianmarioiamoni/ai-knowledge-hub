@@ -99,10 +99,10 @@ export default async function PricingPage({ params }: PricingPageProps): Promise
         <p className="text-sm text-muted-foreground">{t("cta.description")}</p>
         <div className="flex gap-3">
           <Button asChild>
-            <Link href={`/${locale}/login`}>{t("cta.login")}</Link>
+            <Link href="/login">{t("cta.login")}</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link href={`/${locale}/contact`}>{t("cta.contact")}</Link>
+            <Link href="/contact">{t("cta.contact")}</Link>
           </Button>
         </div>
       </Card>
