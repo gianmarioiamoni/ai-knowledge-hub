@@ -23,8 +23,8 @@ function FooterLinks({
     window.dispatchEvent(event);
   };
 
-  const privacyHref = locale ? `/${locale}/privacy` : "/privacy";
-  const contactHref = locale ? `/${locale}/contact` : "/contact";
+  const privacyHref = "/privacy";
+  const contactHref = "/contact";
 
   return (
     <div className="mx-auto flex max-w-6xl items-center justify-end gap-4 px-6 pb-6 text-sm text-muted-foreground">
