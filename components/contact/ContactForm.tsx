@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import { submitContact } from "@/app/[locale]/contact/actions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -32,7 +32,7 @@ type ContactFormProps = {
 };
 
 function ContactForm({ defaultEmail, locale, topics, labels }: ContactFormProps): JSX.Element {
-  const [state, formAction] = useFormState(submitContact, {});
+  const [state, formAction] = useActionState(submitContact, {});
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4 px-6 py-12">

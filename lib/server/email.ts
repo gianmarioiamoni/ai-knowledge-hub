@@ -16,9 +16,11 @@ type EmailConfig = {
   user: string;
   pass: string;
   from: string;
+  fromName: string;
 };
 
 let cachedTransporter: Transporter | null = null;
+const SITE_NAME = "AI Knowledge Hub";
 
 const getEmailConfig = (): EmailConfig => {
   if (env.GMAIL_USER && env.GMAIL_APP_PASSWORD) {
@@ -28,6 +30,7 @@ const getEmailConfig = (): EmailConfig => {
       user: env.GMAIL_USER,
       pass: env.GMAIL_APP_PASSWORD,
       from: env.GMAIL_USER,
+      fromName: SITE_NAME,
     };
   }
 
@@ -38,6 +41,7 @@ const getEmailConfig = (): EmailConfig => {
       user: env.SMTP_USER,
       pass: env.SMTP_PASSWORD,
       from: env.SMTP_FROM,
+      fromName: SITE_NAME,
     };
   }
 
@@ -62,7 +66,7 @@ const sendEmail = async ({ to, subject, text, html, replyTo }: SendEmailInput): 
   const config = getEmailConfig();
   const transporter = getTransporter();
   await transporter.sendMail({
-    from: config.from,
+    from: `"${config.fromName}" <${config.from}>`,
     to,
     subject,
     text,
@@ -83,10 +87,14 @@ type ContactMessage = {
 const buildAdminContent = (payload: ContactMessage): { subject: string; text: string } => {
   const subject = `[Contact] ${payload.topic} - ${payload.title}`;
   const textLines = [
+    `${SITE_NAME} – New contact request`,
+    ``,
     `Topic: ${payload.topic}`,
     `Title: ${payload.title}`,
-    `Message: ${payload.message}`,
-    `Email: ${payload.email}`,
+    `Message:`,
+    `${payload.message}`,
+    ``,
+    `From: ${payload.email}`,
     `Phone: ${payload.phone ?? "N/A"}`,
     `Locale: ${payload.locale}`,
   ];
@@ -94,14 +102,19 @@ const buildAdminContent = (payload: ContactMessage): { subject: string; text: st
 };
 
 const buildUserContent = (payload: ContactMessage): { subject: string; text: string } => {
-  const subject = "We received your request";
+  const subject = `${SITE_NAME} — We received your request`;
   const textLines = [
     `Hi,`,
-    `We received your message with topic "${payload.topic}" and title "${payload.title}".`,
-    `We will reply within 2 business days.`,
+    `thanks for contacting ${SITE_NAME}. We received your message and will reply within 2 business days.`,
+    ``,
+    `Summary`,
+    `- Topic: ${payload.topic}`,
+    `- Title: ${payload.title}`,
     ``,
     `Your message:`,
-    payload.message,
+    `${payload.message}`,
+    ``,
+    `If you need to add details, reply to this email.`,
   ];
   return { subject, text: textLines.join("\n") };
 };
