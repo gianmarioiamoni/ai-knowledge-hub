@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { env } from "@/lib/env";
 import { routing } from "@/i18n/routing";
+import { sendAdminNewUser } from "@/lib/server/email";
 
 const createResponseSupabaseClient = (request: NextRequest, response: NextResponse) =>
   createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
@@ -48,6 +49,20 @@ export async function GET(
   const supabase = createResponseSupabaseClient(request, response);
 
   await supabase.auth.exchangeCodeForSession(code);
+
+  const { data } = await supabase.auth.getUser();
+  const user = data.user;
+  if (user?.email) {
+    const meta = (user.user_metadata as Record<string, unknown> | null) ?? {};
+    if (!meta.adminNotified) {
+      await Promise.all([
+        sendAdminNewUser(user.email).catch(() => {}),
+        supabase.auth.updateUser({
+          data: { ...meta, adminNotified: true },
+        }),
+      ]);
+    }
+  }
 
   return response;
 }

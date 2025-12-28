@@ -75,7 +75,12 @@ export async function signUpWithPassword(
   }
 
   if (data.user?.email) {
-    await sendAdminNewUser(data.user.email).catch(() => {});
+    await Promise.all([
+      sendAdminNewUser(data.user.email).catch(() => {}),
+      supabase.auth.updateUser({
+        data: { ...(data.user.user_metadata ?? {}), adminNotified: true },
+      }),
+    ]);
   }
 
   const locale = await getPreferredLocale();
