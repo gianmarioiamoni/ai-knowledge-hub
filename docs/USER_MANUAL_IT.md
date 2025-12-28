@@ -1,10 +1,13 @@
 # AI Knowledge Hub — Manuale Utente (IT)
 
 ## Panoramica
-AI Knowledge Hub è una piattaforma RAG multi-tenant per centralizzare la conoscenza aziendale, cercarla con AI e produrre SOP. Puoi caricare documenti, ingerirli in un database vettoriale, fare chat con risposte contestuali e generare procedure operative. Sicurezza (Supabase Auth + RLS), scalabilità (pgvector + LangChain + OpenAI).
+AI Knowledge Hub è una piattaforma RAG multi-tenant per centralizzare la conoscenza aziendale, fare ricerche con AI e produrre SOP. Puoi caricare documenti, memorizzarli in un database vettoriale, fare chat con risposte contestuali e generare procedure operative. Sicurezza (Supabase Auth + RLS) e scalabilità (pgvector + LangChain + OpenAI) sono due altre caratteristiche fondamentali della piattaforma.
 
-## Per chi è utile (per dimensione)
-- Startup: onboarding rapido, centralizzazione dei documenti sparsi, SOP senza tool complessi.
+**Cos’è una SOP?**  
+Una Standard Operating Procedure è un insieme strutturato e ripetibile di passi per svolgere un’attività in modo sicuro e consistente (es. onboarding, runbook di incident, checklist di compliance).
+
+## A chi è utile (per dimensione di azienda)
+- Startup: onboarding rapido, centralizzazione dei documenti, SOP senza tool complessi.
 - Piccola impresa: manuali/policy in un unico posto, risposte rapide a “come si fa…”, SOP esportabili.
 - Media impresa: knowledge base per reparto, accessi governati, SOP tracciabili.
 - Grande impresa: multi-tenant isolato, ingestion strutturata, retrieval su grandi corpus, SOP ripetibili con export e revisione.
