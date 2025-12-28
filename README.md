@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Knowledge Hub
+Multi-tenant RAG platform (Next.js + Supabase + LangChain + OpenAI) to ingest documents, chat with contextual answers, and generate SOPs. Includes subscriptions (Stripe), contact center with email notifications (Nodemailer), and bilingual UX (en/it).
+
+## Core Features
+- Document ingestion to pgvector (Supabase) via PDF upload.
+- RAG Chat on ingested knowledge with context inspection.
+- SOP generation and export (Markdown/PDF).
+- Multi-tenant auth with Supabase + RLS.
+- Subscriptions and billing (Stripe checkout, webhook sync).
+- Contact form with admin/user emails (Nodemailer).
+- Help Center with manuals (EN/IT), FAQ, quick links.
+
+## Tech Stack
+- Next.js (App Router, RSC-first), Tailwind + shadcn UI.
+- Supabase Auth/Storage/Postgres + pgvector.
+- LangChain + OpenAI.
+- Stripe for subscriptions.
+- Nodemailer (Gmail shortcut or SMTP).
 
 ## Getting Started
-
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# visit http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment (.env.local)
+Minimum (use either Gmail shortcut or SMTP):
+```
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+OPENAI_API_KEY=
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Email (option 1 – Gmail)
+GMAIL_USER=
+GMAIL_APP_PASSWORD=
+# Email (option 2 – SMTP)
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASSWORD=
+SMTP_FROM=
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+ADMIN_EMAIL=           # admin notifications (or SUPERADMIN_EMAIL)
+SUPERADMIN_EMAIL=
 
-## Learn More
+# Stripe
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRICE_SMB_MONTHLY=
+STRIPE_PRICE_SMB_ANNUAL=
+STRIPE_PRICE_ENTERPRISE_MONTHLY=
+STRIPE_PRICE_ENTERPRISE_ANNUAL=
 
-To learn more about Next.js, take a look at the following resources:
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+CRON_SECRET=optional   # protect /api/cron/reminders
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Email setup
+- Gmail: set `GMAIL_USER` + `GMAIL_APP_PASSWORD` (app password).
+- SMTP: provide all `SMTP_*` + `SMTP_FROM`.
+- `ADMIN_EMAIL` (or `SUPERADMIN_EMAIL`) must be set to receive admin notifications.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Stripe
+- Configure webhook to `/api/stripe/webhook` (use `stripe listen --forward-to localhost:3000/api/stripe/webhook` in dev and set `STRIPE_WEBHOOK_SECRET`).
+- Checkout success/cancel are handled automatically; plans are defined in env price IDs.
 
-## Deploy on Vercel
+## Key URLs
+- Help Center: `/{locale}/help`
+- Pricing (public, no auth): `/{locale}/pricing`
+- Contact: `/{locale}/contact`
+- Manuals: EN `docs/USER_MANUAL.md`, IT `docs/USER_MANUAL_IT.md` (also linked from Help).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scripts
+- `npm run dev` — start dev server
+- `npm test` — run tests (where present)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes
+- Non-authenticated users see only Pricing + Help.
+- Reminders cron: `GET /api/cron/reminders` (protect with `CRON_SECRET` header `x-cron-secret`).
+
+## License
+MIT
