@@ -4,7 +4,7 @@
 AI Knowledge Hub is a multi-tenant RAG platform to centralize company knowledge, search it with AI, and produce SOPs. Upload documents, ingest them into a vector DB, chat with contextual answers, and generate operational procedures. Designed for security (Supabase Auth + RLS) and scale (pgvector + LangChain + OpenAI).
 
 **What is a SOP?**  
-A Standard Operating Procedure is a structured, repeatable set of steps to perform a task safely and consistently (e.g., onboarding steps, incident runbooks, compliance checklists).
+A Standard Operating Procedure (SOP) is a structured, repeatable set of steps to perform a task safely and consistently (e.g., onboarding steps, incident runbooks, compliance checklists).
 
 ## Who benefits (by company size)
 - Startup: fast onboarding, centralize scattered docs, create SOPs without heavy tooling.
