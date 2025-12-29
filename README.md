@@ -10,12 +10,16 @@ Multi-tenant RAG platform (Next.js + Supabase + LangChain + OpenAI) to ingest do
 - Contact form with admin/user emails (Nodemailer).
 - Help Center with manuals (EN/IT), FAQ, quick links.
 
-## Tech Stack
-- Next.js (App Router, RSC-first), Tailwind + shadcn UI.
-- Supabase Auth/Storage/Postgres + pgvector.
-- LangChain + OpenAI.
-- Stripe for subscriptions.
-- Nodemailer (Gmail shortcut or SMTP).
+## Tech Stack (what we use and why)
+- **Next.js 15 (App Router, RSC-first)**: server-first rendering, locale-aware routing, API routes, server actions.
+- **Tailwind CSS + shadcn UI + Radix primitives**: consistent, accessible UI components and fast styling.
+- **Supabase Auth + RLS**: multi-tenant authentication and row-level security to isolate tenants.
+- **Supabase Storage + Postgres + pgvector**: store source docs and vector embeddings for retrieval.
+- **LangChain**: text splitting, embeddings generation, retrieval orchestration (top-k context).
+- **OpenAI (GPT-4.1 / -mini)**: embeddings + generation for RAG answers and SOP drafting.
+- **Stripe**: checkout, subscription lifecycle, webhooks for plan sync.
+- **Nodemailer** (Gmail shortcut or SMTP): transactional emails (contact, signup, plan changes, reminders).
+- **Sentry (optional)**: error monitoring hook via env.
 
 ## Getting Started
 ```bash
