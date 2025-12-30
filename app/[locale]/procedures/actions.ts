@@ -86,10 +86,6 @@ export const handleGenerateSop = async (_prev: ActionResult, formData: FormData)
       title: sop.title,
       content: sop.content,
       source_documents: sop.sourceDocuments,
-      metadata: {
-        allowFree,
-        contextUsed: contextTexts.length,
-      },
     });
 
     if (insertError) {

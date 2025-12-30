@@ -98,6 +98,8 @@ export default async function ProceduresPage({
             cancel: t("form.cancel"),
             success: t("form.success"),
             description: t("form.description"),
+            allowFreeLabel: t("form.allowFreeLabel"),
+            allowFreeWarning: t("form.allowFreeWarning"),
           }}
           action={handleGenerateSop}
         />
