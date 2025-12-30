@@ -33,7 +33,16 @@ export async function generateMetadata({ params }: LoginPageProps): Promise<Meta
 
 export default async function LoginPage({ params, searchParams }: LoginPageProps): Promise<JSX.Element> {
   const { locale } = await params;
-  const { error } = (await searchParams) ?? {};
+  const { error, code, type, next } = (await searchParams) ?? {};
+
+  // Handle Supabase magic link / password reset callbacks that land on /login
+  if (code) {
+    const targetNext = typeof next === "string" && next.length > 0 ? next : `/${locale}/dashboard`;
+    redirect({
+      href: `/auth/callback?code=${encodeURIComponent(code)}${type ? `&type=${encodeURIComponent(type)}` : ""}&next=${encodeURIComponent(targetNext)}`,
+      locale,
+    });
+  }
   const t = await getTranslations({ locale, namespace: "loginPage" });
 
   const stats: Stat[] = [
