@@ -55,6 +55,33 @@
       "confirmLabel": "Are you sure you want to delete your account?"
     }
   },
+  "invites": {
+    "title": "Invites",
+    "subtitle": "Invite people to your company workspace.",
+    "description": "Company Admin can invite Contributors or Viewers. Invites expire in 7 days.",
+    "form": {
+      "email": "Email",
+      "role": "Role",
+      "roles": {
+        "contributor": "Contributor (upload/generate)",
+        "viewer": "Viewer (read-only)"
+      },
+      "submit": "Send invite"
+    },
+    "list": {
+      "title": "Pending and recent invites",
+      "empty": "No invites yet.",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "expires": "Expires",
+      "actions": "Actions",
+      "revoke": "Revoke",
+      "revokeTitle": "Revoke invite",
+      "revokeDesc": "Revoke this pending invite?",
+      "cancel": "Cancel"
+    }
+  },
   "help": {
     "title": "Help Center",
     "subtitle": "How to use AI Knowledge Hub effectively.",

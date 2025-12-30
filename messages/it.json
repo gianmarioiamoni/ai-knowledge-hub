@@ -61,6 +61,33 @@
     "logout": "Logout",
     "multiTenantProtection": "Protezione multi-tenant attiva: RLS, Supabase Auth e storage sicuro per i tuoi dati."
   },
+  "invites": {
+    "title": "Inviti",
+    "subtitle": "Invita persone nello spazio aziendale.",
+    "description": "I Company Admin possono invitare Contributor o Viewer. Gli inviti scadono in 7 giorni.",
+    "form": {
+      "email": "Email",
+      "role": "Ruolo",
+      "roles": {
+        "contributor": "Contributor (upload/generazione)",
+        "viewer": "Viewer (solo lettura)"
+      },
+      "submit": "Invia invito"
+    },
+    "list": {
+      "title": "Inviti pendenti e recenti",
+      "empty": "Nessun invito.",
+      "email": "Email",
+      "role": "Ruolo",
+      "status": "Stato",
+      "expires": "Scadenza",
+      "actions": "Azioni",
+      "revoke": "Revoca",
+      "revokeTitle": "Revocare l’invito?",
+      "revokeDesc": "Vuoi revocare questo invito pendente?",
+      "cancel": "Annulla"
+    }
+  },
   "help": {
     "title": "Help Center",
     "subtitle": "Come usare al meglio AI Knowledge Hub.",

@@ -200,6 +200,7 @@ export {
   sendAdminSubscriptionChange,
   sendAdminAccountDeleted,
   sendUserPlanReminder,
+  sendInviteEmail,
 };
 
 
