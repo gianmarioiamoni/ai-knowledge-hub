@@ -214,6 +214,8 @@
     "signup": "Crea account",
     "email": "Email",
     "password": "Password",
+    "organization": "Nome azienda",
+    "verifyEmail": "Controlla l’email per verificare l’account, poi accedi.",
     "continueWithGoogle": "Continua con Google",
     "welcome": "Benvenuto nel tuo hub",
     "createSpace": "Crea il tuo spazio",

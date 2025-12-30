@@ -7,10 +7,13 @@ type CredentialFormProps = {
   mode: Mode;
   modeLabel: string;
   error?: string;
+  success?: string;
   action: BoundAuthAction;
   labels: {
     email: string;
     password: string;
+    organization?: string;
+    verifyNotice?: string;
   };
 };
 
@@ -18,6 +21,7 @@ function CredentialForm({
   mode,
   modeLabel,
   error,
+  success,
   action,
   labels,
 }: CredentialFormProps): JSX.Element {
@@ -50,9 +54,30 @@ function CredentialForm({
           placeholder="••••••••"
         />
       </div>
+      {mode === "signup" && labels.organization ? (
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-foreground" htmlFor="organization">
+            {labels.organization}
+          </label>
+          <Input
+            id="organization"
+            name="organization"
+            type="text"
+            required
+            minLength={2}
+            placeholder="Acme Inc."
+            autoComplete="organization"
+          />
+        </div>
+      ) : null}
       {error ? (
         <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm font-semibold text-destructive">
           {error}
+        </p>
+      ) : null}
+      {success && mode === "signup" ? (
+        <p className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
+          {labels.verifyNotice ?? success}
         </p>
       ) : null}
       <Button type="submit" className="w-full">

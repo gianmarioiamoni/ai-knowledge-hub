@@ -15,6 +15,7 @@ import type { AuthFormState, Mode } from "./AuthForm/types";
 
 const initialState: AuthFormState = {
   error: "",
+  success: undefined,
 };
 
 function AuthForm(): JSX.Element {
@@ -28,6 +29,7 @@ function AuthForm(): JSX.Element {
     () => (mode === "signin" ? signInState.error : signUpState.error),
     [mode, signInState.error, signUpState.error]
   );
+  const currentSuccess = useMemo(() => (mode === "signup" ? signUpState.success : undefined), [mode, signUpState.success]);
 
   const modeLabel = mode === "signin" ? tAuth("signin") : tAuth("signup");
 
@@ -58,8 +60,14 @@ function AuthForm(): JSX.Element {
               mode={mode}
               modeLabel={modeLabel}
               error={currentError}
+              success={currentSuccess}
               action={mode === "signin" ? signInAction : signUpAction}
-              labels={{ email: tAuth("email"), password: tAuth("password") }}
+              labels={{
+                email: tAuth("email"),
+                password: tAuth("password"),
+                organization: mode === "signup" ? tAuth("organization") : undefined,
+                verifyNotice: mode === "signup" ? tAuth("verifyEmail") : undefined,
+              }}
             />
           </div>
 

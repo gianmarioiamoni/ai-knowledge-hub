@@ -10,11 +10,18 @@ import { routing } from "@/i18n/routing";
 
 type AuthFormState = {
   error?: string;
+  success?: string;
 };
 
-const credentialsSchema = z.object({
+const signInSchema = z.object({
   email: z.string().email("Email non valida"),
   password: z.string().min(6, "Password minima 6 caratteri"),
+});
+
+const signUpSchema = z.object({
+  email: z.string().email("Email non valida"),
+  password: z.string().min(6, "Password minima 6 caratteri"),
+  organization: z.string().min(2, "Nome azienda richiesto"),
 });
 
 const getPreferredLocale = async (): Promise<(typeof routing.locales)[number]> => {
@@ -30,7 +37,7 @@ export async function signInWithPassword(
   _prevState: AuthFormState,
   formData: FormData
 ): Promise<AuthFormState> {
-  const parsed = credentialsSchema.safeParse({
+  const parsed = signInSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
   });
@@ -58,9 +65,10 @@ export async function signUpWithPassword(
   _prevState: AuthFormState,
   formData: FormData
 ): Promise<AuthFormState> {
-  const parsed = credentialsSchema.safeParse({
+  const parsed = signUpSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
+    organization: formData.get("organization"),
   });
 
   if (!parsed.success) {
@@ -68,7 +76,19 @@ export async function signUpWithPassword(
   }
 
   const supabase = createSupabaseServerClient();
-  const { data, error } = await supabase.auth.signUp(parsed.data);
+  const { data, error } = await supabase.auth.signUp({
+    email: parsed.data.email,
+    password: parsed.data.password,
+    options: {
+      data: {
+        organization_name: parsed.data.organization,
+        role: "COMPANY_ADMIN",
+      },
+      emailRedirectTo: process.env.NEXT_PUBLIC_SITE_URL
+        ? `${process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "")}/login`
+        : undefined,
+    },
+  });
 
   if (error) {
     return { error: error.message };
@@ -83,8 +103,7 @@ export async function signUpWithPassword(
     ]);
   }
 
-  const locale = await getPreferredLocale();
-  redirect(`/${locale}/dashboard`);
+  return { success: "check_email" };
 }
 
 export async function signInWithGoogle(): Promise<void> {
