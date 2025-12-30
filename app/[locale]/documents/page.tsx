@@ -151,7 +151,7 @@ export default async function DocumentsPage({
                         id={doc.id}
                         name={getDisplayName(doc) ?? doc.file_path}
                         label={t("delete.label")}
-                        confirmText={t("delete.confirm")}
+                        confirmText={t("delete.confirm", { title: getDisplayName(doc) ?? doc.file_path })}
                         cancelLabel={t("delete.cancel")}
                       />
                     </td>
