@@ -6,13 +6,22 @@ type Pill = { label: string };
 type BadgePillsProps = {
   badgeLabel?: string;
   showBadge?: boolean;
+  showTitle?: boolean;
   title: string;
   headline: string;
   subtitle: string;
   pills: Pill[];
 };
 
-function BadgePills({ badgeLabel, showBadge = true, title, headline, subtitle, pills }: BadgePillsProps): JSX.Element {
+function BadgePills({
+  badgeLabel,
+  showBadge = true,
+  showTitle = true,
+  title,
+  headline,
+  subtitle,
+  pills,
+}: BadgePillsProps): JSX.Element {
   return (
     <div className="space-y-3">
       {badgeLabel && showBadge ? (
@@ -22,7 +31,9 @@ function BadgePills({ badgeLabel, showBadge = true, title, headline, subtitle, p
         </div>
       ) : null}
       <div className="space-y-2">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{title}</p>
+        {showTitle ? (
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{title}</p>
+        ) : null}
         <h1 className="text-3xl font-semibold leading-tight text-foreground sm:text-4xl">{headline}</h1>
         <p className="max-w-3xl text-base text-muted-foreground">{subtitle}</p>
       </div>

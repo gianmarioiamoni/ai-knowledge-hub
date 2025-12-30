@@ -70,6 +70,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <BadgePills
             showBadge={false}
+            showTitle={false}
             title=""
             headline={email}
             subtitle="Controlla carichi, ingestion e conversazioni."
