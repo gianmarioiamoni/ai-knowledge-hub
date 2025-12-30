@@ -8,9 +8,9 @@ import { canInviteUsers } from "@/lib/server/roles";
 import { createInvite, revokeInvite } from "./actions";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { format } from "date-fns";
 import { InviteForm } from "@/components/invites/InviteForm";
+import { InviteRowActions } from "@/components/invites/InviteRowActions";
 
 type InviteRow = {
   id: string;
@@ -107,22 +107,16 @@ export default async function InvitesPage({
                     </td>
                     <td className="px-4 py-3 text-right">
                       {inv.status === "pending" ? (
-                        <ConfirmDialog
-                          title={t("list.revokeTitle")}
-                          description={t("list.revokeDesc")}
-                          confirmLabel={t("list.revoke")}
-                          cancelLabel={t("list.cancel")}
-                          onConfirm={async () => {
-                            const fd = new FormData();
-                            fd.append("locale", locale);
-                            fd.append("id", inv.id);
-                            await revokeInvite({}, fd);
+                        <InviteRowActions
+                          locale={locale}
+                          id={inv.id}
+                          labels={{
+                            revoke: t("list.revoke"),
+                            revokeTitle: t("list.revokeTitle"),
+                            revokeDesc: t("list.revokeDesc"),
+                            cancel: t("list.cancel"),
+                            success: t("list.revokeSuccess"),
                           }}
-                          trigger={
-                            <Button variant="ghost" size="sm" className="text-rose-600 hover:text-rose-700">
-                              {t("list.revoke")}
-                            </Button>
-                          }
                         />
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>

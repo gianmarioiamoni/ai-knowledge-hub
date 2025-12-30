@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { toast } from "sonner";
 import { handleDeleteDocument } from "@/app/[locale]/documents/actions";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { Button } from "@/components/ui/button";
@@ -32,7 +33,12 @@ function DeleteDocumentAction({ locale, id, labels }: DeleteDocumentActionProps)
           const fd = new FormData();
           fd.append("locale", locale);
           fd.append("id", id);
-          await handleDeleteDocument({}, fd);
+          const res = await handleDeleteDocument({}, fd);
+          if (res?.error) {
+            toast.error(res.error);
+          } else {
+            toast.success(labels.deleteLabel);
+          }
         })
       }
       trigger={

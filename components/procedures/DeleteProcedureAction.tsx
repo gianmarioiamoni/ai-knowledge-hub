@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { toast } from "sonner";
 import { handleDeleteSop } from "@/app/[locale]/procedures/actions";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,12 @@ function DeleteProcedureAction({ locale, id, title, labels }: DeleteProcedureAct
           const fd = new FormData();
           fd.append("locale", locale);
           fd.append("id", id);
-          await handleDeleteSop(fd);
+          const res = await handleDeleteSop(fd);
+          if (res?.error) {
+            toast.error(res.error);
+          } else {
+            toast.success(labels.deleteLabel);
+          }
         })
       }
       trigger={

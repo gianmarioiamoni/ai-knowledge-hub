@@ -2,7 +2,6 @@ import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { JSX } from "react";
 import { redirect } from "@/i18n/navigation";
-import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { handleGenerateSop } from "./actions";
