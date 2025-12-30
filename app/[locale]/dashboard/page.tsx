@@ -159,7 +159,8 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
         />
 
         <BadgePills
-          badgeLabel={t("title")}
+          showBadge={false}
+          showTitle
           title={t("title")}
           headline={t("headline")}
           subtitle={t("subtitle")}
