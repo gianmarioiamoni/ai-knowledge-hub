@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createServerClient } from "@supabase/ssr";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { getOrganizationPlanId, getPlanLimits } from "@/lib/server/subscriptions";
 import { getTranslations } from "next-intl/server";
+import { env } from "@/lib/env";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const search = request.nextUrl.searchParams;
@@ -17,10 +19,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const service = createSupabaseServiceClient();
   const t = await getTranslations({ locale, namespace: "invites" });
 
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError || !userData.user) {
-    return NextResponse.redirect(new URL(`/login?next=/invite/accept?token=${token}&locale=${locale}`, request.url));
-  }
+  const { data: userData } = await supabase.auth.getUser();
 
   const { data: invite, error: inviteErr } = await service
     .from("organization_invites")
@@ -37,16 +36,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL(`/${locale}/login?error=invite_expired`, request.url));
   }
 
-  if (invite.email && invite.email.toLowerCase() !== (userData.user.email ?? "").toLowerCase()) {
-    return NextResponse.redirect(new URL(`/${locale}/login?error=invite_email_mismatch`, request.url));
-  }
+  const targetEmail = invite.email?.toLowerCase() ?? null;
 
-  const existingMembership = await service
-    .from("organization_members")
-    .select("role")
-    .eq("organization_id", invite.organization_id)
-    .eq("user_id", userData.user.id)
-    .maybeSingle();
+  const existingUser = targetEmail
+    ? await service.auth.admin.getUserByEmail(targetEmail)
+    : null;
 
   const planId = await getOrganizationPlanId(invite.organization_id);
   const limits = getPlanLimits(planId);
@@ -58,11 +52,65 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     .eq("organization_id", invite.organization_id)
     .eq("role", invite.role);
 
-  // If already member, do not block; otherwise enforce limit
-  if (!existingMembership.data && (membersCount ?? 0) >= targetLimit) {
-    const errorMsg = invite.role === "CONTRIBUTOR" ? t("errors.limitContributor", { count: targetLimit }) : t("errors.limitViewer", { count: targetLimit });
+  const isAlreadyMember = existingUser?.data?.user?.id
+    ? Boolean(
+        await service
+          .from("organization_members")
+          .select("user_id", { head: true, count: "exact" })
+          .eq("organization_id", invite.organization_id)
+          .eq("user_id", existingUser.data.user.id)
+      )
+    : false;
+
+  // enforce limit only if new membership
+  if (!isAlreadyMember && (membersCount ?? 0) >= targetLimit) {
+    const errorMsg =
+      invite.role === "CONTRIBUTOR"
+        ? t("errors.limitContributor", { count: targetLimit })
+        : t("errors.limitViewer", { count: targetLimit });
     return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errorMsg)}`, request.url));
   }
+
+  // Create or reuse user
+  let userId = existingUser?.data?.user?.id ?? null;
+  let tempPassword: string | null = null;
+
+  if (!userId) {
+    tempPassword = crypto.randomUUID();
+    const { data: createdUser, error: createErr } = await service.auth.admin.createUser({
+      email: targetEmail ?? `invite-${token}@example.com`,
+      email_confirm: true,
+      password: tempPassword,
+      user_metadata: {
+        role: invite.role,
+        organization_name: (await service.from("organizations").select("name").eq("id", invite.organization_id).single())
+          ?.data?.name,
+        plan: {
+          id: "trial",
+          billingCycle: "monthly",
+          trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          renewalAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          reminder3DaysSent: false,
+          reminder1DaySent: false,
+        },
+      },
+    });
+    if (createErr || !createdUser?.user?.id) {
+      return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_create_failed`, request.url));
+    }
+    userId = createdUser.user.id;
+  }
+
+  await service
+    .from("organization_members")
+    .upsert({
+      user_id: userId,
+      organization_id: invite.organization_id,
+      role: invite.role,
+      disabled: false,
+    })
+    .eq("user_id", userId)
+    .eq("organization_id", invite.organization_id);
 
   await service
     .from("organization_members")
@@ -75,24 +123,38 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     .eq("user_id", userData.user.id)
     .eq("organization_id", invite.organization_id);
 
-  await service
-    .from("organization_invites")
-    .update({ status: "accepted" })
-    .eq("id", invite.id);
+  await service.from("organization_invites").update({ status: "accepted" }).eq("id", invite.id);
 
-  // update user metadata with org name
-  const { data: orgRow } = await service.from("organizations").select("name").eq("id", invite.organization_id).single();
-  const orgName = (orgRow as { name?: string } | null)?.name;
-
-  await supabase.auth.updateUser({
-    data: {
-      ...((userData.user.user_metadata as Record<string, unknown> | null) ?? {}),
-      role: invite.role,
-      organization_name: orgName,
+  // Sign in (create session) and force password change
+  const response = NextResponse.redirect(new URL(`/${locale}/dashboard?forcePassword=true`, request.url));
+  const cookieClient = createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+    cookies: {
+      get(name: string) {
+        return request.cookies.get(name)?.value;
+      },
+      set(name: string, value: string, options) {
+        response.cookies.set({ name, value, ...options });
+      },
+      remove(name: string, options) {
+        response.cookies.set({ name, value: "", ...options, maxAge: 0 });
+      },
     },
   });
 
-  return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+  const signInEmail = targetEmail ?? userData?.user?.email ?? null;
+  const passwordToUse = userData?.user ? null : tempPassword;
+
+  if (signInEmail && passwordToUse) {
+    const { error: signInError } = await cookieClient.auth.signInWithPassword({
+      email: signInEmail,
+      password: passwordToUse,
+    });
+    if (signInError) {
+      return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(signInError.message)}`, request.url));
+    }
+  }
+
+  return response;
 }
 
 
