@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/card";
 import { ProcedureList } from "@/components/procedures/ProcedureList";
 import { GenerateSopDialog } from "@/components/procedures/GenerateSopDialog";
 import { buildMetadata } from "@/lib/seo";
+import { canGenerateSop } from "@/lib/server/roles";
 
 type ProcedureRow = {
   id: string;
@@ -58,6 +59,7 @@ export default async function ProceduresPage({
   if (role === "SUPER_ADMIN") {
     redirect({ href: "/admin-stats", locale });
   }
+  const allowGenerate = canGenerateSop(role as any);
 
   const service = createSupabaseServiceClient();
   const organizationId = await ensureUserOrganization({ supabase });
@@ -87,23 +89,25 @@ export default async function ProceduresPage({
         <p className="text-sm text-muted-foreground">{t("description")}</p>
       </div>
 
-      <div className="flex justify-end">
-        <GenerateSopDialog
-          locale={locale}
-          labels={{
-            trigger: t("generate"),
-            titleLabel: t("form.titleLabel"),
-            scopeLabel: t("form.scopeLabel"),
-            submit: t("form.submit"),
-            cancel: t("form.cancel"),
-            success: t("form.success"),
-            description: t("form.description"),
-            allowFreeLabel: t("form.allowFreeLabel"),
-            allowFreeWarning: t("form.allowFreeWarning"),
-          }}
-          action={handleGenerateSop}
-        />
-      </div>
+      {allowGenerate ? (
+        <div className="flex justify-end">
+          <GenerateSopDialog
+            locale={locale}
+            labels={{
+              trigger: t("generate"),
+              titleLabel: t("form.titleLabel"),
+              scopeLabel: t("form.scopeLabel"),
+              submit: t("form.submit"),
+              cancel: t("form.cancel"),
+              success: t("form.success"),
+              description: t("form.description"),
+              allowFreeLabel: t("form.allowFreeLabel"),
+              allowFreeWarning: t("form.allowFreeWarning"),
+            }}
+            action={handleGenerateSop}
+          />
+        </div>
+      ) : null}
 
       <Card className="border border-white/40 bg-white/70 p-6 backdrop-blur dark:border-white/10 dark:bg-white/5">
         <div className="mb-4 flex items-center justify-between">

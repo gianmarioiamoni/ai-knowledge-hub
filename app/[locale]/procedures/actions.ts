@@ -8,6 +8,7 @@ import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { generateSop } from "@/lib/server/sop";
 import { rateLimit } from "@/lib/server/rateLimit";
 import { embedQuery, searchSimilarChunks } from "@/lib/server/rag";
+import { canGenerateSop } from "@/lib/server/roles";
 
 const messages = {
   en: {
@@ -51,6 +52,12 @@ export const handleGenerateSop = async (_prev: ActionResult, formData: FormData)
 
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
+    const locale = parsed.data.locale as keyof typeof messages;
+    return { error: messages[locale]?.unauthorized ?? "You must be logged in" };
+  }
+
+  const role = (userData.user.user_metadata as { role?: string } | null)?.role;
+  if (!canGenerateSop(role as any)) {
     const locale = parsed.data.locale as keyof typeof messages;
     return { error: messages[locale]?.unauthorized ?? "You must be logged in" };
   }
@@ -132,6 +139,11 @@ export const handleDeleteSop = async (formData: FormData): Promise<ActionResult>
     return { error: "You must be logged in" };
   }
 
+  const role = (userData.user.user_metadata as { role?: string } | null)?.role;
+  if (!canGenerateSop(role as any)) {
+    return { error: "Permission denied" };
+  }
+
   const organizationId = await ensureUserOrganization({ supabase });
 
   const { error: delError } = await service
@@ -170,6 +182,11 @@ export const handleRenameSop = async (formData: FormData): Promise<ActionResult>
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
     return { error: "You must be logged in" };
+  }
+
+  const role = (userData.user.user_metadata as { role?: string } | null)?.role;
+  if (!canGenerateSop(role as any)) {
+    return { error: "Permission denied" };
   }
 
   const organizationId = await ensureUserOrganization({ supabase });
