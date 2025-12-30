@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { submitContact } from "@/app/[locale]/contact/actions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 type TopicOption = { value: string; label: string };
 
@@ -33,6 +34,14 @@ type ContactFormProps = {
 
 function ContactForm({ defaultEmail, locale, topics, labels }: ContactFormProps): JSX.Element {
   const [state, formAction] = useActionState(submitContact, {});
+
+  useEffect(() => {
+    if (state?.success) {
+      toast.success(labels.success);
+    } else if (state?.error) {
+      toast.error(labels.error);
+    }
+  }, [labels.error, labels.success, state?.error, state?.success]);
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4 px-6 py-12">

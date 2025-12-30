@@ -1,6 +1,7 @@
 "use client";
 
-import { JSX, useActionState, useRef, useState, useTransition } from "react";
+import { JSX, useActionState, useEffect, useRef, useState, useTransition } from "react";
+import { toast } from "sonner";
 import { handleUploadWithState } from "@/app/[locale]/documents/actions";
 
 type FormState = {
@@ -42,6 +43,14 @@ function UploadForm({ locale, labels, action = handleUploadWithState }: UploadFo
   const [pending, startTransition] = useTransition();
   const [localError, setLocalError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (state?.success) {
+      toast.success(state.success);
+    } else if (state?.error) {
+      toast.error(state.error);
+    }
+  }, [state?.error, state?.success]);
 
   const handleSubmit = (formData: FormData) => {
     const file = fileRef.current?.files?.[0];
