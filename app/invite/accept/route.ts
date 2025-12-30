@@ -81,7 +81,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   // Create or reuse user
   let userId = existingUser?.id ?? null;
-  let tempPassword: string | null = crypto.randomUUID();
+  // only generate a temp password for new users; existing users keep their current credentials
+  let tempPassword: string | null = existingUser ? null : crypto.randomUUID();
   const orgName =
     (
       await service.from("organizations").select("name").eq("id", invite.organization_id).single()
@@ -90,7 +91,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (userId) {
     const { error: updErr } = await service.auth.admin.updateUserById(userId, {
       email: existingUser.email ?? targetEmail ?? undefined,
-      password: tempPassword,
       email_confirm: true,
       user_metadata: {
         role: invite.role,
@@ -133,17 +133,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       disabled: false,
     })
     .eq("user_id", userId)
-    .eq("organization_id", invite.organization_id);
-
-  await service
-    .from("organization_members")
-    .upsert({
-      user_id: userData.user.id,
-      organization_id: invite.organization_id,
-      role: invite.role,
-      disabled: false,
-    })
-    .eq("user_id", userData.user.id)
     .eq("organization_id", invite.organization_id);
 
   await service.from("organization_invites").update({ status: "accepted" }).eq("id", invite.id);
