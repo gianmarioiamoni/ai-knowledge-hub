@@ -65,12 +65,12 @@ export default async function DashboardPage(): Promise<JSX.Element> {
       </div>
 
       <div className="relative mx-auto flex max-w-6xl flex-col gap-8">
-        <HeaderBar title="Dashboard" headline={email} actionSlot={logoutButton} />
+        <HeaderBar title="" headline={email} actionSlot={logoutButton} />
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <BadgePills
             badgeLabel="AI Knowledge Hub"
-            title="Dashboard"
+            title=""
             headline={email}
             subtitle="Controlla carichi, ingestion e conversazioni."
             pills={[
