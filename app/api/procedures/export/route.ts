@@ -6,6 +6,9 @@ import { renderSopPdf } from "@/lib/server/sopPdf";
 import { logError, logInfo } from "@/lib/server/logger";
 import { rateLimit } from "@/lib/server/rateLimit";
 import { z } from "zod";
+import { requireActiveOrganization } from "@/lib/server/organizations";
+import { ensureActivePlan } from "@/lib/server/subscriptions";
+import { canGenerateSop } from "@/lib/server/roles";
 
 export const runtime = "nodejs";
 
@@ -53,6 +56,13 @@ export async function GET(request: Request): Promise<Response> {
     logError("Unauthorized export attempt", { route: "procedures/export" });
     return NextResponse.json({ error: t.unauthorized }, { status: 401 });
   }
+  const role = (userData.user.user_metadata as { role?: string } | null)?.role;
+  if (!canGenerateSop(role as any)) {
+    return NextResponse.json({ error: t.unauthorized }, { status: 403 });
+  }
+
+  ensureActivePlan(userData.user, locale, true);
+  const { organizationId } = await requireActiveOrganization({ supabase, locale });
 
   const rl = rateLimit(`export:${userData.user.id}`, { limit: 20, windowMs: 60_000 });
   if (!rl.allowed) {
@@ -63,23 +73,12 @@ export async function GET(request: Request): Promise<Response> {
   }
 
   const service = createSupabaseServiceClient();
-  const { data: membership } = await service
-    .from("organization_members")
-    .select("organization_id")
-    .eq("user_id", userData.user.id)
-    .limit(1)
-    .maybeSingle();
-
-  if (!membership?.organization_id) {
-    logError("Export without organization", { userId: userData.user.id });
-    return NextResponse.json({ error: t.noOrg }, { status: 403 });
-  }
 
   const { data, error } = await service
     .from("procedures")
     .select("id,title,content,source_documents,organization_id")
     .eq("id", id)
-    .eq("organization_id", membership.organization_id)
+    .eq("organization_id", organizationId)
     .single();
 
   if (error || !data) {
@@ -94,7 +93,7 @@ export async function GET(request: Request): Promise<Response> {
       sourceDocuments: data.source_documents ?? [],
     });
     const pdfBytes = new Uint8Array(pdf);
-    logInfo("SOP export PDF", { id, org: membership.organization_id });
+    logInfo("SOP export PDF", { id, org: organizationId });
     return new NextResponse(pdfBytes, {
       headers: {
         "Content-Type": "application/pdf",
@@ -109,7 +108,7 @@ export async function GET(request: Request): Promise<Response> {
     content: data.content,
     sourceDocuments: data.source_documents ?? [],
   });
-  logInfo("SOP export MD", { id, org: membership.organization_id });
+  logInfo("SOP export MD", { id, org: organizationId });
   return new NextResponse(md, {
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",

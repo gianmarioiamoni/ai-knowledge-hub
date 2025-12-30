@@ -5,6 +5,9 @@ import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { rateLimit } from "@/lib/server/rateLimit";
 import { logError } from "@/lib/server/logger";
+import { requireActiveOrganization } from "@/lib/server/organizations";
+import { ensureActivePlan } from "@/lib/server/subscriptions";
+import { canUseChat } from "@/lib/server/roles";
 
 const schema = z.object({
   conversationId: z.string().uuid(),
@@ -23,6 +26,13 @@ export async function GET(request: Request): Promise<NextResponse> {
   if (userError || !userData.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const role = (userData.user.user_metadata as { role?: string } | null)?.role;
+  if (!canUseChat(role as any)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  ensureActivePlan(userData.user, "en", true);
+  const { organizationId } = await requireActiveOrganization({ supabase, locale: "en" });
 
   const rl = rateLimit(`chat-msg:${userData.user.id}`, { limit: 60, windowMs: 60_000 });
   if (!rl.allowed) {
@@ -43,15 +53,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
   }
 
-  const { data: membership } = await service
-    .from("organization_members")
-    .select("organization_id")
-    .eq("user_id", userData.user.id)
-    .eq("organization_id", conv.organization_id)
-    .limit(1)
-    .maybeSingle();
-
-  if (!membership) {
+  if (conv.organization_id !== organizationId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
