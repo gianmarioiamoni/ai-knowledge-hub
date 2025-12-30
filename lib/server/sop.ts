@@ -1,6 +1,8 @@
 type SopPromptInput = {
   title: string;
   scope: string;
+  context?: string[];
+  allowFree?: boolean;
 };
 
 type SopGenerated = {
@@ -9,8 +11,8 @@ type SopGenerated = {
   sourceDocuments: string[];
 };
 
-const buildSopPrompt = ({ title, scope }: SopPromptInput): string => {
-  return [
+const buildSopPrompt = ({ title, scope, context, allowFree }: SopPromptInput): string => {
+  const base = [
     "You are an expert process engineer. Create a concise Standard Operating Procedure (SOP) with the following structure:",
     "- Title",
     "- Purpose",
@@ -26,7 +28,15 @@ const buildSopPrompt = ({ title, scope }: SopPromptInput): string => {
     "",
     `SOP Title: ${title}`,
     `Scope/Context: ${scope}`,
-  ].join("\n");
+  ];
+
+  if (context && context.length > 0) {
+    base.push("", "Use only the following context from company documents:", ...context);
+  } else if (!allowFree) {
+    base.push("", "No context provided. Do not invent; keep the SOP minimal and neutral.");
+  }
+
+  return base.join("\n");
 };
 
 const generateSop = async (input: SopPromptInput): Promise<SopGenerated> => {
@@ -54,7 +64,7 @@ const generateSop = async (input: SopPromptInput): Promise<SopGenerated> => {
   return {
     title: input.title,
     content,
-    sourceDocuments: [],
+    sourceDocuments: input.context ?? [],
   };
 };
 

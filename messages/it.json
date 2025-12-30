@@ -385,7 +385,9 @@
       "submit": "Genera",
       "cancel": "Annulla",
       "success": "SOP generata con successo",
-      "description": "Inserisci titolo e ambito/contesto per generare la SOP. Potrai esportarla in PDF o Markdown."
+      "description": "Default: generazione RAG usando i documenti ingestati. Puoi consentire una SOP libera (senza contesto) se necessario.",
+      "allowFreeLabel": "Consenti generazione senza contesto dai documenti (sconsigliato)",
+      "allowFreeWarning": "Attenzione: senza contesto documentale, la SOP potrebbe non allinearsi alle fonti."
     },
     "breadcrumbs": {
       "home": "Dashboard",

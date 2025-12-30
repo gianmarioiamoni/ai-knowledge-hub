@@ -7,15 +7,18 @@ import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { generateSop } from "@/lib/server/sop";
 import { rateLimit } from "@/lib/server/rateLimit";
+import { embedQuery, searchSimilarChunks } from "@/lib/server/rag";
 
 const messages = {
   en: {
     unauthorized: "You must be logged in",
     rateLimit: "Too many SOP requests. Please try again later.",
+    noContext: "No relevant content found in your documents. Add documents or enable free mode.",
   },
   it: {
     unauthorized: "Devi essere autenticato",
     rateLimit: "Troppe richieste SOP. Riprova più tardi.",
+    noContext: "Nessun contenuto rilevante trovato nei documenti. Aggiungi documenti o abilita la modalità libera.",
   },
 } as const;
 
@@ -23,6 +26,7 @@ const generateSchema = z.object({
   locale: z.string().min(2),
   title: z.string().min(3, "Title is required").max(120, "Title too long"),
   scope: z.string().min(5, "Scope is required").max(2000, "Scope too long"),
+  allowFree: z.enum(["on", "off"]).default("off"),
 });
 
 type ActionResult = {
@@ -35,6 +39,7 @@ export const handleGenerateSop = async (_prev: ActionResult, formData: FormData)
     locale: formData.get("locale"),
     title: formData.get("title"),
     scope: formData.get("scope"),
+    allowFree: formData.get("allowFree") ? "on" : "off",
   });
 
   if (!parsed.success) {
@@ -58,14 +63,33 @@ export const handleGenerateSop = async (_prev: ActionResult, formData: FormData)
 
   const organizationId = await ensureUserOrganization({ supabase });
 
+  const allowFree = parsed.data.allowFree === "on";
+
   try {
-    const sop = await generateSop({ title: parsed.data.title, scope: parsed.data.scope });
+    const chunks = await fetchSopContext({ organizationId, query: `${parsed.data.title}\n${parsed.data.scope}` });
+
+    if (!allowFree && chunks.length === 0) {
+      return { error: messages[locale]?.noContext ?? "No context found in documents" };
+    }
+
+    const contextTexts = chunks.map((c) => c.chunk_text);
+
+    const sop = await generateSop({
+      title: parsed.data.title,
+      scope: parsed.data.scope,
+      context: contextTexts.length > 0 ? contextTexts : undefined,
+      allowFree,
+    });
 
     const { error: insertError } = await service.from("procedures").insert({
       organization_id: organizationId,
       title: sop.title,
       content: sop.content,
       source_documents: sop.sourceDocuments,
+      metadata: {
+        allowFree,
+        contextUsed: contextTexts.length,
+      },
     });
 
     if (insertError) {
@@ -77,6 +101,17 @@ export const handleGenerateSop = async (_prev: ActionResult, formData: FormData)
   } catch (error) {
     return { error: error instanceof Error ? error.message : "SOP generation failed" };
   }
+};
+
+const fetchSopContext = async ({
+  organizationId,
+  query,
+}: {
+  organizationId: string;
+  query: string;
+}) => {
+  const embedding = await embedQuery(query);
+  return searchSimilarChunks(organizationId, embedding, 6);
 };
 
 const deleteSchema = z.object({

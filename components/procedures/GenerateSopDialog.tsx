@@ -24,6 +24,8 @@ type GenerateSopDialogProps = {
     cancel: string;
     success: string;
     description: string;
+    allowFreeLabel: string;
+    allowFreeWarning: string;
   };
   action?: typeof handleGenerateSop;
 };
@@ -37,11 +39,13 @@ function GenerateSopDialog({ locale, labels, action = handleGenerateSop }: Gener
   const [state, formAction] = useActionState<FormState, FormData>(action, {});
   const [pending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
+  const [allowFree, setAllowFree] = useState(false);
   const formRef = useRef<HTMLFormElement | null>(null);
 
   useEffect(() => {
     if (state?.success) {
       formRef.current?.reset();
+      setAllowFree(false);
       setOpen(false);
     }
   }, [state?.success]);
@@ -81,6 +85,21 @@ function GenerateSopDialog({ locale, labels, action = handleGenerateSop }: Gener
           <label className="flex flex-col gap-2 text-sm font-medium text-foreground">
             {labels.scopeLabel}
             <Textarea name="scope" required minLength={5} rows={4} disabled={pending} />
+          </label>
+          <label className="flex items-start gap-2 text-sm text-foreground">
+            <input
+              type="checkbox"
+              name="allowFree"
+              checked={allowFree}
+              onChange={(e) => setAllowFree(e.target.checked)}
+              disabled={pending}
+              className="mt-1"
+            />
+            <span>
+              <span className="font-medium">{labels.allowFreeLabel}</span>
+              <br />
+              <span className="text-xs text-amber-700">{labels.allowFreeWarning}</span>
+            </span>
           </label>
           <div className="flex items-center justify-end gap-2">
             <Button type="button" variant="outline" disabled={pending} onClick={handleCancel}>

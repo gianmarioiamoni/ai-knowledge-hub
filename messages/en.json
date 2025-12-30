@@ -385,7 +385,9 @@
       "submit": "Generate",
       "cancel": "Cancel",
       "success": "SOP generated successfully",
-      "description": "Fill the title and scope/context to generate a SOP. You can export it later in PDF or Markdown."
+      "description": "Default: RAG-first generation using your ingested documents. You can allow a free SOP (no document context) if needed.",
+      "allowFreeLabel": "Allow generation without document context (not recommended)",
+      "allowFreeWarning": "Warning: without document context, the SOP may not align with your sources."
     },
     "breadcrumbs": {
       "home": "Dashboard",
