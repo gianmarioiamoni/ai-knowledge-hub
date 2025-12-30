@@ -12,6 +12,10 @@ const uploadSchema = z.object({
 });
 
 type ActionResult = { error?: string; success?: string };
+const deleteSchema = z.object({
+  locale: z.string().min(2),
+  id: z.string().min(1),
+});
 
 export async function handleUploadWithState(
   _prevState: ActionResult,
@@ -113,6 +117,46 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
   revalidatePath(`/${locale.data.locale}/documents`);
   return { success: "Document uploaded and ingested" };
 }
+
+export const handleDeleteDocument = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {
+  return deleteDocument(formData);
+};
+
+export const deleteDocument = async (formData: FormData): Promise<ActionResult> => {
+  const parsed = deleteSchema.safeParse({
+    locale: formData.get("locale"),
+    id: formData.get("id"),
+  });
+  if (!parsed.success) {
+    return { error: "Invalid request" };
+  }
+
+  const supabase = createSupabaseServerClient();
+  const service = createSupabaseServiceClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user) {
+    return { error: "You must be logged in" };
+  }
+
+  const organizationId = await ensureUserOrganization({ supabase });
+  const { data: doc, error: fetchErr } = await service
+    .from("documents")
+    .select("id,file_path")
+    .eq("id", parsed.data.id)
+    .eq("organization_id", organizationId)
+    .single();
+
+  if (fetchErr || !doc) {
+    return { error: "Document not found" };
+  }
+
+  await service.from("document_chunks").delete().eq("document_id", parsed.data.id);
+  await service.storage.from("documents").remove([doc.file_path]);
+  await service.from("documents").delete().eq("id", parsed.data.id);
+
+  revalidatePath(`/${parsed.data.locale}/documents`);
+  return { success: "deleted" };
+};
 
 type IngestionParams = {
   service: ReturnType<typeof createSupabaseServiceClient>;

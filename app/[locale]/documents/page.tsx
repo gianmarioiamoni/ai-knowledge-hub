@@ -8,6 +8,7 @@ import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { ensureActivePlan } from "@/lib/server/subscriptions";
 import { StatusBadge } from "@/components/documents/StatusBadge";
+import { DeleteDocumentDialog } from "@/components/documents/DeleteDocumentDialog";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { Card } from "@/components/ui/card";
 import { UploadForm } from "@/components/documents/UploadForm";
@@ -128,6 +129,7 @@ export default async function DocumentsPage({
                   <th className="px-4 py-3 text-left font-semibold text-foreground">{t("table.type")}</th>
                   <th className="px-4 py-3 text-left font-semibold text-foreground">{t("table.status")}</th>
                   <th className="px-4 py-3 text-left font-semibold text-foreground">{t("table.updated")}</th>
+                  <th className="px-4 py-3 text-right font-semibold text-foreground">{t("table.actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/80 bg-background/40">
@@ -142,6 +144,16 @@ export default async function DocumentsPage({
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">
                       {formatDate(doc.updated_at, locale)}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <DeleteDocumentDialog
+                        locale={locale}
+                        id={doc.id}
+                        name={getDisplayName(doc) ?? doc.file_path}
+                        label={t("delete.label")}
+                        confirmText={t("delete.confirm")}
+                        cancelLabel={t("delete.cancel")}
+                      />
                     </td>
                   </tr>
                 ))}

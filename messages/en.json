@@ -241,7 +241,8 @@
       "name": "Name",
       "type": "Type",
       "status": "Status",
-      "updated": "Updated"
+      "updated": "Updated",
+      "actions": "Actions"
     },
     "status": {
       "pending": "Pending",
@@ -260,6 +261,11 @@
     "links": {
       "chat": "Jump to chat",
       "procedures": "Generate a SOP"
+    },
+    "delete": {
+      "label": "Delete",
+      "confirm": "Are you sure you want to delete “{title}”? This cannot be undone.",
+      "cancel": "Cancel"
     }
   },
   "chatPage": {
