@@ -201,7 +201,7 @@ const sendInviteEmail = async (payload: {
   locale: string;
 }): Promise<void> => {
   const origin = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "http://localhost:3000";
-  const link = `${origin}/invite/accept?token=${payload.token}&locale=${payload.locale}`;
+  const link = `${origin}/${payload.locale}/invite/accept?token=${payload.token}`;
   const subject = `${SITE_NAME} – You’re invited to ${payload.orgName}`;
   const text = [
     `Hi,`,
