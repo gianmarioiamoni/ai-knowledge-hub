@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
-import { ensureUserOrganization } from "@/lib/server/organizations";
+import { ensureUserOrganization, requireActiveOrganizationId } from "@/lib/server/organizations";
 import { createEmbeddingModel, createTextSplitter } from "@/lib/server/langchain";
 import { canUploadDocs } from "@/lib/server/roles";
 
@@ -58,7 +58,7 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
     return { error: "Permission denied" };
   }
 
-  const organizationId = await ensureUserOrganization({ supabase });
+  const organizationId = await requireActiveOrganizationId({ supabase, locale: parsed.data.locale });
 
   const filePath = `${organizationId}/${crypto.randomUUID()}-${file.name}`;
 
@@ -149,7 +149,7 @@ export const deleteDocument = async (formData: FormData): Promise<ActionResult> 
     return { error: "Permission denied" };
   }
 
-  const organizationId = await ensureUserOrganization({ supabase });
+  const organizationId = await requireActiveOrganizationId({ supabase, locale: parsed.data.locale });
   const { data: doc, error: fetchErr } = await service
     .from("documents")
     .select("id,file_path")

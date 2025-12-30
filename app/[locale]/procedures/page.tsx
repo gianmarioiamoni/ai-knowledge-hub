@@ -13,6 +13,7 @@ import { ProcedureList } from "@/components/procedures/ProcedureList";
 import { GenerateSopDialog } from "@/components/procedures/GenerateSopDialog";
 import { buildMetadata } from "@/lib/seo";
 import { canGenerateSop } from "@/lib/server/roles";
+import { requireActiveOrganization } from "@/lib/server/organizations";
 
 type ProcedureRow = {
   id: string;
@@ -62,7 +63,7 @@ export default async function ProceduresPage({
   const allowGenerate = canGenerateSop(role as any);
 
   const service = createSupabaseServiceClient();
-  const organizationId = await ensureUserOrganization({ supabase });
+  const { organizationId } = await requireActiveOrganization({ supabase, locale });
 
   const { data: procedures } = await service
     .from("procedures")

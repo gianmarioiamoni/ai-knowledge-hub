@@ -1,16 +1,28 @@
 import { getTranslations } from "next-intl/server";
 import { JSX } from "react";
+import { redirect } from "@/i18n/navigation";
 import { PlansSection } from "@/components/subscriptions/PlansSection";
 import type { Plan } from "@/components/subscriptions/PlansSection/types";
 import type { PlanMetadata } from "@/lib/server/subscriptions";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { startPlanCheckout } from "./actions";
+import { requireActiveOrganization } from "@/lib/server/organizations";
+import { canManageOrg } from "@/lib/server/roles";
 
 export default async function PlansPage({ params }: { params: Promise<{ locale: string }> }): Promise<JSX.Element> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "plans" });
   const supabase = createSupabaseServerClient();
-  const { data } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) {
+    redirect({ href: "/login", locale });
+  }
+
+  const { role } = await requireActiveOrganization({ supabase, locale });
+  if (!canManageOrg(role as any) && role !== "SUPER_ADMIN") {
+    redirect({ href: "/dashboard", locale });
+  }
+
   const planMeta = (data.user?.user_metadata as { plan?: PlanMetadata } | undefined)?.plan;
   const parsePlanId = (value?: string): Plan["id"] => {
     if (value === "smb" || value === "enterprise" || value === "trial") return value;

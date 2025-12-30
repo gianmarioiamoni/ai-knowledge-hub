@@ -1,6 +1,7 @@
 // lib/server/organizations.ts
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createSupabaseServiceClient } from "./supabaseService";
+import { redirect } from "@/i18n/navigation";
 import type { UserRole } from "./roles";
 
 type EnsureOrganizationParams = {
@@ -76,5 +77,85 @@ export const ensureUserOrganization = async ({
   });
 
   return orgId;
+};
+
+type ActiveOrg = {
+  organizationId: string;
+  organizationName: string | null;
+  role: UserRole;
+  orgDisabled: boolean;
+  memberDisabled: boolean;
+};
+
+const fetchMembership = async (
+  userId: string
+): Promise<{ organization_id: string; role: UserRole; member_disabled: boolean; org_name: string | null; org_disabled: boolean } | null> => {
+  const service = createSupabaseServiceClient();
+  const { data } = await service
+    .from("organization_members")
+    .select("organization_id, role, disabled, organizations(name, disabled)")
+    .eq("user_id", userId)
+    .limit(1)
+    .maybeSingle();
+
+  if (!data) return null;
+  const org = (data as { organizations?: { name?: string | null; disabled?: boolean } }).organizations;
+  return {
+    organization_id: (data as { organization_id: string }).organization_id,
+    role: ((data as { role?: string }).role as UserRole) ?? null,
+    member_disabled: Boolean((data as { disabled?: boolean }).disabled),
+    org_name: org?.name ?? null,
+    org_disabled: Boolean(org?.disabled),
+  };
+};
+
+export const requireActiveOrganization = async ({
+  supabase,
+  locale,
+}: {
+  supabase: SupabaseClient;
+  locale: string;
+}): Promise<ActiveOrg> => {
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user) {
+    redirect({ href: "/login", locale });
+  }
+
+  let membership = await fetchMembership(userData.user!.id);
+  if (!membership) {
+    const orgId = await ensureUserOrganization({ supabase });
+    const service = createSupabaseServiceClient();
+    const { data: orgRow } = await service.from("organizations").select("name,disabled").eq("id", orgId).single();
+    membership = {
+      organization_id: orgId,
+      role: "COMPANY_ADMIN",
+      member_disabled: false,
+      org_name: (orgRow as { name?: string | null } | null)?.name ?? null,
+      org_disabled: Boolean((orgRow as { disabled?: boolean } | null)?.disabled),
+    };
+  }
+
+  if (membership.org_disabled || membership.member_disabled) {
+    redirect({ href: "/login?error=org_disabled", locale });
+  }
+
+  return {
+    organizationId: membership.organization_id,
+    organizationName: membership.org_name,
+    role: membership.role,
+    orgDisabled: membership.org_disabled,
+    memberDisabled: membership.member_disabled,
+  };
+};
+
+export const requireActiveOrganizationId = async ({
+  supabase,
+  locale,
+}: {
+  supabase: SupabaseClient;
+  locale: string;
+}): Promise<string> => {
+  const org = await requireActiveOrganization({ supabase, locale });
+  return org.organizationId;
 };
 

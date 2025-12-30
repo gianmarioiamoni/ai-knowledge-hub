@@ -5,7 +5,7 @@ import { redirect } from "@/i18n/navigation";
 import { handleUploadWithState } from "./actions";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
-import { ensureUserOrganization } from "@/lib/server/organizations";
+import { requireActiveOrganization } from "@/lib/server/organizations";
 import { ensureActivePlan } from "@/lib/server/subscriptions";
 import { StatusBadge } from "@/components/documents/StatusBadge";
 import { DeleteDocumentAction } from "@/components/documents/DeleteDocumentAction";
@@ -64,7 +64,7 @@ export default async function DocumentsPage({
   }
 
   const service = createSupabaseServiceClient();
-  const organizationId = await ensureUserOrganization({ supabase });
+  const { organizationId } = await requireActiveOrganization({ supabase, locale });
 
   const { data: docs } = await service
     .from("documents")

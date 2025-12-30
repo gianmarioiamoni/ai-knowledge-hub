@@ -4,7 +4,7 @@ import { JSX } from "react";
 import { ChatShell } from "@/components/chat/ChatShell";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { listConversations, listMessages } from "@/lib/server/chat";
-import { ensureUserOrganization } from "@/lib/server/organizations";
+import { requireActiveOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { ensureActivePlan } from "@/lib/server/subscriptions";
 import { buildMetadata } from "@/lib/seo";
@@ -44,8 +44,8 @@ export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.E
     return <></>;
   }
 
-  const orgId = await ensureUserOrganization({ supabase });
-  const conversations = await listConversations(orgId, data.user.id);
+  const { organizationId } = await requireActiveOrganization({ supabase, locale });
+  const conversations = await listConversations(organizationId, data.user.id);
   const initialConversationId = conversations[0]?.id;
   const initialMessages = initialConversationId ? await listMessages(initialConversationId) : [];
 
