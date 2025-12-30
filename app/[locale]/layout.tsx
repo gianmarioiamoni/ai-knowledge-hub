@@ -98,15 +98,19 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SentryClientInit />
-          <div className="relative z-50 mx-auto flex w-full max-w-6xl items-center justify-end gap-3 px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
-            <TopNav items={navItems} helpHref="/help" helpLabel={tHelp("title")} />
+          <div className="relative z-50 mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
             {role !== "SUPER_ADMIN" && orgName ? (
               <span className="hidden text-sm font-semibold text-muted-foreground sm:inline">{orgName}</span>
-            ) : null}
-            <CommandHint />
-            <CommandLauncher />
-            <LanguageSwitcher />
-            <CommandPalette />
+            ) : (
+              <span />
+            )}
+            <div className="flex items-center justify-end gap-3">
+              <TopNav items={navItems} helpHref="/help" helpLabel={tHelp("title")} />
+              <CommandHint />
+              <CommandLauncher />
+              <LanguageSwitcher />
+              <CommandPalette />
+            </div>
           </div>
           {children}
           <CookieBanner
