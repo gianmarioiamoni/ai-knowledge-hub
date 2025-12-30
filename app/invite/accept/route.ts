@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
+import { getOrganizationPlanId, getPlanLimits } from "@/lib/server/subscriptions";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const search = request.nextUrl.searchParams;
@@ -36,6 +37,28 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   if (invite.email && invite.email.toLowerCase() !== (userData.user.email ?? "").toLowerCase()) {
     return NextResponse.redirect(new URL(`/${locale}/login?error=invite_email_mismatch`, request.url));
+  }
+
+  const existingMembership = await service
+    .from("organization_members")
+    .select("role")
+    .eq("organization_id", invite.organization_id)
+    .eq("user_id", userData.user.id)
+    .maybeSingle();
+
+  const planId = await getOrganizationPlanId(invite.organization_id);
+  const limits = getPlanLimits(planId);
+  const targetLimit = invite.role === "CONTRIBUTOR" ? limits.maxContributors : limits.maxViewers;
+
+  const { count: membersCount } = await service
+    .from("organization_members")
+    .select("user_id", { count: "exact", head: true })
+    .eq("organization_id", invite.organization_id)
+    .eq("role", invite.role);
+
+  // If already member, do not block; otherwise enforce limit
+  if (!existingMembership.data && (membersCount ?? 0) >= targetLimit) {
+    return NextResponse.redirect(new URL(`/${locale}/login?error=role_limit_reached`, request.url));
   }
 
   await service

@@ -1,5 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 import { redirect } from "@/i18n/navigation";
+import { createSupabaseServiceClient } from "./supabaseService";
 
 type PlanMetadata = {
   id?: string;
@@ -71,6 +72,24 @@ const getPlanLimits = (planId: string | null): PlanLimits => {
   return planLimits[planId] ?? planLimits.trial;
 };
 
+const getOrganizationPlanId = async (organizationId: string): Promise<string> => {
+  const service = createSupabaseServiceClient();
+  const { data: adminMember } = await service
+    .from("organization_members")
+    .select("user_id, role")
+    .eq("organization_id", organizationId)
+    .eq("role", "COMPANY_ADMIN")
+    .limit(1)
+    .maybeSingle();
+
+  const fallback = "trial";
+  if (!adminMember?.user_id) return fallback;
+
+  const { data: user } = await service.auth.admin.getUserById(adminMember.user_id);
+  const planId = ((user?.user?.user_metadata as { plan?: PlanMetadata } | null)?.plan?.id as string | undefined) ?? fallback;
+  return planId ?? fallback;
+};
+
 export type { PlanStatus, PlanMetadata, PlanLimits };
-export { getPlanStatus, ensureActivePlan, isUnlimitedRole, getPlanLimits };
+export { getPlanStatus, ensureActivePlan, isUnlimitedRole, getPlanLimits, getOrganizationPlanId };
 

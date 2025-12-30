@@ -7,6 +7,7 @@ import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { canInviteUsers } from "@/lib/server/roles";
 import { sendInviteEmail } from "@/lib/server/email";
+import { getOrganizationPlanId, getPlanLimits } from "@/lib/server/subscriptions";
 
 type ActionResult = { error?: string; success?: string };
 
@@ -44,6 +45,28 @@ export const createInvite = async (_prev: ActionResult, formData: FormData): Pro
   }
 
   const organizationId = await ensureUserOrganization({ supabase });
+
+  const planId = await getOrganizationPlanId(organizationId);
+  const limits = getPlanLimits(planId);
+  const targetLimit = parsed.data.role === "CONTRIBUTOR" ? limits.maxContributors : limits.maxViewers;
+
+  const { count: membersCount } = await service
+    .from("organization_members")
+    .select("user_id", { count: "exact", head: true })
+    .eq("organization_id", organizationId)
+    .eq("role", parsed.data.role);
+
+  const { count: pendingInvitesCount } = await service
+    .from("organization_invites")
+    .select("id", { count: "exact", head: true })
+    .eq("organization_id", organizationId)
+    .eq("role", parsed.data.role)
+    .eq("status", "pending");
+
+  const current = (membersCount ?? 0) + (pendingInvitesCount ?? 0);
+  if (current >= targetLimit) {
+    return { error: "Limit reached for this role on current plan." };
+  }
 
   const { data: orgRow } = await service.from("organizations").select("name").eq("id", organizationId).single();
   const orgName = (orgRow as { name?: string } | null)?.name ?? "Your organization";
