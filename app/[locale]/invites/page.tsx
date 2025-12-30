@@ -74,7 +74,6 @@ export default async function InvitesPage({
             },
             submit: t("form.submit"),
             success: t("form.success"),
-            error: t("errors.limitContributor"),
           }}
         />
       </Card>
