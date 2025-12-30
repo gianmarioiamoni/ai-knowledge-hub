@@ -28,15 +28,22 @@ function SupabaseHashHandler({ redirectTo }: SupabaseHashHandlerProps): null {
       return;
     }
 
-    void supabase.auth
+    // Persist locally (client) so subsequent client-side calls work
+    supabase.auth
       .setSession({
         access_token: accessToken,
         refresh_token: refreshToken,
       })
-      .then(({ error }) => {
-        if (!error) {
-          window.location.replace(redirectTo);
-        }
+      .catch(() => {});
+
+    // Also set HTTP-only cookies via API so SSR sees the session
+    void fetch("/api/auth/set-session", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ access_token: accessToken, refresh_token: refreshToken }),
+    })
+      .then(() => {
+        window.location.replace(redirectTo);
       })
       .catch(() => {
         // silently ignore; user will stay on login page
