@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
@@ -96,6 +97,7 @@ export const createInvite = async (_prev: ActionResult, formData: FormData): Pro
     locale: parsed.data.locale,
   }).catch(() => {});
 
+  revalidatePath(`/${parsed.data.locale}/invites`);
   return { success: "invite_created" };
 };
 
