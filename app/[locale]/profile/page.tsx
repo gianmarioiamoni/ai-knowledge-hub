@@ -1,4 +1,6 @@
 import { getTranslations } from "next-intl/server";
+
+export const dynamic = "force-dynamic";
 import { JSX } from "react";
 import { Link, redirect } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";

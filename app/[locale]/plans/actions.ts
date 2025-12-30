@@ -44,6 +44,7 @@ const startPlanCheckout = async ({ planId, billingCycle, locale }: StartCheckout
 
   if (error || !user) {
     redirect({ href: "/login", locale });
+    return;
   }
 
   if (planId === "trial") {

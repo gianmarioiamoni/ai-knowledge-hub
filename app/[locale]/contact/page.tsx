@@ -1,4 +1,6 @@
 import { getTranslations } from "next-intl/server";
+
+export const dynamic = "force-dynamic";
 import { JSX } from "react";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
