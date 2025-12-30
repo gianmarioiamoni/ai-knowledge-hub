@@ -54,7 +54,7 @@ const getPlanStatus = (user: User): PlanStatus => {
 
 const isUnlimitedRole = (user: User): boolean => {
   const role = (user.user_metadata as { role?: string } | null)?.role;
-  return role === "SUPER_ADMIN" || role === "COMPANY_ADMIN";
+  return role === "SUPER_ADMIN";
 };
 
 const ensureActivePlan = (user: User, locale: string, skipRedirect = false): void => {

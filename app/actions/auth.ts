@@ -83,6 +83,14 @@ export async function signUpWithPassword(
       data: {
         organization_name: parsed.data.organization,
         role: "COMPANY_ADMIN",
+        plan: {
+          id: "trial",
+          billingCycle: "monthly",
+          trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          renewalAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          reminder3DaysSent: false,
+          reminder1DaySent: false,
+        },
       },
       emailRedirectTo: process.env.NEXT_PUBLIC_SITE_URL
         ? `${process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "")}/login`
