@@ -89,17 +89,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     )?.data?.name ?? undefined;
 
   if (userId) {
-    const { error: updErr } = await service.auth.admin.updateUserById(userId, {
+    // Do not touch password for existing users; only ensure metadata is updated
+    await service.auth.admin.updateUserById(userId, {
       email: existingUser.email ?? targetEmail ?? undefined,
-      email_confirm: true,
       user_metadata: {
         role: invite.role,
         organization_name: orgName,
       },
     });
-    if (updErr) {
-      return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_update_failed`, request.url));
-    }
   } else {
     const { data: createdUser, error: createErr } = await service.auth.admin.createUser({
       email: targetEmail ?? `invite-${token}@example.com`,
