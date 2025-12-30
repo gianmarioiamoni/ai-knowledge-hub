@@ -6,6 +6,7 @@ import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createEmbeddingModel, createTextSplitter } from "@/lib/server/langchain";
+import { canUploadDocs } from "@/lib/server/roles";
 
 const uploadSchema = z.object({
   locale: z.string().min(2),
@@ -50,6 +51,11 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
     return { error: "You must be logged in" };
+  }
+
+  const role = (userData.user.user_metadata as { role?: string } | null)?.role;
+  if (!canUploadDocs(role as any)) {
+    return { error: "Permission denied" };
   }
 
   const organizationId = await ensureUserOrganization({ supabase });
@@ -136,6 +142,11 @@ export const deleteDocument = async (formData: FormData): Promise<ActionResult> 
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
     return { error: "You must be logged in" };
+  }
+
+  const role = (userData.user.user_metadata as { role?: string } | null)?.role;
+  if (!canUploadDocs(role as any)) {
+    return { error: "Permission denied" };
   }
 
   const organizationId = await ensureUserOrganization({ supabase });

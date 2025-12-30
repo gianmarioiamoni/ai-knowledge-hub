@@ -4,6 +4,7 @@
     "subtitle": "Manage your account details.",
     "email": "Email",
     "role": "Role",
+    "organization": "Organization",
     "created": "Created at",
     "plan": "Plan",
     "nextRenewal": "Next renewal",

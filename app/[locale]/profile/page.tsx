@@ -32,6 +32,8 @@ export default async function ProfilePage({
 
   const t = await getTranslations({ locale, namespace: "profile" });
   const role = (user?.user_metadata as { role?: string } | null)?.role ?? "USER";
+  const orgName =
+    ((user?.user_metadata as { organization_name?: string } | null)?.organization_name as string | undefined) ?? null;
   const plan = planStatus;
   const planLabel = (() => {
     if (isUnlimited) return t("planLabels.unlimited");
@@ -76,6 +78,10 @@ export default async function ProfilePage({
           <div className="flex flex-col gap-1">
             <p className="text-sm text-muted-foreground">{t("role")}</p>
             <p className="text-base font-semibold text-foreground">{role}</p>
+          </div>
+          <div className="flex flex-col gap-1">
+            <p className="text-sm text-muted-foreground">{t("organization")}</p>
+            <p className="text-base font-semibold text-foreground">{orgName ?? "—"}</p>
           </div>
           <div className="flex flex-col gap-1">
             <p className="text-sm text-muted-foreground">{t("plan")}</p>

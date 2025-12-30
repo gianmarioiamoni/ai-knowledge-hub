@@ -5,6 +5,7 @@ import { handleDeleteDocument } from "@/app/[locale]/documents/actions";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
+import { canUploadDocs } from "@/lib/server/roles";
 
 type DeleteDocumentActionProps = {
   locale: string;
@@ -18,6 +19,7 @@ type DeleteDocumentActionProps = {
 
 function DeleteDocumentAction({ locale, id, labels }: DeleteDocumentActionProps): JSX.Element {
   const [isPending, startTransition] = useTransition();
+  const canDelete = canUploadDocs((typeof window !== "undefined" ? (window as any).__userRole : undefined) as any);
 
   return (
     <ConfirmDialog
@@ -40,7 +42,7 @@ function DeleteDocumentAction({ locale, id, labels }: DeleteDocumentActionProps)
           size="icon"
           title={labels.deleteLabel}
           aria-label={labels.deleteLabel}
-          disabled={isPending}
+          disabled={isPending || !canDelete}
           className="text-rose-600 hover:text-rose-700"
         >
           <Trash2 className="h-4 w-4" />

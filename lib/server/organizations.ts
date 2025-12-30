@@ -1,6 +1,7 @@
 // lib/server/organizations.ts
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createSupabaseServiceClient } from "./supabaseService";
+import type { UserRole } from "./roles";
 
 type EnsureOrganizationParams = {
   supabase: SupabaseClient;
@@ -37,7 +38,9 @@ export const ensureUserOrganization = async ({
     return existing;
   }
 
-  const orgName = userData.user.email ? `Org - ${userData.user.email}` : fallbackName;
+  const orgName =
+    userData.user.user_metadata?.organization_name ??
+    (userData.user.email ? `Org - ${userData.user.email}` : fallbackName);
 
   const { data: orgInsert, error: orgError } = await service
     .from("organizations")
@@ -51,16 +54,26 @@ export const ensureUserOrganization = async ({
 
   const orgId = orgInsert.id as string;
 
-  // Explicitly add the user as ORG_ADMIN (service role bypasses the trigger auth.uid()).
+  // Explicitly add the user as COMPANY_ADMIN (service role bypasses the trigger auth.uid()).
   const { error: memberError } = await service.from("organization_members").insert({
     user_id: userData.user.id,
     organization_id: orgId,
-    role: "ORG_ADMIN",
+    role: "COMPANY_ADMIN",
   });
 
   if (memberError) {
     throw new Error(memberError.message ?? "Unable to attach user to organization");
   }
+
+  // Update user metadata with org info and role if missing
+  const currentRole = (userData.user.user_metadata as { role?: UserRole } | null)?.role;
+  await supabase.auth.updateUser({
+    data: {
+      ...((userData.user.user_metadata as Record<string, unknown> | null) ?? {}),
+      organization_name: orgName,
+      role: currentRole ?? "COMPANY_ADMIN",
+    },
+  });
 
   return orgId;
 };

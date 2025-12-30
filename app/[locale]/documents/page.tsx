@@ -13,6 +13,7 @@ import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { Card } from "@/components/ui/card";
 import { UploadForm } from "@/components/documents/UploadForm";
 import { buildMetadata } from "@/lib/seo";
+import { canUploadDocs } from "@/lib/server/roles";
 
 type DocumentRow = {
   id: string;
@@ -57,6 +58,7 @@ export default async function DocumentsPage({
   ensureActivePlan(user!, locale);
 
   const role = (user?.user_metadata as { role?: string } | null)?.role;
+  const allowUpload = canUploadDocs(role as any);
   if (role === "SUPER_ADMIN") {
     redirect({ href: "/admin-stats", locale });
   }
@@ -99,19 +101,21 @@ export default async function DocumentsPage({
         </div>
       </div>
 
-      <Card className="border border-white/40 bg-white/70 p-6 backdrop-blur dark:border-white/10 dark:bg-white/5">
-        <UploadForm
-          locale={locale}
-          labels={{
-            uploadLabel: t("uploadLabel"),
-            uploadButton: t("uploadButton"),
-            uploading: t("uploading"),
-            hintFormats: t("hintFormats"),
-            hintSecurity: t("hintSecurity"),
-          }}
-          action={action}
-        />
-      </Card>
+      {allowUpload ? (
+        <Card className="border border-white/40 bg-white/70 p-6 backdrop-blur dark:border-white/10 dark:bg-white/5">
+          <UploadForm
+            locale={locale}
+            labels={{
+              uploadLabel: t("uploadLabel"),
+              uploadButton: t("uploadButton"),
+              uploading: t("uploading"),
+              hintFormats: t("hintFormats"),
+              hintSecurity: t("hintSecurity"),
+            }}
+            action={action}
+          />
+        </Card>
+      ) : null}
 
       <Card className="border border-white/40 bg-white/70 p-6 backdrop-blur dark:border-white/10 dark:bg-white/5">
         <div className="mb-4 flex items-center justify-between">

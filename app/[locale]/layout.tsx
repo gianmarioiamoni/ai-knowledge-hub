@@ -77,6 +77,9 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   ];
 
   const navItems = isAuthenticated ? (role === "SUPER_ADMIN" ? superNav : defaultNav) : publicNav;
+  const orgName =
+    (data.user?.user_metadata as { organization_name?: string } | null)?.organization_name ??
+    null;
 
   return (
     <html lang={locale}>
@@ -85,6 +88,9 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           <SentryClientInit />
           <div className="relative z-50 mx-auto flex w-full max-w-6xl items-center justify-end gap-3 px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
             <TopNav items={navItems} helpHref="/help" helpLabel={tHelp("title")} />
+            {role !== "SUPER_ADMIN" && orgName ? (
+              <span className="hidden text-sm font-semibold text-muted-foreground sm:inline">{orgName}</span>
+            ) : null}
             <CommandHint />
             <CommandLauncher />
             <LanguageSwitcher />
