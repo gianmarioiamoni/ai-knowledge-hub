@@ -5,16 +5,17 @@ type Pill = { label: string };
 
 type BadgePillsProps = {
   badgeLabel?: string;
+  showBadge?: boolean;
   title: string;
   headline: string;
   subtitle: string;
   pills: Pill[];
 };
 
-function BadgePills({ badgeLabel, title, headline, subtitle, pills }: BadgePillsProps): JSX.Element {
+function BadgePills({ badgeLabel, showBadge = true, title, headline, subtitle, pills }: BadgePillsProps): JSX.Element {
   return (
     <div className="space-y-3">
-      {badgeLabel ? (
+      {badgeLabel && showBadge ? (
         <div className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm ring-1 ring-border/60 backdrop-blur dark:bg-white/10">
           <ShieldCheck className="size-4 text-primary" />
           {badgeLabel}
