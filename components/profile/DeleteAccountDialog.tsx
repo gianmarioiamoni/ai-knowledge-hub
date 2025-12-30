@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import type { JSX } from "react";
 import { deleteAccount } from "@/app/[locale]/profile/actions";
 import { Button } from "@/components/ui/button";
@@ -37,8 +38,11 @@ function DeleteAccountDialog({ labels }: DeleteAccountDialogProps): JSX.Element 
       const res = await deleteAccount();
       if (res?.error) {
         setMessage(res.error || labels.error);
+        toast.error(res.error || labels.error);
       } else {
         setMessage(labels.success);
+        toast.success(labels.success);
+        setOpen(false);
       }
     });
   };

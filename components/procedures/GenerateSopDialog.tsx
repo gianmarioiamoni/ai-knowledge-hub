@@ -1,6 +1,7 @@
 "use client";
 
 import { JSX, useActionState, useEffect, useRef, useState, useTransition } from "react";
+import { toast } from "sonner";
 import { handleGenerateSop } from "@/app/[locale]/procedures/actions";
 import {
   Dialog,
@@ -47,6 +48,9 @@ function GenerateSopDialog({ locale, labels, action = handleGenerateSop }: Gener
       formRef.current?.reset();
       setAllowFree(false);
       setOpen(false);
+      toast.success(labels.success);
+    } else if (state?.error) {
+      toast.error(state.error);
     }
   }, [state?.success]);
 

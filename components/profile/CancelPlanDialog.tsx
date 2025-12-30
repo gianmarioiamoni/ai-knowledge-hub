@@ -1,6 +1,7 @@
 "use client";
 
 import { type JSX, useState, useTransition } from "react";
+import { toast } from "sonner";
 import { cancelStripeSubscription } from "@/app/[locale]/profile/actions";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,9 +40,11 @@ function CancelPlanDialog({ labels }: CancelPlanDialogProps): JSX.Element {
       const result = await cancelStripeSubscription();
       if (result.error) {
         setError(labels.error);
+        toast.error(labels.error);
         return;
       }
       setOpen(false);
+      toast.success(labels.success);
       router.refresh();
     });
   };

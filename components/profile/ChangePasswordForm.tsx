@@ -1,10 +1,11 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import type { JSX } from "react";
 import { changePassword } from "@/app/[locale]/profile/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 type ChangePasswordFormProps = {
   labels: {
@@ -19,6 +20,14 @@ type ChangePasswordFormProps = {
 
 function ChangePasswordForm({ labels }: ChangePasswordFormProps): JSX.Element {
   const [state, formAction] = useActionState(changePassword, { error: "", success: "" });
+
+  useEffect(() => {
+    if (state?.success) {
+      toast.success(labels.success);
+    } else if (state?.error) {
+      toast.error(state.error || labels.error);
+    }
+  }, [labels.error, labels.success, state?.error, state?.success]);
 
   return (
     <div className="rounded-2xl border border-border/60 bg-white/70 p-6 shadow-sm backdrop-blur dark:bg-white/5">
