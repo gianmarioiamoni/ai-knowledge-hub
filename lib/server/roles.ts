@@ -11,6 +11,8 @@ const canInviteUsers = (role: UserRole): boolean => isSuperAdmin(role) || isComp
 const canManageUsers = canInviteUsers;
 const canManageOrg = canInviteUsers;
 const canViewAllOrgs = (role: UserRole): boolean => isSuperAdmin(role);
+const canUseChat = (role: UserRole): boolean => isSuperAdmin(role) || isCompanyAdmin(role) || isContributor(role) || isViewer(role);
+const canSeePlans = (role: UserRole): boolean => isSuperAdmin(role) || isCompanyAdmin(role);
 
 export {
   isSuperAdmin,
@@ -23,6 +25,8 @@ export {
   canManageUsers,
   canManageOrg,
   canViewAllOrgs,
+  canUseChat,
+  canSeePlans,
 };
 export type { UserRole };
 

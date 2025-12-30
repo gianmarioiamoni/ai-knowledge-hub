@@ -8,6 +8,9 @@ import { createChatModel } from "@/lib/server/langchain";
 import { buildPrompt, encodeLine } from "@/lib/server/ragPrompt";
 import { rateLimit } from "@/lib/server/rateLimit";
 import { logError } from "@/lib/server/logger";
+import { requireActiveOrganization } from "@/lib/server/organizations";
+import { ensureActivePlan } from "@/lib/server/subscriptions";
+import { canUseChat } from "@/lib/server/roles";
 
 const bodySchema = z.object({
   query: z.string().min(4, "Query too short").max(1000, "Query too long"),
@@ -27,6 +30,14 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const role = (userData.user.user_metadata as { role?: string } | null)?.role;
+  if (!canUseChat(role as any)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  ensureActivePlan(userData.user, "en", true); // locale not used for API errors
+  const { organizationId } = await requireActiveOrganization({ supabase, locale: "en" });
+
   const rl = rateLimit(`chat:${userData.user.id}`, { limit: 20, windowMs: 60_000 });
   if (!rl.allowed) {
     return NextResponse.json(
@@ -35,24 +46,12 @@ export async function POST(request: Request): Promise<NextResponse> {
     );
   }
 
-  const service = createSupabaseServiceClient();
-  const { data: membership } = await service
-    .from("organization_members")
-    .select("organization_id")
-    .eq("user_id", userData.user.id)
-    .limit(1)
-    .maybeSingle();
-
-  if (!membership?.organization_id) {
-    return NextResponse.json({ error: "No organization found" }, { status: 403 });
-  }
-
   const embedding = await embedQuery(parsed.data.query);
-  const chunks = await searchSimilarChunks(membership.organization_id, embedding, 6);
+  const chunks = await searchSimilarChunks(organizationId, embedding, 6);
 
   const conversationId = await ensureConversation({
     conversationId: parsed.data.conversationId,
-    organizationId: membership.organization_id,
+    organizationId,
     userId: userData.user.id,
     title: parsed.data.query.slice(0, 80),
   });

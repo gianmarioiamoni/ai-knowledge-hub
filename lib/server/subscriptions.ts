@@ -22,6 +22,18 @@ type PlanStatus = {
   expired: boolean;
 };
 
+type PlanLimits = {
+  maxContributors: number;
+  maxViewers: number;
+};
+
+const planLimits: Record<string, PlanLimits> = {
+  trial: { maxContributors: 5, maxViewers: 20 },
+  smb: { maxContributors: 20, maxViewers: 100 },
+  enterprise: { maxContributors: 200, maxViewers: 1000 },
+  expired: { maxContributors: 0, maxViewers: 0 },
+};
+
 const getPlanStatus = (user: User): PlanStatus => {
   const meta = (user.user_metadata as { plan?: PlanMetadata } | null)?.plan ?? {};
   const planId = meta.id ?? "trial";
@@ -54,6 +66,11 @@ const ensureActivePlan = (user: User, locale: string, skipRedirect = false): voi
   }
 };
 
-export type { PlanStatus, PlanMetadata };
-export { getPlanStatus, ensureActivePlan, isUnlimitedRole };
+const getPlanLimits = (planId: string | null): PlanLimits => {
+  if (!planId) return planLimits.trial;
+  return planLimits[planId] ?? planLimits.trial;
+};
+
+export type { PlanStatus, PlanMetadata, PlanLimits };
+export { getPlanStatus, ensureActivePlan, isUnlimitedRole, getPlanLimits };
 

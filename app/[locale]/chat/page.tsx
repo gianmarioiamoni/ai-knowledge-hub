@@ -8,6 +8,8 @@ import { requireActiveOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { ensureActivePlan } from "@/lib/server/subscriptions";
 import { buildMetadata } from "@/lib/seo";
+import { canUseChat } from "@/lib/server/roles";
+import { redirect } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -38,10 +40,8 @@ export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.E
   ensureActivePlan(data.user, locale);
 
   const role = (data.user.user_metadata as { role?: string } | null)?.role;
-  if (role === "SUPER_ADMIN") {
-    const { redirect } = require("next/navigation");
-    redirect(`/${locale}/admin-stats`);
-    return <></>;
+  if (!canUseChat(role as any)) {
+    redirect({ href: "/dashboard", locale });
   }
 
   const { organizationId } = await requireActiveOrganization({ supabase, locale });

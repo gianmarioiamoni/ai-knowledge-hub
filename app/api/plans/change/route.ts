@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import type { PlanMetadata } from "@/lib/server/subscriptions";
+import { requireActiveOrganization } from "@/lib/server/organizations";
+import { canSeePlans } from "@/lib/server/roles";
 
 const bodySchema = z.object({
   planId: z.enum(["trial", "smb", "enterprise", "cancel"]),
@@ -68,6 +70,10 @@ export async function POST(request: Request) {
   const { data, error: userErr } = await supabase.auth.getUser();
   if (userErr || !data.user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+  const { role } = await requireActiveOrganization({ supabase, locale: "en" });
+  if (!canSeePlans(role as any)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
   const json = await request.json().catch(() => null);

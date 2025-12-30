@@ -7,7 +7,7 @@ import type { PlanMetadata } from "@/lib/server/subscriptions";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { startPlanCheckout } from "./actions";
 import { requireActiveOrganization } from "@/lib/server/organizations";
-import { canManageOrg } from "@/lib/server/roles";
+import { canManageOrg, canSeePlans } from "@/lib/server/roles";
 
 export default async function PlansPage({ params }: { params: Promise<{ locale: string }> }): Promise<JSX.Element> {
   const { locale } = await params;
@@ -19,7 +19,7 @@ export default async function PlansPage({ params }: { params: Promise<{ locale: 
   }
 
   const { role } = await requireActiveOrganization({ supabase, locale });
-  if (!canManageOrg(role as any) && role !== "SUPER_ADMIN") {
+  if (!canSeePlans(role as any)) {
     redirect({ href: "/dashboard", locale });
   }
 
