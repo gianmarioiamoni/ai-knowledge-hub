@@ -21,8 +21,18 @@ function SupabaseHashHandler({ redirectTo }: SupabaseHashHandlerProps): null {
       return;
     }
 
+    const params = new URLSearchParams(hash.replace(/^#/, ""));
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token");
+    if (!accessToken || !refreshToken) {
+      return;
+    }
+
     void supabase.auth
-      .getSessionFromUrl({ storeSession: true })
+      .setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      })
       .then(({ error }) => {
         if (!error) {
           window.location.replace(redirectTo);
