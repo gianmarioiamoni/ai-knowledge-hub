@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { getOrganizationPlanId, getPlanLimits } from "@/lib/server/subscriptions";
 import { getTranslations } from "next-intl/server";
@@ -15,11 +14,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
   }
 
-  const supabase = createSupabaseServerClient();
   const service = createSupabaseServiceClient();
   const t = await getTranslations({ locale, namespace: "invites" });
-
-  const { data: userData } = await supabase.auth.getUser();
 
   const { data: invite, error: inviteErr } = await service
     .from("organization_invites")
