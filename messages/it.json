@@ -466,6 +466,39 @@
     "conversations7d": "Conversazioni (ultimi 7 giorni)",
     "procedures7d": "Procedure (ultimi 7 giorni)",
     "noData": "Nessun dato disponibile"
+  },
+  "adminUsers": {
+    "title": "Utenti e organizzazioni",
+    "subtitle": "Vista super admin su tutte le aziende.",
+    "description": "Gestisci organizzazioni, abilita/disabilita o cancella. Disabilitare conserva i dati, cancellare li rimuove.",
+    "orgsTitle": "Organizzazioni",
+    "usersTitle": "Utenti",
+    "empty": "Nessun dato.",
+    "status": {
+      "active": "Attivo",
+      "disabled": "Disabilitato"
+    },
+    "actions": {
+      "disable": "Disabilita",
+      "enable": "Abilita",
+      "delete": "Cancella",
+      "cancel": "Annulla",
+      "disableOrgTitle": "Disabilitare l’organizzazione?",
+      "disableOrgDesc": "Gli utenti verranno bloccati ma i dati restano.",
+      "deleteOrgTitle": "Cancellare l’organizzazione?",
+      "deleteOrgDesc": "Rimuove l’organizzazione e tutti i dati.",
+      "disableUserTitle": "Disabilitare l’utente?",
+      "disableUserDesc": "L’utente viene bloccato ma i dati restano.",
+      "deleteUserTitle": "Cancellare l’utente?",
+      "deleteUserDesc": "Rimuove l’utente; l’org può essere rimossa se è l’ultimo membro."
+    },
+    "users": {
+      "email": "Email",
+      "org": "Organizzazione",
+      "role": "Ruolo",
+      "status": "Stato",
+      "actions": "Azioni"
+    }
   }
 }
 

@@ -466,6 +466,39 @@
     "conversations7d": "Conversations (last 7 days)",
     "procedures7d": "Procedures (last 7 days)",
     "noData": "No data available"
+  },
+  "adminUsers": {
+    "title": "Users & organizations",
+    "subtitle": "Super admin view for all companies.",
+    "description": "Manage organizations, disable/enable, or delete. Disable keeps data, delete removes data.",
+    "orgsTitle": "Organizations",
+    "usersTitle": "Users",
+    "empty": "No data.",
+    "status": {
+      "active": "Active",
+      "disabled": "Disabled"
+    },
+    "actions": {
+      "disable": "Disable",
+      "enable": "Enable",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "disableOrgTitle": "Disable organization?",
+      "disableOrgDesc": "Users will be blocked but data is kept.",
+      "deleteOrgTitle": "Delete organization?",
+      "deleteOrgDesc": "This removes the organization and all data.",
+      "disableUserTitle": "Disable user?",
+      "disableUserDesc": "User will be blocked but data is kept.",
+      "deleteUserTitle": "Delete user?",
+      "deleteUserDesc": "This removes the user; org may be removed if last member."
+    },
+    "users": {
+      "email": "Email",
+      "org": "Organization",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions"
+    }
   }
 }
 
