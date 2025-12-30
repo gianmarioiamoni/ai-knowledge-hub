@@ -1,5 +1,6 @@
 "use client";
 
+import type { JSX } from "react";
 import { useActionState, useEffect } from "react";
 import { submitContact } from "@/app/[locale]/contact/actions";
 import { Button } from "@/components/ui/button";

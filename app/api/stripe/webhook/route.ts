@@ -39,10 +39,11 @@ const buildPlanFromSubscription = (subscription: Stripe.Subscription): PlanPatch
   if (!priceId) return null;
   const planInfo = resolvePlanFromPriceId(priceId);
   if (!planInfo) return null;
-  const renewalAt = subscription.current_period_end
-    ? new Date(subscription.current_period_end * 1000).toISOString()
-    : null;
-  const trialEndsAt = subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : undefined;
+  const subAny = subscription as unknown as Record<string, unknown>;
+  const renewalEpoch = typeof subAny.current_period_end === "number" ? subAny.current_period_end : null;
+  const renewalAt = renewalEpoch ? new Date(renewalEpoch * 1000).toISOString() : null;
+  const trialEpoch = typeof subAny.trial_end === "number" ? subAny.trial_end : null;
+  const trialEndsAt = trialEpoch ? new Date(trialEpoch * 1000).toISOString() : undefined;
 
   return {
     id: planInfo.planId,
@@ -115,7 +116,7 @@ export async function POST(request: Request): Promise<NextResponse> {
           id: "expired",
           billingCycle: subscription.metadata?.billingCycle as PlanPatch["billingCycle"],
           renewalAt: null,
-          trialEndsAt: null,
+          trialEndsAt: undefined,
           subscriptionId: null,
           customerId: typeof subscription.customer === "string" ? subscription.customer : subscription.customer?.id,
           cancelAtPeriodEnd: false,

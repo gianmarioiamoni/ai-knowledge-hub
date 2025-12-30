@@ -35,9 +35,12 @@ export default async function AdminUsersPage({
 
   if (error || !user) {
     redirect({ href: "/login", locale });
+    return <></>;
   }
-  if ((user.user_metadata as { role?: string } | null)?.role !== "SUPER_ADMIN") {
+  const role = (user.user_metadata as { role?: string } | null)?.role ?? null;
+  if (role !== "SUPER_ADMIN") {
     redirect({ href: "/dashboard", locale });
+    return <></>;
   }
 
   const t = await getTranslations({ locale, namespace: "adminUsers" });
@@ -91,7 +94,7 @@ export default async function AdminUsersPage({
                 </div>
                 <div className="flex gap-2">
                   {org.disabled ? (
-                    <form action={enableOrg}>
+                    <form action={async (fd) => { await enableOrg({}, fd); }}>
                       <input type="hidden" name="locale" value={locale} />
                       <input type="hidden" name="orgId" value={org.id} />
                       <Button size="sm" variant="secondary">
@@ -171,7 +174,7 @@ export default async function AdminUsersPage({
                     <td className="px-4 py-3 text-right">
                       <div className="flex justify-end gap-2">
                         {m.disabled ? (
-                          <form action={enableUser}>
+                          <form action={async (fd) => { await enableUser({}, fd); }}>
                             <input type="hidden" name="locale" value={locale} />
                             <input type="hidden" name="userId" value={m.user_id} />
                             <Button size="sm" variant="secondary">

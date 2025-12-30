@@ -1,5 +1,6 @@
 "use client";
 
+import type { JSX } from "react";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { handleDeleteDocument } from "@/app/[locale]/documents/actions";

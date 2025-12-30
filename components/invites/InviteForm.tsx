@@ -1,5 +1,6 @@
 "use client";
 
+import type { JSX } from "react";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 import { createInvite } from "@/app/[locale]/invites/actions";

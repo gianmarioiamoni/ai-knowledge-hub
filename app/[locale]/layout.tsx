@@ -61,6 +61,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const tProcedures = await getTranslations({ locale, namespace: "proceduresPage" });
   const tPlans = await getTranslations({ locale, namespace: "plans" });
   const tHelp = await getTranslations({ locale, namespace: "help" });
+  const tInvites = await getTranslations({ locale, namespace: "invites" });
 
   const defaultNav = [
     { label: tDashboard("title"), href: "/dashboard" },
@@ -72,7 +73,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 
   const invitesNav =
     role === "COMPANY_ADMIN"
-      ? [{ label: t("invites.title", { locale }), href: "/invites" }]
+      ? [{ label: tInvites("title"), href: "/invites" }]
       : [];
 
   const publicNav = [{ label: tPlans("title"), href: "/pricing" }];

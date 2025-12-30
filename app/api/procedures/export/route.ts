@@ -82,7 +82,7 @@ export async function GET(request: Request): Promise<Response> {
     .single();
 
   if (error || !data) {
-    logError("Procedure not found", { id, org: membership.organization_id });
+    logError("Procedure not found", { id, org: organizationId });
     return NextResponse.json({ error: t.notFound }, { status: 404 });
   }
 

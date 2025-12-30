@@ -50,7 +50,7 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
     : routing.defaultLocale;
 
   if (!locale) {
-    redirect(`/${localeFromCookie}/login`);
+    redirect({ href: "/login", locale: localeFromCookie });
   }
 
   const errorMessage =

@@ -22,7 +22,7 @@ const ensureSuper = async (locale: string) => {
   const supabase = createSupabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
   if (error || !data.user || (data.user.user_metadata as { role?: string } | null)?.role !== "SUPER_ADMIN") {
-    redirect({ href: "/dashboard", locale });
+    redirect(`/${locale}/dashboard`);
   }
 };
 

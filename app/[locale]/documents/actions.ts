@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
-import { ensureUserOrganization, requireActiveOrganizationId } from "@/lib/server/organizations";
 import { createEmbeddingModel, createTextSplitter } from "@/lib/server/langchain";
 import { canUploadDocs } from "@/lib/server/roles";
+import { requireActiveOrganizationId } from "@/lib/server/organizations";
 
 const uploadSchema = z.object({
   locale: z.string().min(2),
@@ -26,8 +26,8 @@ export async function handleUploadWithState(
 }
 
 export async function uploadDocument(formData: FormData): Promise<ActionResult> {
-  const locale = uploadSchema.safeParse({ locale: formData.get("locale") });
-  if (!locale.success) {
+  const parsedLocale = uploadSchema.safeParse({ locale: formData.get("locale") });
+  if (!parsedLocale.success) {
     return { error: "Invalid locale" };
   }
 
@@ -58,7 +58,7 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
     return { error: "Permission denied" };
   }
 
-  const organizationId = await requireActiveOrganizationId({ supabase, locale: parsed.data.locale });
+  const organizationId = await requireActiveOrganizationId({ supabase, locale: parsedLocale.data.locale });
 
   const filePath = `${organizationId}/${crypto.randomUUID()}-${file.name}`;
 
@@ -106,7 +106,7 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
       fileName: file.name,
       fileType: file.type,
       parsePdf,
-      locale: locale.data.locale,
+      locale: parsedLocale.data.locale,
     });
     await service
       .from("documents")
@@ -117,10 +117,10 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
       .from("documents")
       .update({ status: "failed", updated_at: new Date().toISOString() })
       .eq("id", documentId);
-    return { error: getFriendlyError(err, locale.data.locale) };
+    return { error: getFriendlyError(err, parsedLocale.data.locale) };
   }
 
-  revalidatePath(`/${locale.data.locale}/documents`);
+  revalidatePath(`/${parsedLocale.data.locale}/documents`);
   return { success: "Document uploaded and ingested" };
 }
 

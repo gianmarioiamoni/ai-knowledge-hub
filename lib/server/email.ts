@@ -193,6 +193,29 @@ const sendUserPlanReminder = async (payload: {
   await sendEmail({ to: payload.to, subject, text });
 };
 
+const sendInviteEmail = async (payload: {
+  to: string;
+  token: string;
+  orgName: string;
+  role: string;
+  locale: string;
+}): Promise<void> => {
+  const origin = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "http://localhost:3000";
+  const link = `${origin}/invite/accept?token=${payload.token}&locale=${payload.locale}`;
+  const subject = `${SITE_NAME} – You’re invited to ${payload.orgName}`;
+  const text = [
+    `Hi,`,
+    `You have been invited to join ${payload.orgName} as ${payload.role}.`,
+    `Accept the invitation: ${link}`,
+  ].join("\n");
+  const html = `
+    <p>Hi,</p>
+    <p>You have been invited to join <strong>${payload.orgName}</strong> as <strong>${payload.role}</strong>.</p>
+    <p><a href="${link}">Accept invitation</a></p>
+  `;
+  await sendEmail({ to: payload.to, subject, text, html });
+};
+
 export {
   sendEmail,
   sendContactEmails,

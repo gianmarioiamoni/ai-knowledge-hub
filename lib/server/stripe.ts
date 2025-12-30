@@ -6,7 +6,7 @@ type PlanId = "trial" | PaidPlanId;
 type BillingCycle = "monthly" | "annual";
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-06-20",
+  apiVersion: "2025-12-15.clover",
 });
 
 const priceMap: Record<PaidPlanId, Record<BillingCycle, string>> = {
