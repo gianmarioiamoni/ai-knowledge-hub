@@ -38,9 +38,21 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const targetEmail = invite.email?.toLowerCase() ?? null;
 
-  const existingUser = targetEmail
-    ? await service.auth.admin.getUserByEmail(targetEmail)
-    : null;
+  let existingUser: { id: string; email?: string | null } | null = null;
+  if (targetEmail) {
+    const { data: usersPage, error: listErr } = await service.auth.admin.listUsers({
+      page: 1,
+      perPage: 1,
+      email: targetEmail,
+    });
+    if (listErr) {
+      return NextResponse.redirect(new URL(`/${locale}/login?error=invite_lookup_failed`, request.url));
+    }
+    const found = usersPage?.users?.[0];
+    if (found) {
+      existingUser = { id: found.id, email: found.email };
+    }
+  }
 
   const planId = await getOrganizationPlanId(invite.organization_id);
   const limits = getPlanLimits(planId);
@@ -52,13 +64,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     .eq("organization_id", invite.organization_id)
     .eq("role", invite.role);
 
-  const isAlreadyMember = existingUser?.data?.user?.id
+  const isAlreadyMember = existingUser?.id
     ? Boolean(
         await service
           .from("organization_members")
           .select("user_id", { head: true, count: "exact" })
           .eq("organization_id", invite.organization_id)
-          .eq("user_id", existingUser.data.user.id)
+          .eq("user_id", existingUser.id)
       )
     : false;
 
@@ -72,19 +84,34 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   // Create or reuse user
-  let userId = existingUser?.data?.user?.id ?? null;
-  let tempPassword: string | null = null;
+  let userId = existingUser?.id ?? null;
+  let tempPassword: string | null = crypto.randomUUID();
+  const orgName =
+    (
+      await service.from("organizations").select("name").eq("id", invite.organization_id).single()
+    )?.data?.name ?? undefined;
 
-  if (!userId) {
-    tempPassword = crypto.randomUUID();
+  if (userId) {
+    const { error: updErr } = await service.auth.admin.updateUserById(userId, {
+      email: existingUser.email ?? targetEmail ?? undefined,
+      password: tempPassword,
+      email_confirm: true,
+      user_metadata: {
+        role: invite.role,
+        organization_name: orgName,
+      },
+    });
+    if (updErr) {
+      return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_update_failed`, request.url));
+    }
+  } else {
     const { data: createdUser, error: createErr } = await service.auth.admin.createUser({
       email: targetEmail ?? `invite-${token}@example.com`,
       email_confirm: true,
       password: tempPassword,
       user_metadata: {
         role: invite.role,
-        organization_name: (await service.from("organizations").select("name").eq("id", invite.organization_id).single())
-          ?.data?.name,
+        organization_name: orgName,
         plan: {
           id: "trial",
           billingCycle: "monthly",
@@ -141,13 +168,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     },
   });
 
-  const signInEmail = targetEmail ?? userData?.user?.email ?? null;
-  const passwordToUse = userData?.user ? null : tempPassword;
-
-  if (signInEmail && passwordToUse) {
+  const signInEmail = targetEmail ?? existingUser?.email ?? null;
+  if (signInEmail && tempPassword) {
     const { error: signInError } = await cookieClient.auth.signInWithPassword({
       email: signInEmail,
-      password: passwordToUse,
+      password: tempPassword,
     });
     if (signInError) {
       return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(signInError.message)}`, request.url));
