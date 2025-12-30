@@ -10,13 +10,29 @@ export const metadata: Metadata = {
   description: "Accedi o registrati per gestire i tuoi contenuti.",
 };
 
-export default async function LoginPage(): Promise<never> {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}): Promise<never> {
   const cookieStore = await cookies();
   const cookieLocale = cookieStore.get("preferred_locale")?.value;
   const candidate = cookieLocale ?? "";
   const locale = routing.locales.includes(candidate as (typeof routing.locales)[number])
     ? (candidate as (typeof routing.locales)[number])
     : routing.defaultLocale;
-  redirect(`/${locale}/login`);
+
+  const query = new URLSearchParams();
+  if (searchParams) {
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (typeof value === "string") {
+        query.set(key, value);
+      }
+    });
+  }
+
+  const suffix = query.toString();
+  const target = `/${locale}/login${suffix ? `?${suffix}` : ""}`;
+  redirect(target);
 }
 
