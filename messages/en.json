@@ -66,7 +66,8 @@
         "contributor": "Contributor (upload/generate)",
         "viewer": "Viewer (read-only)"
       },
-      "submit": "Send invite"
+      "submit": "Send invite",
+      "success": "Invite sent"
     },
     "list": {
       "title": "Pending and recent invites",

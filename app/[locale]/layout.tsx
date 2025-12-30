@@ -13,6 +13,7 @@ import { TopNav } from "@/components/navigation/TopNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SentryClientInit } from "@/components/SentryClientInit";
 import { CookieBanner } from "@/components/CookieBanner/CookieBanner";
+import { Toaster } from "@/components/ui/sonner";
 import { FooterLinks } from "@/components/navigation/FooterLinks";
 import "@/app/globals.css";
 
@@ -115,6 +116,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             policyHref={`/${locale}/privacy`}
             manageLabel={messages.cookies.banner.manage}
           />
+          <Toaster position="top-right" richColors />
           <FooterLinks
             privacyLabel={messages.cookies.banner.policy}
             cookiesLabel={messages.cookies.banner.manage}

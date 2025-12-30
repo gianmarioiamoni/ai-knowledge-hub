@@ -72,7 +72,8 @@
         "contributor": "Contributor (upload/generazione)",
         "viewer": "Viewer (solo lettura)"
       },
-      "submit": "Invia invito"
+      "submit": "Invia invito",
+      "success": "Invito inviato"
     },
     "list": {
       "title": "Inviti pendenti e recenti",

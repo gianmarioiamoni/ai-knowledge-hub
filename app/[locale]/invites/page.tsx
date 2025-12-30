@@ -8,10 +8,9 @@ import { canInviteUsers } from "@/lib/server/roles";
 import { createInvite, revokeInvite } from "./actions";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { format } from "date-fns";
+import { InviteForm } from "@/components/invites/InviteForm";
 
 type InviteRow = {
   id: string;
@@ -62,28 +61,20 @@ export default async function InvitesPage({
       </div>
 
       <Card className="p-6">
-        <form action={createInvite} className="grid gap-4 sm:grid-cols-3">
-          <input type="hidden" name="locale" value={locale} />
-          <div className="flex flex-col gap-2 sm:col-span-2">
-            <Label htmlFor="email">{t("form.email")}</Label>
-            <Input id="email" name="email" type="email" required />
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="role">{t("form.role")}</Label>
-            <select
-              id="role"
-              name="role"
-              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-              defaultValue="CONTRIBUTOR"
-            >
-              <option value="CONTRIBUTOR">{t("form.roles.contributor")}</option>
-              <option value="VIEWER">{t("form.roles.viewer")}</option>
-            </select>
-          </div>
-          <div className="sm:col-span-3 flex justify-end">
-            <Button type="submit">{t("form.submit")}</Button>
-          </div>
-        </form>
+        <InviteForm
+          locale={locale}
+          labels={{
+            email: t("form.email"),
+            role: t("form.role"),
+            roles: {
+              contributor: t("form.roles.contributor"),
+              viewer: t("form.roles.viewer"),
+            },
+            submit: t("form.submit"),
+            success: t("form.success"),
+            error: t("errors.limitContributor"),
+          }}
+        />
       </Card>
 
       <Card className="p-6">
