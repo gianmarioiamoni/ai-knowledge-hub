@@ -4,7 +4,7 @@ import { ShieldCheck } from "lucide-react";
 type Pill = { label: string };
 
 type BadgePillsProps = {
-  badgeLabel: string;
+  badgeLabel?: string;
   title: string;
   headline: string;
   subtitle: string;
@@ -14,10 +14,12 @@ type BadgePillsProps = {
 function BadgePills({ badgeLabel, title, headline, subtitle, pills }: BadgePillsProps): JSX.Element {
   return (
     <div className="space-y-3">
-      <div className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm ring-1 ring-border/60 backdrop-blur dark:bg-white/10">
-        <ShieldCheck className="size-4 text-primary" />
-        {badgeLabel}
-      </div>
+      {badgeLabel ? (
+        <div className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm ring-1 ring-border/60 backdrop-blur dark:bg-white/10">
+          <ShieldCheck className="size-4 text-primary" />
+          {badgeLabel}
+        </div>
+      ) : null}
       <div className="space-y-2">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{title}</p>
         <h1 className="text-3xl font-semibold leading-tight text-foreground sm:text-4xl">{headline}</h1>
