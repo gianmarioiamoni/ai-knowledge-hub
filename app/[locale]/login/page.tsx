@@ -4,6 +4,7 @@ import { JSX } from "react";
 import { redirect } from "@/i18n/navigation";
 import { cookies } from "next/headers";
 import { AuthForm } from "@/components/auth/AuthForm";
+import { SupabaseHashHandler } from "@/components/auth/SupabaseHashHandler";
 import { BadgeBar } from "@/components/login/BadgeBar";
 import { FormPanel } from "@/components/login/FormPanel";
 import { Hero } from "@/components/login/Hero";
@@ -105,6 +106,7 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
 
           <FormPanel>
             <AuthForm />
+            <SupabaseHashHandler redirectTo={`/${locale}/dashboard`} />
           </FormPanel>
         </div>
       </div>
