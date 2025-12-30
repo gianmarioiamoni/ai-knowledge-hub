@@ -80,6 +80,10 @@
       "revokeTitle": "Revoke invite",
       "revokeDesc": "Revoke this pending invite?",
       "cancel": "Cancel"
+    },
+    "errors": {
+      "limitContributor": "You reached the maximum number of Contributors for the current plan ({count}).",
+      "limitViewer": "You reached the maximum number of Viewers for the current plan ({count})."
     }
   },
   "help": {

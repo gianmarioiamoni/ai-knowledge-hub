@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { getOrganizationPlanId, getPlanLimits } from "@/lib/server/subscriptions";
+import { getTranslations } from "next-intl/server";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const search = request.nextUrl.searchParams;
@@ -14,6 +15,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const supabase = createSupabaseServerClient();
   const service = createSupabaseServiceClient();
+  const t = await getTranslations({ locale, namespace: "invites" });
 
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
@@ -58,7 +60,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   // If already member, do not block; otherwise enforce limit
   if (!existingMembership.data && (membersCount ?? 0) >= targetLimit) {
-    return NextResponse.redirect(new URL(`/${locale}/login?error=role_limit_reached`, request.url));
+    const errorMsg = invite.role === "CONTRIBUTOR" ? t("errors.limitContributor", { count: targetLimit }) : t("errors.limitViewer", { count: targetLimit });
+    return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errorMsg)}`, request.url));
   }
 
   await service

@@ -86,6 +86,10 @@
       "revokeTitle": "Revocare l’invito?",
       "revokeDesc": "Vuoi revocare questo invito pendente?",
       "cancel": "Annulla"
+    },
+    "errors": {
+      "limitContributor": "Hai raggiunto il numero massimo di Contributor per il piano attuale ({count}).",
+      "limitViewer": "Hai raggiunto il numero massimo di Viewer per il piano attuale ({count})."
     }
   },
   "help": {

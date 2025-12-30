@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { getTranslations } from "next-intl/server";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { ensureUserOrganization } from "@/lib/server/organizations";
@@ -33,6 +34,7 @@ export const createInvite = async (_prev: ActionResult, formData: FormData): Pro
   }
 
   const supabase = createSupabaseServerClient();
+  const t = await getTranslations({ locale: parsed.data.locale, namespace: "invites" });
   const service = createSupabaseServiceClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
@@ -65,7 +67,8 @@ export const createInvite = async (_prev: ActionResult, formData: FormData): Pro
 
   const current = (membersCount ?? 0) + (pendingInvitesCount ?? 0);
   if (current >= targetLimit) {
-    return { error: "Limit reached for this role on current plan." };
+    const errorKey = parsed.data.role === "CONTRIBUTOR" ? "errors.limitContributor" : "errors.limitViewer";
+    return { error: t(errorKey, { count: targetLimit }) };
   }
 
   const { data: orgRow } = await service.from("organizations").select("name").eq("id", organizationId).single();
