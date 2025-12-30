@@ -8,7 +8,7 @@ import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { ensureUserOrganization } from "@/lib/server/organizations";
 import { ensureActivePlan } from "@/lib/server/subscriptions";
 import { StatusBadge } from "@/components/documents/StatusBadge";
-import { DeleteDocumentDialog } from "@/components/documents/DeleteDocumentDialog";
+import { DeleteDocumentAction } from "@/components/documents/DeleteDocumentAction";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { Card } from "@/components/ui/card";
 import { UploadForm } from "@/components/documents/UploadForm";
@@ -146,13 +146,14 @@ export default async function DocumentsPage({
                       {formatDate(doc.updated_at, locale)}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <DeleteDocumentDialog
+                      <DeleteDocumentAction
                         locale={locale}
                         id={doc.id}
-                        name={getDisplayName(doc) ?? doc.file_path}
-                        label={t("delete.label")}
-                        confirmText={t("delete.confirm", { title: getDisplayName(doc) ?? doc.file_path })}
-                        cancelLabel={t("delete.cancel")}
+                        labels={{
+                          deleteLabel: t("delete.label"),
+                          confirmText: t("delete.confirm", { title: getDisplayName(doc) ?? doc.file_path }),
+                          cancelLabel: t("delete.cancel"),
+                        }}
                       />
                     </td>
                   </tr>

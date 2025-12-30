@@ -2,7 +2,7 @@
 
 import { JSX } from "react";
 import { Link } from "@/i18n/navigation";
-import { DeleteConfirmDialog } from "../DeleteConfirmDialog";
+import { DeleteProcedureAction } from "../DeleteProcedureAction";
 import type { ProcedureListActionsProps } from "./types";
 
 function ProcedureListActions({ procedure, labels, locale }: ProcedureListActionsProps): JSX.Element {
@@ -29,13 +29,15 @@ function ProcedureListActions({ procedure, labels, locale }: ProcedureListAction
       >
         {labels.exportPdf}
       </a>
-      <DeleteConfirmDialog
+      <DeleteProcedureAction
         locale={locale}
         id={procedure.id}
         title={procedure.title}
-        label={labels.delete}
-        confirmText={labels.confirmDelete ?? labels.delete}
-        cancelLabel={labels.cancel}
+        labels={{
+          deleteLabel: labels.delete,
+          confirmText: (labels.confirmDelete ?? labels.delete).replace("{title}", procedure.title),
+          cancelLabel: labels.cancel,
+        }}
       />
     </>
   );
