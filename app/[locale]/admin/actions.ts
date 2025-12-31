@@ -23,9 +23,9 @@ const orgScopedSchema = z.object({
 const ensureCompanyAdmin = async (locale: string) => {
   const supabase = createSupabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) redirect({ href: "/login", locale });
+  if (error || !data.user) redirect(`/${locale}/login`);
   const { role } = await requireActiveOrganization({ supabase, locale });
-  if (!canManageOrg(role as any)) redirect({ href: "/dashboard", locale });
+  if (!canManageOrg(role as any)) redirect(`/${locale}/dashboard`);
   return { supabase, user: data.user };
 };
 
