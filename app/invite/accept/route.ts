@@ -93,37 +93,68 @@ if (targetEmail) {
     return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errorMsg)}`, request.url));
   }
 
-  // Create or reuse user; temp password only for newly created users (existing keep their password)
-  let userId = existingUser?.id ?? null;
-  const tempPassword: string = crypto.randomUUID();
+// Treat users without confirmed email as "new" to auto-provision and login
+const isExistingVerified = Boolean(existingUser?.email_confirmed_at);
+
+// Create or reuse user; temp password only for newly created or unverified users
+let userId = isExistingVerified ? existingUser?.id ?? null : existingUser?.id ?? null;
+const tempPassword: string = crypto.randomUUID();
   const orgName =
     (
       await service.from("organizations").select("name").eq("id", invite.organization_id).single()
     )?.data?.name ?? undefined;
 
-  // Existing user: do not touch password/metadata; just ensure membership exists
-  if (!userId) {
-    const { data: createdUser, error: createErr } = await service.auth.admin.createUser({
-      email: targetEmail ?? `invite-${token}@example.com`,
-      email_confirm: true,
-      password: tempPassword,
-      user_metadata: {
-        role: invite.role,
-        organization_name: orgName,
-        plan: {
-          id: "trial",
-          billingCycle: "monthly",
-          trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          renewalAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          reminder3DaysSent: false,
-          reminder1DaySent: false,
+// Existing verified user: do not alter account; just ensure membership exists
+  if (isExistingVerified) {
+    userId = existingUser?.id ?? userId;
+  } else {
+    if (existingUser?.id) {
+      const currentMeta = (existingUser.user_metadata as Record<string, unknown> | null) ?? {};
+      const { data: updatedUser, error: updErr } = await service.auth.admin.updateUserById(existingUser.id, {
+        email: existingUser.email ?? targetEmail ?? undefined,
+        email_confirm: true,
+        password: tempPassword,
+        user_metadata: {
+          ...currentMeta,
+          organization_name: orgName ?? currentMeta.organization_name,
+          role: invite.role,
+          plan: currentMeta.plan ?? {
+            id: "trial",
+            billingCycle: "monthly",
+            trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            renewalAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            reminder3DaysSent: false,
+            reminder1DaySent: false,
+          },
         },
-      },
-    });
-    if (createErr || !createdUser?.user?.id) {
-      return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_create_failed`, request.url));
+      });
+      if (updErr || !updatedUser?.user?.id) {
+        return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_update_failed`, request.url));
+      }
+      userId = updatedUser.user.id;
+    } else {
+      const { data: createdUser, error: createErr } = await service.auth.admin.createUser({
+        email: targetEmail ?? `invite-${token}@example.com`,
+        email_confirm: true,
+        password: tempPassword,
+        user_metadata: {
+          role: invite.role,
+          organization_name: orgName,
+          plan: {
+            id: "trial",
+            billingCycle: "monthly",
+            trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            renewalAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            reminder3DaysSent: false,
+            reminder1DaySent: false,
+          },
+        },
+      });
+      if (createErr || !createdUser?.user?.id) {
+        return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_create_failed`, request.url));
+      }
+      userId = createdUser.user.id;
     }
-    userId = createdUser.user.id;
   }
 
   if (!isAlreadyMember) {
