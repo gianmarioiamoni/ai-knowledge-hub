@@ -58,18 +58,21 @@ export default async function AdminPageRoute({
         revoke: tInvites("list.revoke"),
         deleteInvite: tAdmin("deleteInvite"),
         deleteAllInvites: tAdmin("deleteAllInvites"),
-        roles: {
-          company: tUsers("roles.company"),
-          contributor: tUsers("roles.contributor"),
-          viewer: tUsers("roles.viewer"),
+        roles: tUsers.raw("roles") as {
+          company: string;
+          contributor: string;
+          viewer: string;
+          COMPANY_ADMIN?: string;
+          CONTRIBUTOR?: string;
+          VIEWER?: string;
         },
-        headers: {
-          email: tUsers("headers.email"),
-          role: tUsers("headers.role"),
-          status: tUsers("headers.status"),
-          expires: tUsers("headers.expires"),
-          created: tUsers("headers.created"),
-          actions: tUsers("headers.actions"),
+        headers: tUsers.raw("headers") as {
+          email: string;
+          role: string;
+          status: string;
+          expires: string;
+          created: string;
+          actions: string;
         },
         statusActive: tUsers("statusActive"),
         statusSuspended: tUsers("statusSuspended"),
