@@ -34,27 +34,33 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const targetEmail = invite.email?.toLowerCase() ?? null;
 
-  let existingUser:
-    | {
-        id: string;
-        email?: string | null;
-        user_metadata?: Record<string, unknown> | null;
-      }
-    | null = null;
-  if (targetEmail) {
-    const { data: usersPage, error: listErr } = await service.auth.admin.listUsers({
-      page: 1,
-      perPage: 1,
-      email: targetEmail,
-    });
-    if (listErr) {
-      return NextResponse.redirect(new URL(`/${locale}/login?error=invite_lookup_failed`, request.url));
+let existingUser:
+  | {
+      id: string;
+      email?: string | null;
+      user_metadata?: Record<string, unknown> | null;
+      email_confirmed_at?: string | null;
     }
-    const found = usersPage?.users?.[0];
-    if (found) {
-      existingUser = { id: found.id, email: found.email, user_metadata: found.user_metadata };
-    }
+  | null = null;
+if (targetEmail) {
+  const { data: usersPage, error: listErr } = await service.auth.admin.listUsers({
+    page: 1,
+    perPage: 1,
+    email: targetEmail,
+  });
+  if (listErr) {
+    return NextResponse.redirect(new URL(`/${locale}/login?error=invite_lookup_failed`, request.url));
   }
+  const found = usersPage?.users?.[0];
+  if (found) {
+    existingUser = {
+      id: found.id,
+      email: found.email,
+      user_metadata: found.user_metadata,
+      email_confirmed_at: (found as { email_confirmed_at?: string | null }).email_confirmed_at ?? null,
+    };
+  }
+}
 
   const planId = await getOrganizationPlanId(invite.organization_id);
   const limits = getPlanLimits(planId);
@@ -140,10 +146,55 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL(`/${locale}/login?error=invite_email_missing`, request.url));
   }
 
-  if (existingUser) {
-    // Existing user: do not alter account or session; invite just adds membership
-    return NextResponse.redirect(new URL(`/${locale}/login?message=invite_accepted`, request.url));
+if (existingUser) {
+  const currentMeta = (existingUser.user_metadata as Record<string, unknown> | null) ?? {};
+  const isVerified = Boolean(existingUser.email_confirmed_at);
+
+  if (!isVerified) {
+    // User exists but not verified: set temp password, confirm email, keep role untouched
+    const { error: updErr } = await service.auth.admin.updateUserById(existingUser.id, {
+      email: existingUser.email ?? targetEmail ?? undefined,
+      email_confirm: true,
+      password: tempPassword,
+      user_metadata: {
+        ...currentMeta,
+        organization_name: orgName ?? currentMeta.organization_name,
+      },
+    });
+    if (updErr) {
+      return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_update_failed`, request.url));
+    }
+
+    const response = NextResponse.redirect(new URL(`/${locale}/dashboard?forcePassword=true`, request.url));
+    const cookieClient = createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options) {
+          response.cookies.set({ name, value, ...options });
+        },
+        remove(name: string, options) {
+          response.cookies.set({ name, value: "", ...options, maxAge: 0 });
+        },
+      },
+    });
+
+    const { error: signInError } = await cookieClient.auth.signInWithPassword({
+      email: signInEmail,
+      password: tempPassword,
+    });
+    if (signInError) {
+      const errMsg = signInError.message ?? "invite_signin_failed";
+      return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errMsg)}`, request.url));
+    }
+
+    return response;
   }
+
+  // Existing and verified: do not alter account; invite just adds membership
+  return NextResponse.redirect(new URL(`/${locale}/login?message=invite_accepted`, request.url));
+}
 
   // New user: sign in with temp password to set session and force password change
   const response = NextResponse.redirect(new URL(`/${locale}/dashboard?forcePassword=true`, request.url));
