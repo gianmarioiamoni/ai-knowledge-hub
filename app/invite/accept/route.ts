@@ -11,7 +11,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const locale = search.get("locale") ?? "en";
 
   if (!token) {
-    console.error("[invite/accept] missing token");
     return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
   }
 
@@ -25,18 +24,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     .single();
 
   if (inviteErr || !invite) {
-    console.error("[invite/accept] invalid invite", { token, inviteErr });
     return NextResponse.redirect(new URL(`/${locale}/login?error=invalid_invite`, request.url));
   }
 
   const isExpired = invite.expires_at && new Date(invite.expires_at).getTime() < Date.now();
   if (invite.status !== "pending" || isExpired) {
-    console.error("[invite/accept] invite expired or not pending", {
-      token,
-      status: invite.status,
-      isExpired,
-      expiresAt: invite.expires_at,
-    });
     return NextResponse.redirect(new URL(`/${locale}/login?error=invite_expired`, request.url));
   }
 
@@ -50,16 +42,15 @@ let existingUser:
       email_confirmed_at?: string | null;
     }
   | null = null;
-if (targetEmail) {
-  const { data: usersPage, error: listErr } = await service.auth.admin.listUsers({
-    page: 1,
-    perPage: 1,
-    email: targetEmail,
-  });
-  if (listErr) {
-      console.error("[invite/accept] listUsers failed", { targetEmail, listErr });
-    return NextResponse.redirect(new URL(`/${locale}/login?error=invite_lookup_failed`, request.url));
-  }
+  if (targetEmail) {
+    const { data: usersPage, error: listErr } = await service.auth.admin.listUsers({
+      page: 1,
+      perPage: 1,
+      email: targetEmail,
+    });
+    if (listErr) {
+      return NextResponse.redirect(new URL(`/${locale}/login?error=invite_lookup_failed`, request.url));
+    }
     const found = usersPage?.users?.[0];
     if (found) {
       const foundEmail = found.email?.toLowerCase() ?? "";
@@ -70,11 +61,9 @@ if (targetEmail) {
           user_metadata: found.user_metadata,
           email_confirmed_at: (found as { email_confirmed_at?: string | null }).email_confirmed_at ?? null,
         };
-      } else {
-        console.warn("[invite/accept] email mismatch, ignoring existing user", { targetEmail, foundEmail, foundId: found.id });
       }
     }
-}
+  }
 
   const planId = await getOrganizationPlanId(invite.organization_id);
   const limits = getPlanLimits(planId);
@@ -98,25 +87,6 @@ if (targetEmail) {
 
   const isAlreadyMember = Boolean(existingMembershipRow?.data);
 
-console.info("[invite/accept] state", {
-  token,
-  locale,
-  targetEmail,
-  inviteOrg: invite.organization_id,
-  inviteRole: invite.role,
-  existingUser: existingUser
-    ? {
-        id: existingUser.id,
-        email: existingUser.email,
-        confirmed: existingUser.email_confirmed_at,
-      }
-    : null,
-  isAlreadyMember,
-  membersCount,
-  planId,
-  limits,
-});
-
   // enforce limit only if new membership
   if (!isAlreadyMember && (membersCount ?? 0) >= targetLimit) {
     const errorMsg =
@@ -139,12 +109,7 @@ const tempPassword: string = crypto.randomUUID();
     )?.data?.name ?? undefined;
 
 // Existing verified user: do not alter account; just ensure membership exists
-if (shouldAutoLogin) {
-  console.info("[invite/accept] auto-login candidate", {
-    existingUser: existingUser ? existingUser.id : null,
-    signInEmail: existingUser?.email ?? targetEmail,
-    reason: !isExistingUser ? "new_user" : "missing_membership",
-  });
+  if (shouldAutoLogin) {
   if (existingUser?.id) {
     const currentMeta = (existingUser.user_metadata as Record<string, unknown> | null) ?? {};
     const { data: updatedUser, error: updErr } = await service.auth.admin.updateUserById(existingUser.id, {
@@ -197,7 +162,6 @@ if (shouldAutoLogin) {
 }
 
   if (!isAlreadyMember) {
-    console.info("[invite/accept] upsert membership", { userId, org: invite.organization_id, role: invite.role });
     await service
       .from("organization_members")
       .upsert({
@@ -219,12 +183,10 @@ if (shouldAutoLogin) {
 
   if (!shouldAutoLogin) {
     // Existing, already member: do nothing else
-    console.info("[invite/accept] skip auto-login (already member)", { userId, email: signInEmail });
     return NextResponse.redirect(new URL(`/${locale}/login?message=invite_accepted`, request.url));
   }
 
   // New user: sign in with temp password to set session and force password change
-  console.info("[invite/accept] signing in with temp password", { userId, email: signInEmail });
   const response = NextResponse.redirect(new URL(`/${locale}/dashboard?forcePassword=true`, request.url));
   const cookieClient = createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
     cookies: {
@@ -245,12 +207,10 @@ if (shouldAutoLogin) {
     password: tempPassword,
   });
   if (signInError) {
-    console.error("[invite/accept] signInWithPassword failed", { email: signInEmail, message: signInError.message });
     const errMsg = signInError.message ?? "invite_signin_failed";
     return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errMsg)}`, request.url));
   }
 
-  console.info("[invite/accept] success redirect to dashboard", { userId, email: signInEmail });
   return response;
 }
 
