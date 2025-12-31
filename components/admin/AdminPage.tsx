@@ -14,9 +14,7 @@ import {
   enableUser,
   suspendUser,
 } from "@/app/[locale]/admin/actions";
-import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip } from "@/components/ui/tooltip";
 import { Shield, Trash2, Ban, Check, UserMinus } from "lucide-react";
 
 type InviteRow = {
