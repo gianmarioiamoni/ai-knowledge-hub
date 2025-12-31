@@ -60,15 +60,20 @@ if (targetEmail) {
       console.error("[invite/accept] listUsers failed", { targetEmail, listErr });
     return NextResponse.redirect(new URL(`/${locale}/login?error=invite_lookup_failed`, request.url));
   }
-  const found = usersPage?.users?.[0];
-  if (found) {
-    existingUser = {
-      id: found.id,
-      email: found.email,
-      user_metadata: found.user_metadata,
-      email_confirmed_at: (found as { email_confirmed_at?: string | null }).email_confirmed_at ?? null,
-    };
-  }
+    const found = usersPage?.users?.[0];
+    if (found) {
+      const foundEmail = found.email?.toLowerCase() ?? "";
+      if (foundEmail === targetEmail.toLowerCase()) {
+        existingUser = {
+          id: found.id,
+          email: found.email,
+          user_metadata: found.user_metadata,
+          email_confirmed_at: (found as { email_confirmed_at?: string | null }).email_confirmed_at ?? null,
+        };
+      } else {
+        console.warn("[invite/accept] email mismatch, ignoring existing user", { targetEmail, foundEmail, foundId: found.id });
+      }
+    }
 }
 
   const planId = await getOrganizationPlanId(invite.organization_id);
