@@ -82,6 +82,11 @@ export function AdminPage({
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
+  const bindAction =
+    (action: (prevState: any, formData: FormData) => Promise<any>) =>
+    async (formData: FormData) =>
+      action({}, formData);
+
   const currentStatus = searchParams.get("status") ?? "all";
   const filteredInvites =
     currentStatus === "all"
@@ -138,7 +143,7 @@ export function AdminPage({
               <option value="expired">{labels.filterExpired}</option>
               <option value="revoked">{labels.filterRevoked}</option>
             </select>
-              <form action={deleteAllInvites}>
+            <form action={bindAction(deleteAllInvites)}>
               <input type="hidden" name="locale" value={locale} />
                 <Button variant="outline" size="sm" type="submit">
                 {labels.deleteAllInvites}
@@ -168,14 +173,14 @@ export function AdminPage({
                   <td className="px-3 py-2">{formatDate(invite.expires_at)}</td>
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-2">
-                      <form action={revokeInvite}>
+                      <form action={bindAction(revokeInvite)}>
                         <input type="hidden" name="locale" value={locale} />
                         <input type="hidden" name="id" value={invite.id} />
                         <Button size="icon" variant="outline" title={labels.revoke}>
                           <Ban className="size-4" />
                         </Button>
                       </form>
-                      <form action={deleteInvite}>
+                      <form action={bindAction(deleteInvite)}>
                         <input type="hidden" name="locale" value={locale} />
                         <input type="hidden" name="id" value={invite.id} />
                         <Button size="icon" variant="outline" title={labels.deleteInvite}>
@@ -220,7 +225,7 @@ export function AdminPage({
                 <tr key={u.id} className="border-t border-border/40">
                   <td className="px-3 py-2">{u.email ?? "—"}</td>
                   <td className="px-3 py-2">
-                    <form action={changeUserRole} className="flex items-center gap-2">
+                    <form action={bindAction(changeUserRole)} className="flex items-center gap-2">
                       <input type="hidden" name="locale" value={locale} />
                       <input type="hidden" name="userId" value={u.id} />
                       <select
@@ -243,14 +248,14 @@ export function AdminPage({
                   <td className="px-3 py-2">{formatDate(u.created_at)}</td>
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-2">
-                      <form action={u.disabled ? enableUser : suspendUser}>
+                      <form action={bindAction(u.disabled ? enableUser : suspendUser)}>
                         <input type="hidden" name="locale" value={locale} />
                         <input type="hidden" name="userId" value={u.id} />
                         <Button size="icon" variant="outline" title={u.disabled ? labels.enable : labels.suspend}>
                           {u.disabled ? <Check className="size-4" /> : <Ban className="size-4" />}
                         </Button>
                       </form>
-                      <form action={deleteUserMembership}>
+                      <form action={bindAction(deleteUserMembership)}>
                         <input type="hidden" name="locale" value={locale} />
                         <input type="hidden" name="userId" value={u.id} />
                         <Button size="icon" variant="outline" title={labels.deleteUser}>
