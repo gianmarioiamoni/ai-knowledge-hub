@@ -1,8 +1,7 @@
 "use client";
 
-import { useTransition } from "react";
 import type { JSX } from "react";
-import { useRouter, useSearchParams } from "@/i18n/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   deleteInvite,
@@ -83,7 +82,7 @@ export function AdminPage({
 }: AdminPageProps): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const pathname = usePathname();
 
   const currentStatus = searchParams.get("status") ?? "all";
   const filteredInvites =
@@ -125,14 +124,14 @@ export function AdminPage({
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <select
+              <select
               className="rounded-md border border-border bg-background px-3 py-2 text-sm"
               value={currentStatus}
               onChange={(e) => {
-                const next = new URLSearchParams(searchParams.toString());
-                if (e.target.value === "all") next.delete("status");
-                else next.set("status", e.target.value);
-                router.replace(`/admin?${next.toString()}`);
+                  const next = new URLSearchParams(searchParams.toString());
+                  if (e.target.value === "all") next.delete("status");
+                  else next.set("status", e.target.value);
+                  router.replace(`${pathname}?${next.toString()}`);
               }}
             >
               <option value="all">{labels.filterAll}</option>
@@ -141,9 +140,9 @@ export function AdminPage({
               <option value="expired">{labels.filterExpired}</option>
               <option value="revoked">{labels.filterRevoked}</option>
             </select>
-            <form action={deleteAllInvites}>
+              <form action={deleteAllInvites}>
               <input type="hidden" name="locale" value={locale} />
-              <Button variant="outline" size="sm" type="submit" disabled={isPending}>
+                <Button variant="outline" size="sm" type="submit">
                 {labels.deleteAllInvites}
               </Button>
             </form>
