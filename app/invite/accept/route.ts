@@ -60,15 +60,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     .eq("organization_id", invite.organization_id)
     .eq("role", invite.role);
 
-  const isAlreadyMember = existingUser?.id
-    ? Boolean(
-        await service
+  const existingMembershipRow =
+    existingUser?.id
+      ? await service
           .from("organization_members")
-          .select("user_id", { head: true, count: "exact" })
+          .select("user_id, role")
           .eq("organization_id", invite.organization_id)
           .eq("user_id", existingUser.id)
-      )
-    : false;
+          .maybeSingle()
+      : { data: null };
+
+  const isAlreadyMember = Boolean(existingMembershipRow?.data);
 
   // enforce limit only if new membership
   if (!isAlreadyMember && (membersCount ?? 0) >= targetLimit) {
@@ -124,16 +126,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     userId = createdUser.user.id;
   }
 
-  await service
-    .from("organization_members")
-    .upsert({
-      user_id: userId,
-      organization_id: invite.organization_id,
-      role: invite.role,
-      disabled: false,
-    })
-    .eq("user_id", userId)
-    .eq("organization_id", invite.organization_id);
+  if (!isAlreadyMember) {
+    await service
+      .from("organization_members")
+      .upsert({
+        user_id: userId,
+        organization_id: invite.organization_id,
+        role: invite.role,
+        disabled: false,
+      })
+      .eq("user_id", userId)
+      .eq("organization_id", invite.organization_id);
+  }
 
   await service.from("organization_invites").update({ status: "accepted" }).eq("id", invite.id);
 
