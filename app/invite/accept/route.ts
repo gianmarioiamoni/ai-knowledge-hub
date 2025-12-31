@@ -45,13 +45,14 @@ let existingUser:
   if (targetEmail) {
     const { data: usersPage, error: listErr } = await service.auth.admin.listUsers({
       page: 1,
-      perPage: 1,
-      email: targetEmail,
+      perPage: 50,
     });
     if (listErr) {
       return NextResponse.redirect(new URL(`/${locale}/login?error=invite_lookup_failed`, request.url));
     }
-    const found = usersPage?.users?.[0];
+    const found = usersPage?.users?.find(
+      (u) => (u.email ?? "").toLowerCase() === targetEmail.toLowerCase()
+    );
     if (found) {
       const foundEmail = found.email?.toLowerCase() ?? "";
       if (foundEmail === targetEmail.toLowerCase()) {
