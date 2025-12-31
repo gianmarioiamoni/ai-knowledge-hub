@@ -81,7 +81,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errorMsg)}`, request.url));
   }
 
-  // Create or reuse user; we enforce a temp password to auto-login and then force change
+  // Create or reuse user; we keep a temp password for fallback sign-in
   let userId = existingUser?.id ?? null;
   const tempPassword: string = crypto.randomUUID();
   const orgName =
@@ -145,7 +145,24 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL(`/${locale}/login?error=invite_email_missing`, request.url));
   }
 
-  // Sign in (create session) and force password change
+  // Try magic link first
+  const origin =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
+    `${request.nextUrl.protocol}//${request.headers.get("host") ?? "localhost:3000"}`;
+
+  const { data: linkData, error: linkErr } = await service.auth.admin.generateLink({
+    type: "magiclink",
+    email: signInEmail,
+    options: {
+      redirectTo: `${origin}/${locale}/login`,
+    },
+  });
+
+  if (linkData?.action_link) {
+    return NextResponse.redirect(linkData.action_link);
+  }
+
+  // Fallback: sign in with temp password
   const response = NextResponse.redirect(new URL(`/${locale}/dashboard?forcePassword=true`, request.url));
   const cookieClient = createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
     cookies: {
@@ -166,7 +183,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     password: tempPassword,
   });
   if (signInError) {
-    return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(signInError.message)}`, request.url));
+    const errMsg = linkErr?.message ?? signInError.message ?? "invite_signin_failed";
+    return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errMsg)}`, request.url));
   }
 
   return response;
