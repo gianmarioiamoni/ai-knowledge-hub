@@ -90,7 +90,31 @@
     "errors": {
       "limitContributor": "You reached the maximum number of Contributors for the current plan ({count}).",
       "limitViewer": "You reached the maximum number of Viewers for the current plan ({count})."
+    },
+    "filter": {
+      "all": "All",
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "expired": "Expired",
+      "revoked": "Revoked"
     }
+  },
+  "admin": {
+    "title": "Admin"
+  },
+  "adminUsers": {
+    "title": "Users",
+    "subtitle": "Manage members of your organization.",
+    "empty": "No users.",
+    "roles": {
+      "company": "Company Admin",
+      "contributor": "Contributor",
+      "viewer": "Viewer"
+    },
+    "suspend": "Suspend",
+    "enable": "Enable",
+    "deleteUser": "Delete user",
+    "changeRole": "Change role"
   },
   "help": {
     "title": "Help Center",

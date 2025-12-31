@@ -96,7 +96,31 @@
     "errors": {
       "limitContributor": "Hai raggiunto il numero massimo di Contributor per il piano attuale ({count}).",
       "limitViewer": "Hai raggiunto il numero massimo di Viewer per il piano attuale ({count})."
+    },
+    "filter": {
+      "all": "Tutti",
+      "pending": "In attesa",
+      "accepted": "Accettati",
+      "expired": "Scaduti",
+      "revoked": "Revocati"
     }
+  },
+  "admin": {
+    "title": "Admin"
+  },
+  "adminUsers": {
+    "title": "Utenti",
+    "subtitle": "Gestisci i membri della tua organizzazione.",
+    "empty": "Nessun utente.",
+    "roles": {
+      "company": "Company Admin",
+      "contributor": "Contributor",
+      "viewer": "Viewer"
+    },
+    "suspend": "Sospendi",
+    "enable": "Riattiva",
+    "deleteUser": "Elimina utente",
+    "changeRole": "Cambia ruolo"
   },
   "help": {
     "title": "Help Center",

@@ -24,6 +24,42 @@ const revokeSchema = z.object({
   id: z.string().uuid(),
 });
 
+export const listInvites = async ({
+  organizationId,
+  status,
+}: {
+  organizationId: string;
+  status?: string;
+}): Promise<
+  {
+    id: string;
+    email: string;
+    role: string;
+    status: string;
+    expires_at: string | null;
+    created_at: string | null;
+  }[]
+> => {
+  const service = createSupabaseServiceClient();
+  const query = service
+    .from("organization_invites")
+    .select("id,email,role,status,expires_at,created_at")
+    .eq("organization_id", organizationId)
+    .order("created_at", { ascending: false });
+  if (status && status !== "all") query.eq("status", status);
+  const { data } = await query;
+  return (
+    data?.map((row) => ({
+      id: row.id,
+      email: row.email,
+      role: row.role,
+      status: row.status,
+      expires_at: row.expires_at,
+      created_at: row.created_at,
+    })) ?? []
+  );
+};
+
 export const createInvite = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {
   const parsed = createSchema.safeParse({
     locale: formData.get("locale"),
@@ -134,6 +170,63 @@ export const revokeInvite = async (_prev: ActionResult, formData: FormData): Pro
   }
 
   return { success: "revoked" };
+};
+
+export const deleteInvite = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {
+  const parsed = revokeSchema.safeParse({
+    locale: formData.get("locale"),
+    id: formData.get("id"),
+  });
+  if (!parsed.success) return { error: "Invalid data" };
+
+  const supabase = createSupabaseServerClient();
+  const service = createSupabaseServiceClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user) {
+    redirect(`/${parsed.data.locale}/login`);
+  }
+
+  const role = (userData.user.user_metadata as { role?: string } | null)?.role;
+  if (!canInviteUsers(role as any)) {
+    return { error: "Permission denied" };
+  }
+
+  const organizationId = await ensureUserOrganization({ supabase });
+  const { error } = await service
+    .from("organization_invites")
+    .delete()
+    .eq("id", parsed.data.id)
+    .eq("organization_id", organizationId);
+  if (error) return { error: error.message };
+  return { success: "deleted" };
+};
+
+export const deleteAllInvites = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {
+  const parsed = z
+    .object({
+      locale: z.string().min(2),
+    })
+    .safeParse({
+      locale: formData.get("locale"),
+    });
+  if (!parsed.success) return { error: "Invalid data" };
+
+  const supabase = createSupabaseServerClient();
+  const service = createSupabaseServiceClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user) {
+    redirect(`/${parsed.data.locale}/login`);
+  }
+
+  const role = (userData.user.user_metadata as { role?: string } | null)?.role;
+  if (!canInviteUsers(role as any)) {
+    return { error: "Permission denied" };
+  }
+
+  const organizationId = await ensureUserOrganization({ supabase });
+  const { error } = await service.from("organization_invites").delete().eq("organization_id", organizationId);
+  if (error) return { error: error.message };
+  return { success: "deleted" };
 };
 
 
