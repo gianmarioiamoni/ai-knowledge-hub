@@ -17,7 +17,9 @@ import { routing } from "@/i18n/routing";
 
 type LoginPageProps = {
   params: Promise<{ locale: string }> | { locale: string };
-  searchParams?: Promise<{ error?: string }> | { error?: string };
+  searchParams?:
+    | Promise<{ error?: string; code?: string; type?: string; next?: string }>
+    | { error?: string; code?: string; type?: string; next?: string };
 };
 
 export async function generateMetadata({ params }: LoginPageProps): Promise<Metadata> {
@@ -34,7 +36,7 @@ export async function generateMetadata({ params }: LoginPageProps): Promise<Meta
 
 export default async function LoginPage({ params, searchParams }: LoginPageProps): Promise<JSX.Element> {
   const { locale } = await params;
-  const { error, code, type, next } = (await searchParams) ?? {};
+  const { error, code, type, next } = (searchParams ? await searchParams : {}) ?? {};
 
   // Handle Supabase magic link / password reset callbacks that land on /login
   if (code) {
