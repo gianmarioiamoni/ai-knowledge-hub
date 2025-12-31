@@ -87,7 +87,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errorMsg)}`, request.url));
   }
 
-  // Create or reuse user; temp password only for newly created users (existing will be updated)
+  // Create or reuse user; temp password only for newly created users (existing keep their password)
   let userId = existingUser?.id ?? null;
   const tempPassword: string = crypto.randomUUID();
   const orgName =
@@ -100,7 +100,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const { error: updErr } = await service.auth.admin.updateUserById(userId, {
       email: existingUser.email ?? targetEmail ?? undefined,
       email_confirm: true,
-      password: tempPassword,
       user_metadata: {
         ...currentMeta,
         organization_name: orgName ?? currentMeta.organization_name,
@@ -159,22 +158,22 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     request.headers.get("origin") ??
     `${request.nextUrl.protocol}//${request.headers.get("host") ?? "localhost:3000"}`;
 
-  // If user existed, prefer magic link (keeps their password intact)
+  // If user existed, try magic link but do not fail hard if it doesn't work
   if (existingUser) {
-    const { data: linkData, error: linkErr } = await service.auth.admin.generateLink({
+    const { data: linkData } = await service.auth.admin.generateLink({
       type: "magiclink",
       email: signInEmail,
       options: {
-        redirectTo: `${origin}/${locale}/login`,
+        redirectTo: `${origin}/${locale}/dashboard`,
       },
     });
 
-    if (linkErr || !linkData?.action_link) {
-      const errMsg = linkErr?.message ?? "invite_magic_link_failed";
-      return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errMsg)}`, request.url));
+    if (linkData?.action_link) {
+      return NextResponse.redirect(linkData.action_link);
     }
 
-    return NextResponse.redirect(linkData.action_link);
+    // fallback: just send them to login with a success message; their password is unchanged
+    return NextResponse.redirect(new URL(`/${locale}/login?message=invite_accepted`, request.url));
   }
 
   // New user: sign in with temp password to set session and force password change
