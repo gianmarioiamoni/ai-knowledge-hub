@@ -81,9 +81,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errorMsg)}`, request.url));
   }
 
-  // Create or reuse user
+  // Create or reuse user; we enforce a temp password to auto-login and then force change
   let userId = existingUser?.id ?? null;
-  // generate a temporary password for newly created users
   const tempPassword: string = crypto.randomUUID();
   const orgName =
     (
@@ -93,6 +92,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (userId) {
     const { error: updErr } = await service.auth.admin.updateUserById(userId, {
       email: existingUser.email ?? targetEmail ?? undefined,
+      password: tempPassword,
       user_metadata: {
         role: invite.role,
         organization_name: orgName,
@@ -145,24 +145,31 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL(`/${locale}/login?error=invite_email_missing`, request.url));
   }
 
-  // Generate a magic link and redirect to it to set the session, then land on dashboard
-  const origin =
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
-    `${request.nextUrl.protocol}//${request.headers.get("host") ?? "localhost:3000"}`;
-
-  const { data: linkData, error: linkErr } = await service.auth.admin.generateLink({
-    type: "magiclink",
-    email: signInEmail,
-    options: {
-      redirectTo: `${origin}/${locale}/dashboard?forcePassword=true`,
+  // Sign in (create session) and force password change
+  const response = NextResponse.redirect(new URL(`/${locale}/dashboard?forcePassword=true`, request.url));
+  const cookieClient = createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+    cookies: {
+      get(name: string) {
+        return request.cookies.get(name)?.value;
+      },
+      set(name: string, value: string, options) {
+        response.cookies.set({ name, value, ...options });
+      },
+      remove(name: string, options) {
+        response.cookies.set({ name, value: "", ...options, maxAge: 0 });
+      },
     },
   });
 
-  if (linkErr || !linkData?.action_link) {
-    return NextResponse.redirect(new URL(`/${locale}/login?error=invite_magic_link_failed`, request.url));
+  const { error: signInError } = await cookieClient.auth.signInWithPassword({
+    email: signInEmail,
+    password: tempPassword,
+  });
+  if (signInError) {
+    return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(signInError.message)}`, request.url));
   }
 
-  return NextResponse.redirect(linkData.action_link);
+  return response;
 }
 
 
