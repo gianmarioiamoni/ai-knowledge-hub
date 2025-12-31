@@ -58,6 +58,16 @@ type AdminPageProps = {
       contributor: string;
       viewer: string;
     };
+    headers: {
+      email: string;
+      role: string;
+      status: string;
+      expires: string;
+      created: string;
+      actions: string;
+    };
+    statusActive: string;
+    statusSuspended: string;
     suspend: string;
     enable: string;
     deleteUser: string;
@@ -156,18 +166,20 @@ export function AdminPage({
           <table className="min-w-full text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>
-                <th className="px-3 py-2 font-semibold">Email</th>
-                <th className="px-3 py-2 font-semibold">Role</th>
-                <th className="px-3 py-2 font-semibold">Status</th>
-                <th className="px-3 py-2 font-semibold">Expires</th>
-                <th className="px-3 py-2 font-semibold">Actions</th>
+                <th className="px-3 py-2 font-semibold">{labels.headers.email}</th>
+                <th className="px-3 py-2 font-semibold">{labels.headers.role}</th>
+                <th className="px-3 py-2 font-semibold">{labels.headers.status}</th>
+                <th className="px-3 py-2 font-semibold">{labels.headers.expires}</th>
+                <th className="px-3 py-2 font-semibold">{labels.headers.actions}</th>
               </tr>
             </thead>
             <tbody>
               {filteredInvites.map((invite) => (
                 <tr key={invite.id} className="border-t border-border/40">
                   <td className="px-3 py-2">{invite.email}</td>
-                  <td className="px-3 py-2">{invite.role}</td>
+                  <td className="px-3 py-2">
+                    {labels.roles[invite.role as keyof typeof labels.roles] ?? invite.role}
+                  </td>
                   <td className="px-3 py-2">
                     <Badge variant="secondary">{invite.status}</Badge>
                   </td>
@@ -214,11 +226,11 @@ export function AdminPage({
           <table className="min-w-full text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>
-                <th className="px-3 py-2 font-semibold">Email</th>
-                <th className="px-3 py-2 font-semibold">Role</th>
-                <th className="px-3 py-2 font-semibold">Status</th>
-                <th className="px-3 py-2 font-semibold">Created</th>
-                <th className="px-3 py-2 font-semibold">Actions</th>
+                <th className="px-3 py-2 font-semibold">{labels.headers.email}</th>
+                <th className="px-3 py-2 font-semibold">{labels.headers.role}</th>
+                <th className="px-3 py-2 font-semibold">{labels.headers.status}</th>
+                <th className="px-3 py-2 font-semibold">{labels.headers.created}</th>
+                <th className="px-3 py-2 font-semibold">{labels.headers.actions}</th>
               </tr>
             </thead>
             <tbody>
@@ -243,7 +255,7 @@ export function AdminPage({
                   </td>
                   <td className="px-3 py-2">
                     <Badge variant={u.disabled ? "destructive" : "secondary"}>
-                      {u.disabled ? "Suspended" : "Active"}
+                      {u.disabled ? labels.statusSuspended : labels.statusActive}
                     </Badge>
                   </td>
                   <td className="px-3 py-2">{formatDate(u.created_at)}</td>

@@ -117,9 +117,16 @@
       "CONTRIBUTOR": "Contributor",
       "VIEWER": "Viewer"
     },
-    "roleCompany": "Company Admin",
-    "roleContributor": "Contributor",
-    "roleViewer": "Viewer",
+    "headers": {
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "expires": "Expires",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "statusActive": "Active",
+    "statusSuspended": "Suspended",
     "suspend": "Suspend",
     "enable": "Enable",
     "deleteUser": "Delete user",
