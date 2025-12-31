@@ -94,10 +94,11 @@ if (targetEmail) {
   }
 
 // Treat users without confirmed email as "new" to auto-provision and login
-const isExistingVerified = Boolean(existingUser?.email_confirmed_at);
+const isExistingUser = Boolean(existingUser?.id);
+const shouldAutoLogin = !isExistingUser || !isAlreadyMember;
 
-// Create or reuse user; temp password only for newly created or unverified users
-let userId = isExistingVerified ? existingUser?.id ?? null : existingUser?.id ?? null;
+// Create or reuse user; temp password only for newly created or users without membership
+let userId = existingUser?.id ?? null;
 const tempPassword: string = crypto.randomUUID();
   const orgName =
     (
@@ -105,57 +106,57 @@ const tempPassword: string = crypto.randomUUID();
     )?.data?.name ?? undefined;
 
 // Existing verified user: do not alter account; just ensure membership exists
-  if (isExistingVerified) {
-    userId = existingUser?.id ?? userId;
-  } else {
-    if (existingUser?.id) {
-      const currentMeta = (existingUser.user_metadata as Record<string, unknown> | null) ?? {};
-      const { data: updatedUser, error: updErr } = await service.auth.admin.updateUserById(existingUser.id, {
-        email: existingUser.email ?? targetEmail ?? undefined,
-        email_confirm: true,
-        password: tempPassword,
-        user_metadata: {
-          ...currentMeta,
-          organization_name: orgName ?? currentMeta.organization_name,
-          role: invite.role,
-          plan: currentMeta.plan ?? {
-            id: "trial",
-            billingCycle: "monthly",
-            trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-            renewalAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-            reminder3DaysSent: false,
-            reminder1DaySent: false,
-          },
+if (shouldAutoLogin) {
+  if (existingUser?.id) {
+    const currentMeta = (existingUser.user_metadata as Record<string, unknown> | null) ?? {};
+    const { data: updatedUser, error: updErr } = await service.auth.admin.updateUserById(existingUser.id, {
+      email: existingUser.email ?? targetEmail ?? undefined,
+      email_confirm: true,
+      password: tempPassword,
+      user_metadata: {
+        ...currentMeta,
+        organization_name: orgName ?? currentMeta.organization_name,
+        role: invite.role,
+        plan: currentMeta.plan ?? {
+          id: "trial",
+          billingCycle: "monthly",
+          trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          renewalAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          reminder3DaysSent: false,
+          reminder1DaySent: false,
         },
-      });
-      if (updErr || !updatedUser?.user?.id) {
-        return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_update_failed`, request.url));
-      }
-      userId = updatedUser.user.id;
-    } else {
-      const { data: createdUser, error: createErr } = await service.auth.admin.createUser({
-        email: targetEmail ?? `invite-${token}@example.com`,
-        email_confirm: true,
-        password: tempPassword,
-        user_metadata: {
-          role: invite.role,
-          organization_name: orgName,
-          plan: {
-            id: "trial",
-            billingCycle: "monthly",
-            trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-            renewalAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-            reminder3DaysSent: false,
-            reminder1DaySent: false,
-          },
-        },
-      });
-      if (createErr || !createdUser?.user?.id) {
-        return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_create_failed`, request.url));
-      }
-      userId = createdUser.user.id;
+      },
+    });
+    if (updErr || !updatedUser?.user?.id) {
+      return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_update_failed`, request.url));
     }
+    userId = updatedUser.user.id;
+  } else {
+    const { data: createdUser, error: createErr } = await service.auth.admin.createUser({
+      email: targetEmail ?? `invite-${token}@example.com`,
+      email_confirm: true,
+      password: tempPassword,
+      user_metadata: {
+        role: invite.role,
+        organization_name: orgName,
+        plan: {
+          id: "trial",
+          billingCycle: "monthly",
+          trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          renewalAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          reminder3DaysSent: false,
+          reminder1DaySent: false,
+        },
+      },
+    });
+    if (createErr || !createdUser?.user?.id) {
+      return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_create_failed`, request.url));
+    }
+    userId = createdUser.user.id;
   }
+} else {
+  userId = existingUser?.id ?? userId;
+}
 
   if (!isAlreadyMember) {
     await service
@@ -177,55 +178,10 @@ const tempPassword: string = crypto.randomUUID();
     return NextResponse.redirect(new URL(`/${locale}/login?error=invite_email_missing`, request.url));
   }
 
-if (existingUser) {
-  const currentMeta = (existingUser.user_metadata as Record<string, unknown> | null) ?? {};
-  const isVerified = Boolean(existingUser.email_confirmed_at);
-
-  if (!isVerified) {
-    // User exists but not verified: set temp password, confirm email, keep role untouched
-    const { error: updErr } = await service.auth.admin.updateUserById(existingUser.id, {
-      email: existingUser.email ?? targetEmail ?? undefined,
-      email_confirm: true,
-      password: tempPassword,
-      user_metadata: {
-        ...currentMeta,
-        organization_name: orgName ?? currentMeta.organization_name,
-      },
-    });
-    if (updErr) {
-      return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_update_failed`, request.url));
-    }
-
-    const response = NextResponse.redirect(new URL(`/${locale}/dashboard?forcePassword=true`, request.url));
-    const cookieClient = createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options) {
-          response.cookies.set({ name, value, ...options });
-        },
-        remove(name: string, options) {
-          response.cookies.set({ name, value: "", ...options, maxAge: 0 });
-        },
-      },
-    });
-
-    const { error: signInError } = await cookieClient.auth.signInWithPassword({
-      email: signInEmail,
-      password: tempPassword,
-    });
-    if (signInError) {
-      const errMsg = signInError.message ?? "invite_signin_failed";
-      return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errMsg)}`, request.url));
-    }
-
-    return response;
+  if (!shouldAutoLogin) {
+    // Existing, already member: do nothing else
+    return NextResponse.redirect(new URL(`/${locale}/login?message=invite_accepted`, request.url));
   }
-
-  // Existing and verified: do not alter account; invite just adds membership
-  return NextResponse.redirect(new URL(`/${locale}/login?message=invite_accepted`, request.url));
-}
 
   // New user: sign in with temp password to set session and force password change
   const response = NextResponse.redirect(new URL(`/${locale}/dashboard?forcePassword=true`, request.url));
