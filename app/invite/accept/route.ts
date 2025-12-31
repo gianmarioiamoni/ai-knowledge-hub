@@ -95,21 +95,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       await service.from("organizations").select("name").eq("id", invite.organization_id).single()
     )?.data?.name ?? undefined;
 
-  if (userId) {
-    const currentMeta = (existingUser.user_metadata as Record<string, unknown> | null) ?? {};
-    const { error: updErr } = await service.auth.admin.updateUserById(userId, {
-      email: existingUser.email ?? targetEmail ?? undefined,
-      email_confirm: true,
-      user_metadata: {
-        ...currentMeta,
-        organization_name: orgName ?? currentMeta.organization_name,
-        // keep existing role, do not overwrite
-      },
-    });
-    if (updErr) {
-      return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_update_failed`, request.url));
-    }
-  } else {
+  // Existing user: do not touch password/metadata; just ensure membership exists
+  if (!userId) {
     const { data: createdUser, error: createErr } = await service.auth.admin.createUser({
       email: targetEmail ?? `invite-${token}@example.com`,
       email_confirm: true,
@@ -153,26 +140,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL(`/${locale}/login?error=invite_email_missing`, request.url));
   }
 
-  const origin =
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
-    request.headers.get("origin") ??
-    `${request.nextUrl.protocol}//${request.headers.get("host") ?? "localhost:3000"}`;
-
-  // If user existed, try magic link but do not fail hard if it doesn't work
   if (existingUser) {
-    const { data: linkData } = await service.auth.admin.generateLink({
-      type: "magiclink",
-      email: signInEmail,
-      options: {
-        redirectTo: `${origin}/${locale}/dashboard`,
-      },
-    });
-
-    if (linkData?.action_link) {
-      return NextResponse.redirect(linkData.action_link);
-    }
-
-    // fallback: just send them to login with a success message; their password is unchanged
+    // Existing user: do not alter account; ensure membership is present and send to login with notice
     return NextResponse.redirect(new URL(`/${locale}/login?message=invite_accepted`, request.url));
   }
 
