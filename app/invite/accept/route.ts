@@ -141,25 +141,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   if (existingUser) {
-    // Existing user: best-effort magic link to set session without touching password
-    const origin =
-      process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
-      request.headers.get("origin") ??
-      `${request.nextUrl.protocol}//${request.headers.get("host") ?? "localhost:3000"}`;
-
-    const { data: linkData } = await service.auth.admin.generateLink({
-      type: "magiclink",
-      email: signInEmail,
-      options: {
-        redirectTo: `${origin}/${locale}/login`,
-      },
-    });
-
-    if (linkData?.action_link) {
-      return NextResponse.redirect(linkData.action_link);
-    }
-
-    // fallback: send back to login with notice (password untouched)
+    // Existing user: do not alter account or session; invite just adds membership
     return NextResponse.redirect(new URL(`/${locale}/login?message=invite_accepted`, request.url));
   }
 
