@@ -5,7 +5,7 @@ import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { requireActiveOrganization } from "@/lib/server/organizations";
 import { canManageOrg } from "@/lib/server/roles";
 import { AdminPage } from "@/components/admin/AdminPage";
-import { listCompanyUsers } from "@/app/[locale]/admin/users/actions";
+import { listCompanyUsers } from "@/app/[locale]/admin/actions";
 import { listInvites, revokeInvite, deleteInvite, deleteAllInvites } from "@/app/[locale]/invites/actions";
 
 export const dynamic = "force-dynamic";
