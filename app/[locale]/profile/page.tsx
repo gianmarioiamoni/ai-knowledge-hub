@@ -8,15 +8,19 @@ import { getPlanStatus, isUnlimitedRole } from "@/lib/server/subscriptions";
 import { CancelPlanDialog } from "@/components/profile/CancelPlanDialog";
 import { ChangePasswordForm } from "@/components/profile/ChangePasswordForm";
 import { DeleteAccountDialog } from "@/components/profile/DeleteAccountDialog";
+import { ForcePasswordDialog } from "@/components/profile/ForcePasswordDialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 export default async function ProfilePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams?: Promise<{ forcePassword?: string }> | { forcePassword?: string };
 }): Promise<JSX.Element> {
   const { locale } = await params;
+  const resolvedSearch = searchParams ? await searchParams : undefined;
   const supabase = createSupabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
   const user = data.user;
@@ -63,6 +67,7 @@ export default async function ProfilePage({
     return t("planDate.renewal", { date: nextRenewal });
   })();
   const isPaidPlan = plan.planId === "smb" || plan.planId === "enterprise";
+  const forcePassword = resolvedSearch?.forcePassword === "true";
 
   return (
     <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-12">
@@ -133,6 +138,19 @@ export default async function ProfilePage({
       <ChangePasswordForm
         labels={{
           title: t("changePassword.title"),
+          newPassword: t("changePassword.newPassword"),
+          confirmPassword: t("changePassword.confirmPassword"),
+          submit: t("changePassword.submit"),
+          success: t("changePassword.success"),
+          error: t("changePassword.error"),
+        }}
+      />
+      <ForcePasswordDialog
+        open={forcePassword}
+        locale={locale}
+        labels={{
+          title: t("forcePassword.title"),
+          description: t("forcePassword.description"),
           newPassword: t("changePassword.newPassword"),
           confirmPassword: t("changePassword.confirmPassword"),
           submit: t("changePassword.submit"),

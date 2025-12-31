@@ -45,6 +45,10 @@
       "success": "Password updated",
       "error": "Update failed"
     },
+    "forcePassword": {
+      "title": "Set a new password to continue",
+      "description": "For security, please choose a new password now. You will be redirected once saved."
+    },
     "delete": {
       "title": "Delete account",
       "description": "This will permanently delete your account and associated data. This action cannot be undone.",

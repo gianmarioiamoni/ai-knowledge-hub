@@ -45,6 +45,10 @@
       "success": "Password aggiornata",
       "error": "Aggiornamento fallito"
     },
+    "forcePassword": {
+      "title": "Imposta una nuova password per continuare",
+      "description": "Per sicurezza, scegli ora una nuova password. Verrai reindirizzato dopo il salvataggio."
+    },
     "delete": {
       "title": "Elimina account",
       "description": "Questo eliminerà definitivamente il tuo account e i dati associati. L'azione è irreversibile.",
