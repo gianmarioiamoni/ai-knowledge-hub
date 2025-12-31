@@ -34,7 +34,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const targetEmail = invite.email?.toLowerCase() ?? null;
 
-  let existingUser: { id: string; email?: string | null } | null = null;
+  let existingUser:
+    | {
+        id: string;
+        email?: string | null;
+        user_metadata?: Record<string, unknown> | null;
+      }
+    | null = null;
   if (targetEmail) {
     const { data: usersPage, error: listErr } = await service.auth.admin.listUsers({
       page: 1,
@@ -46,7 +52,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
     const found = usersPage?.users?.[0];
     if (found) {
-      existingUser = { id: found.id, email: found.email };
+      existingUser = { id: found.id, email: found.email, user_metadata: found.user_metadata };
     }
   }
 
@@ -81,7 +87,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errorMsg)}`, request.url));
   }
 
-  // Create or reuse user; temp password only for newly created users
+  // Create or reuse user; temp password only for newly created users (existing will be updated)
   let userId = existingUser?.id ?? null;
   const tempPassword: string = crypto.randomUUID();
   const orgName =
@@ -90,12 +96,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     )?.data?.name ?? undefined;
 
   if (userId) {
+    const currentMeta = (existingUser.user_metadata as Record<string, unknown> | null) ?? {};
     const { error: updErr } = await service.auth.admin.updateUserById(userId, {
       email: existingUser.email ?? targetEmail ?? undefined,
       email_confirm: true,
+      password: tempPassword,
       user_metadata: {
-        role: invite.role,
-        organization_name: orgName,
+        ...currentMeta,
+        organization_name: orgName ?? currentMeta.organization_name,
+        // keep existing role, do not overwrite
       },
     });
     if (updErr) {
