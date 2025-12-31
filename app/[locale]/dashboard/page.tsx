@@ -22,6 +22,7 @@ export const dynamic = "force-dynamic";
 
 type DashboardPageProps = {
   params: Promise<{ locale: string }> | { locale: string };
+  searchParams?: { forcePassword?: string };
 };
 
 export async function generateMetadata({ params }: DashboardPageProps): Promise<Metadata> {
@@ -35,7 +36,10 @@ export async function generateMetadata({ params }: DashboardPageProps): Promise<
   });
 }
 
-export default async function DashboardPage({ params }: DashboardPageProps): Promise<JSX.Element> {
+export default async function DashboardPage({
+  params,
+  searchParams,
+}: DashboardPageProps): Promise<JSX.Element> {
   const { locale } = await params;
   const supabase = createSupabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
@@ -53,6 +57,10 @@ export default async function DashboardPage({ params }: DashboardPageProps): Pro
   const tCommon = await getTranslations({ locale, namespace: "common" });
   const greetingPrefix = t("user", { email: "" }).trim() || "Hi,";
   const superAdmin = (user.user_metadata as { role?: string } | null)?.role === "SUPER_ADMIN";
+
+  if (searchParams?.forcePassword === "true") {
+    redirect({ href: "/profile?forcePassword=true", locale });
+  }
   const organizationId = await ensureUserOrganization({ supabase });
   const ingestion = await getIngestionStats(organizationId);
   const statsData = await getDashboardStats(organizationId, ingestion);
