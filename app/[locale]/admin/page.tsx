@@ -35,7 +35,7 @@ export default async function AdminPageRoute({
     redirect({ href: "/dashboard", locale });
   }
 
-  const invites = await listInvites({ organizationId, status: filters.status, locale });
+  const invites = await listInvites({ organizationId, status: filters.status });
   const users = await listCompanyUsers({ organizationId });
 
   return (
