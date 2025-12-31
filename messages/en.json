@@ -112,7 +112,10 @@
     "roles": {
       "company": "Company Admin",
       "contributor": "Contributor",
-      "viewer": "Viewer"
+      "viewer": "Viewer",
+      "COMPANY_ADMIN": "Company Admin",
+      "CONTRIBUTOR": "Contributor",
+      "VIEWER": "Viewer"
     },
     "suspend": "Suspend",
     "enable": "Enable",
