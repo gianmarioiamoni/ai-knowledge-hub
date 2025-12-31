@@ -81,7 +81,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errorMsg)}`, request.url));
   }
 
-  // Create or reuse user; we keep a temp password for fallback sign-in
+  // Create or reuse user; temp password only for newly created users
   let userId = existingUser?.id ?? null;
   const tempPassword: string = crypto.randomUUID();
   const orgName =
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (userId) {
     const { error: updErr } = await service.auth.admin.updateUserById(userId, {
       email: existingUser.email ?? targetEmail ?? undefined,
-      password: tempPassword,
+      email_confirm: true,
       user_metadata: {
         role: invite.role,
         organization_name: orgName,
@@ -145,24 +145,30 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL(`/${locale}/login?error=invite_email_missing`, request.url));
   }
 
-  // Try magic link first
   const origin =
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
+    request.headers.get("origin") ??
     `${request.nextUrl.protocol}//${request.headers.get("host") ?? "localhost:3000"}`;
 
-  const { data: linkData, error: linkErr } = await service.auth.admin.generateLink({
-    type: "magiclink",
-    email: signInEmail,
-    options: {
-      redirectTo: `${origin}/${locale}/login`,
-    },
-  });
+  // If user existed, prefer magic link (keeps their password intact)
+  if (existingUser) {
+    const { data: linkData, error: linkErr } = await service.auth.admin.generateLink({
+      type: "magiclink",
+      email: signInEmail,
+      options: {
+        redirectTo: `${origin}/${locale}/login`,
+      },
+    });
 
-  if (linkData?.action_link) {
+    if (linkErr || !linkData?.action_link) {
+      const errMsg = linkErr?.message ?? "invite_magic_link_failed";
+      return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errMsg)}`, request.url));
+    }
+
     return NextResponse.redirect(linkData.action_link);
   }
 
-  // Fallback: sign in with temp password
+  // New user: sign in with temp password to set session and force password change
   const response = NextResponse.redirect(new URL(`/${locale}/dashboard?forcePassword=true`, request.url));
   const cookieClient = createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
     cookies: {
@@ -183,7 +189,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     password: tempPassword,
   });
   if (signInError) {
-    const errMsg = linkErr?.message ?? signInError.message ?? "invite_signin_failed";
+    const errMsg = signInError.message ?? "invite_signin_failed";
     return NextResponse.redirect(new URL(`/${locale}/login?error=${encodeURIComponent(errMsg)}`, request.url));
   }
 
