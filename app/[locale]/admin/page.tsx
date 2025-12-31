@@ -69,11 +69,6 @@ export default async function AdminPageRoute({
         changeRole: tUsers("changeRole"),
       usersEmpty: tUsers("empty"),
       }}
-      actions={{
-        revokeInvite,
-        deleteInvite,
-        deleteAllInvites,
-      }}
     />
   );
 }
