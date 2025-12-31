@@ -81,22 +81,25 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   // Create or reuse user
   let userId = existingUser?.id ?? null;
-  // only generate a temp password for new users; existing users keep their current credentials
-  let tempPassword: string | null = existingUser ? null : crypto.randomUUID();
+  // generate a temporary password to force login and password change
+  const tempPassword: string = crypto.randomUUID();
   const orgName =
     (
       await service.from("organizations").select("name").eq("id", invite.organization_id).single()
     )?.data?.name ?? undefined;
 
   if (userId) {
-    // Do not touch password for existing users; only ensure metadata is updated
-    await service.auth.admin.updateUserById(userId, {
+    const { error: updErr } = await service.auth.admin.updateUserById(userId, {
       email: existingUser.email ?? targetEmail ?? undefined,
+      password: tempPassword,
       user_metadata: {
         role: invite.role,
         organization_name: orgName,
       },
     });
+    if (updErr) {
+      return NextResponse.redirect(new URL(`/${locale}/login?error=invite_user_update_failed`, request.url));
+    }
   } else {
     const { data: createdUser, error: createErr } = await service.auth.admin.createUser({
       email: targetEmail ?? `invite-${token}@example.com`,
