@@ -68,6 +68,14 @@ let existingUser:
   const planId = await getOrganizationPlanId(invite.organization_id);
   const limits = getPlanLimits(planId);
   const targetLimit = invite.role === "CONTRIBUTOR" ? limits.maxContributors : limits.maxViewers;
+const planMetaFromOrg = {
+  id: planId,
+  billingCycle: "monthly" as const,
+  trialEndsAt: null,
+  renewalAt: null,
+  reminder3DaysSent: false,
+  reminder1DaySent: false,
+};
 
   const { count: membersCount } = await service
     .from("organization_members")
@@ -120,14 +128,7 @@ const tempPassword: string = crypto.randomUUID();
         ...currentMeta,
         organization_name: orgName ?? currentMeta.organization_name,
         role: invite.role,
-        plan: currentMeta.plan ?? {
-          id: "trial",
-          billingCycle: "monthly",
-          trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          renewalAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          reminder3DaysSent: false,
-          reminder1DaySent: false,
-        },
+        plan: currentMeta.plan ?? planMetaFromOrg,
       },
     });
     if (updErr || !updatedUser?.user?.id) {
@@ -142,14 +143,7 @@ const tempPassword: string = crypto.randomUUID();
       user_metadata: {
         role: invite.role,
         organization_name: orgName,
-        plan: {
-          id: "trial",
-          billingCycle: "monthly",
-          trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          renewalAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          reminder3DaysSent: false,
-          reminder1DaySent: false,
-        },
+        plan: planMetaFromOrg,
       },
     });
     if (createErr || !createdUser?.user?.id) {
