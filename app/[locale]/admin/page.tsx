@@ -58,29 +58,26 @@ export default async function AdminPageRoute({
         revoke: tInvites("list.revoke"),
         deleteInvite: tAdmin("deleteInvite"),
         deleteAllInvites: tAdmin("deleteAllInvites"),
-        roles: tUsers.raw("roles") as {
-          company: string;
-          contributor: string;
-          viewer: string;
-          COMPANY_ADMIN?: string;
-          CONTRIBUTOR?: string;
-          VIEWER?: string;
+        roles: {
+          company: tUsers("roles.company", { fallback: "Company Admin" }),
+          contributor: tUsers("roles.contributor", { fallback: "Contributor" }),
+          viewer: tUsers("roles.viewer", { fallback: "Viewer" }),
         },
-        headers: tUsers.raw("headers") as {
-          email: string;
-          role: string;
-          status: string;
-          expires: string;
-          created: string;
-          actions: string;
+        headers: {
+          email: tUsers("headers.email", { fallback: "Email" }),
+          role: tUsers("headers.role", { fallback: "Role" }),
+          status: tUsers("headers.status", { fallback: "Status" }),
+          expires: tUsers("headers.expires", { fallback: "Expires" }),
+          created: tUsers("headers.created", { fallback: "Created" }),
+          actions: tUsers("headers.actions", { fallback: "Actions" }),
         },
-        statusActive: tUsers("statusActive"),
-        statusSuspended: tUsers("statusSuspended"),
-        suspend: tUsers("suspend"),
-        enable: tUsers("enable"),
-        deleteUser: tUsers("deleteUser"),
-        changeRole: tUsers("changeRole"),
-      usersEmpty: tUsers("empty"),
+        statusActive: tUsers("statusActive", { fallback: "Active" }),
+        statusSuspended: tUsers("statusSuspended", { fallback: "Suspended" }),
+        suspend: tUsers("suspend", { fallback: "Suspend" }),
+        enable: tUsers("enable", { fallback: "Enable" }),
+        deleteUser: tUsers("deleteUser", { fallback: "Delete user" }),
+        changeRole: tUsers("changeRole", { fallback: "Change role" }),
+      usersEmpty: tUsers("empty", { fallback: "No users." }),
       }}
     />
   );
