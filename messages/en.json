@@ -117,6 +117,9 @@
       "CONTRIBUTOR": "Contributor",
       "VIEWER": "Viewer"
     },
+    "roleCompany": "Company Admin",
+    "roleContributor": "Contributor",
+    "roleViewer": "Viewer",
     "suspend": "Suspend",
     "enable": "Enable",
     "deleteUser": "Delete user",

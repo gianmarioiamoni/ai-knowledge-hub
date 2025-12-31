@@ -59,14 +59,14 @@ export default async function AdminPageRoute({
         deleteInvite: tAdmin("deleteInvite"),
         deleteAllInvites: tAdmin("deleteAllInvites"),
         roles: {
-          company: tUsers("roles.company", { fallback: "Company Admin" }),
-          contributor: tUsers("roles.contributor", { fallback: "Contributor" }),
-          viewer: tUsers("roles.viewer", { fallback: "Viewer" }),
+          company: tUsers("roleCompany"),
+          contributor: tUsers("roleContributor"),
+          viewer: tUsers("roleViewer"),
         },
-        suspend: tUsers("suspend", { fallback: "Suspend" }),
-        enable: tUsers("enable", { fallback: "Enable" }),
-        deleteUser: tUsers("deleteUser", { fallback: "Delete user" }),
-        changeRole: tUsers("changeRole", { fallback: "Change role" }),
+        suspend: tUsers("suspend"),
+        enable: tUsers("enable"),
+        deleteUser: tUsers("deleteUser"),
+        changeRole: tUsers("changeRole"),
       usersEmpty: tUsers("empty"),
       }}
     />

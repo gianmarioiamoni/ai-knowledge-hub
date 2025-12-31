@@ -123,6 +123,9 @@
       "CONTRIBUTOR": "Contributor",
       "VIEWER": "Viewer"
     },
+    "roleCompany": "Company Admin",
+    "roleContributor": "Contributor",
+    "roleViewer": "Viewer",
     "suspend": "Sospendi",
     "enable": "Riattiva",
     "deleteUser": "Elimina utente",
