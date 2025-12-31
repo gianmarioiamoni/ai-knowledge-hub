@@ -19,7 +19,7 @@ export default async function PlansPage({ params }: { params: Promise<{ locale: 
   }
 
   const { role } = await requireActiveOrganization({ supabase, locale });
-  if (!canSeePlans(role as any)) {
+  if (!canManageOrg(role as any)) {
     redirect({ href: "/dashboard", locale });
   }
 
