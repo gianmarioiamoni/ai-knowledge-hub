@@ -59,9 +59,9 @@ export default async function AdminPageRoute({
         deleteInvite: tAdmin("deleteInvite"),
         deleteAllInvites: tAdmin("deleteAllInvites"),
         roles: {
-          company: tUsers("roles.COMPANY_ADMIN"),
-          contributor: tUsers("roles.CONTRIBUTOR"),
-          viewer: tUsers("roles.VIEWER"),
+          company: tUsers("roles.company"),
+          contributor: tUsers("roles.contributor"),
+          viewer: tUsers("roles.viewer"),
         },
         suspend: tUsers("suspend"),
         enable: tUsers("enable"),
