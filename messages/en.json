@@ -71,7 +71,8 @@
         "viewer": "Viewer (read-only)"
       },
       "submit": "Send invite",
-      "success": "Invite sent"
+      "success": "Invite sent",
+      "error": "Unable to send invite"
     },
     "list": {
       "title": "Pending and recent invites",

@@ -77,7 +77,8 @@
         "viewer": "Viewer (solo lettura)"
       },
       "submit": "Invia invito",
-      "success": "Invito inviato"
+      "success": "Invito inviato",
+      "error": "Impossibile inviare l'invito"
     },
     "list": {
       "title": "Inviti pendenti e recenti",
