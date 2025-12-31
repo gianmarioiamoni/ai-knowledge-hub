@@ -107,7 +107,9 @@
     }
   },
   "admin": {
-    "title": "Admin"
+    "title": "Admin",
+    "deleteInvite": "Cancella invito",
+    "deleteAllInvites": "Cancella tutti gli inviti"
   },
   "adminUsers": {
     "title": "Utenti",

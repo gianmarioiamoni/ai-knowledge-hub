@@ -101,7 +101,9 @@
     }
   },
   "admin": {
-    "title": "Admin"
+    "title": "Admin",
+    "deleteInvite": "Delete invite",
+    "deleteAllInvites": "Delete all invites"
   },
   "adminUsers": {
     "title": "Users",
