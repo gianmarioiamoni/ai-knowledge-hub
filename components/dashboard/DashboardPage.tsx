@@ -20,7 +20,6 @@ type DashboardPageProps = {
   nextActions: string[];
   ingestion: IngestionData;
   locale: string;
-  logoutButton: JSX.Element;
 };
 
 export function DashboardPage({
@@ -32,7 +31,6 @@ export function DashboardPage({
   nextActions,
   ingestion,
   locale,
-  logoutButton,
 }: DashboardPageProps): JSX.Element {
   if (isSuperAdmin && adminLabels) {
     return (
@@ -41,7 +39,6 @@ export function DashboardPage({
         greetingPrefix={labels.greetingPrefix}
         email={labels.email}
         profileTooltip={labels.profileTooltip}
-        logoutButton={logoutButton}
         adminLabels={adminLabels}
       />
     );
@@ -55,7 +52,6 @@ export function DashboardPage({
       nextActions={nextActions}
       ingestion={ingestion}
       locale={locale}
-      logoutButton={logoutButton}
     />
   );
 }

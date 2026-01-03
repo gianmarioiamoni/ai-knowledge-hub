@@ -12,7 +12,6 @@ type SuperAdminDashboardProps = {
   greetingPrefix: string;
   email: string;
   profileTooltip: string;
-  logoutButton: JSX.Element;
   adminLabels: SuperAdminLabels;
 };
 
@@ -21,7 +20,6 @@ export function SuperAdminDashboard({
   greetingPrefix,
   email,
   profileTooltip,
-  logoutButton,
   adminLabels,
 }: SuperAdminDashboardProps): JSX.Element {
   return (
@@ -34,7 +32,6 @@ export function SuperAdminDashboard({
           headlineLinkLabel={email}
           headlineHref="/profile"
           headlineTooltip={profileTooltip}
-          actionSlot={logoutButton}
         />
         <SuperAdminPanel labels={adminLabels} />
       </div>

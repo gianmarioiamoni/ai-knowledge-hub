@@ -8,7 +8,7 @@ type HeaderBarProps = {
   headlineLinkLabel?: string;
   headlineTooltip?: string;
   headlineHref?: string;
-  actionSlot: JSX.Element;
+  actionSlot?: JSX.Element;
 };
 
 function HeaderBar({
@@ -43,7 +43,7 @@ function HeaderBar({
           <h1 className="text-2xl font-semibold text-zinc-900">{headline}</h1>
         )}
       </div>
-      <div className="flex-shrink-0">{actionSlot}</div>
+      {actionSlot && <div className="flex-shrink-0">{actionSlot}</div>}
     </div>
   );
 }

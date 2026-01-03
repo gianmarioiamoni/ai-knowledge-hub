@@ -21,7 +21,6 @@ type RegularDashboardProps = {
   nextActions: string[];
   ingestion: IngestionData;
   locale: string;
-  logoutButton: JSX.Element;
 };
 
 export function RegularDashboard({
@@ -31,7 +30,6 @@ export function RegularDashboard({
   nextActions,
   ingestion,
   locale,
-  logoutButton,
 }: RegularDashboardProps): JSX.Element {
   return (
     <div className="relative min-h-screen overflow-hidden py-12">
@@ -44,7 +42,6 @@ export function RegularDashboard({
           headlineLinkLabel={labels.email}
           headlineHref="/profile"
           headlineTooltip={labels.profileTooltip}
-          actionSlot={logoutButton}
         />
 
         <BadgePills

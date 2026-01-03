@@ -2,8 +2,6 @@ import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import type { JSX } from "react";
 import { redirect } from "@/i18n/navigation";
-import { signOut } from "@/app/actions/auth";
-import { Button } from "@/components/ui/button";
 import { DashboardPage } from "@/components/dashboard";
 import { getIngestionStats } from "@/lib/server/documents";
 import { ensureUserOrganization } from "@/lib/server/organizations";
@@ -86,14 +84,6 @@ export default async function DashboardPageRoute({
   const pipelineSteps = await buildPipelineSteps(locale);
   const nextActions = await getNextActions(locale);
 
-  // Logout button
-  const tCommon = await getTranslations({ locale, namespace: "common" });
-  const logoutButton = (
-    <form action={signOut} className="flex items-center justify-end">
-      <Button variant="outline">{tCommon("logout")}</Button>
-    </form>
-  );
-
   return (
     <DashboardPage
       isSuperAdmin={isSuperAdmin}
@@ -104,7 +94,6 @@ export default async function DashboardPageRoute({
       nextActions={nextActions}
       ingestion={ingestion}
       locale={locale}
-      logoutButton={logoutButton}
     />
   );
 }

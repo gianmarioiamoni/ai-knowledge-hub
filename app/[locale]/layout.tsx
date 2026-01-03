@@ -11,6 +11,7 @@ import { CommandHint } from "@/components/navigation/CommandHint";
 import { CommandLauncher } from "@/components/navigation/CommandLauncher";
 import { TopNav } from "@/components/navigation/TopNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { LogoutButton } from "@/components/common/LogoutButton";
 import { SentryClientInit } from "@/components/SentryClientInit";
 import { CookieBanner } from "@/components/CookieBanner/CookieBanner";
 import { Toaster } from "@/components/ui/sonner";
@@ -90,6 +91,10 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     (data.user?.user_metadata as { organization_name?: string } | null)?.organization_name ??
     null;
 
+  // Get translations for logout button
+  const tCommon = await getTranslations({ locale, namespace: "common" });
+  const showLogout = isAuthenticated; // Show logout for all authenticated users
+
   return (
     <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
@@ -108,6 +113,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
               <CommandHint />
               <CommandLauncher />
               <LanguageSwitcher />
+              {showLogout && <LogoutButton label={tCommon("logout")} variant="outline" size="sm" />}
               <CommandPalette />
             </div>
           </div>
