@@ -61,44 +61,47 @@ export default async function AdminUsersRoute({
     created_at: usersById[m.user_id]?.created_at ?? null,
   }));
 
+  // Build labels object
+  const labels = {
+    title: t("title"),
+    subtitle: t("subtitle"),
+    description: t("description"),
+    orgsTitle: t("orgsTitle"),
+    usersTitle: t("usersTitle"),
+    empty: t("empty"),
+    status: {
+      active: t("status.active"),
+      disabled: t("status.disabled"),
+    },
+    users: {
+      email: t("users.email"),
+      org: t("users.org"),
+      role: t("users.role"),
+      status: t("users.status"),
+      actions: t("users.actions"),
+    },
+    actions: {
+      enable: t("actions.enable"),
+      disable: t("actions.disable"),
+      delete: t("actions.delete"),
+      cancel: t("actions.cancel"),
+      disableOrgTitle: t("actions.disableOrgTitle"),
+      disableOrgDesc: t("actions.disableOrgDesc"),
+      deleteOrgTitle: t("actions.deleteOrgTitle"),
+      deleteOrgDesc: t("actions.deleteOrgDesc"),
+      disableUserTitle: t("actions.disableUserTitle"),
+      disableUserDesc: t("actions.disableUserDesc"),
+      deleteUserTitle: t("actions.deleteUserTitle"),
+      deleteUserDesc: t("actions.deleteUserDesc"),
+    },
+  };
+
   return (
     <SuperAdminUsersPage
       locale={locale}
       orgs={orgs}
       members={membersWithUser}
-      labels={{
-        title: t("title"),
-        subtitle: t("subtitle"),
-        description: t("description"),
-        orgsTitle: t("orgsTitle"),
-        usersTitle: t("usersTitle"),
-        empty: t("empty"),
-        status: {
-          active: t("status.active"),
-          disabled: t("status.disabled"),
-        },
-        users: {
-          email: t("users.email"),
-          org: t("users.org"),
-          role: t("users.role"),
-          status: t("users.status"),
-          actions: t("users.actions"),
-        },
-        actions: {
-          enable: t("actions.enable"),
-          disable: t("actions.disable"),
-          delete: t("actions.delete"),
-          cancel: t("actions.cancel"),
-          disableOrgTitle: t("actions.disableOrgTitle"),
-          disableOrgDesc: t("actions.disableOrgDesc"),
-          deleteOrgTitle: t("actions.deleteOrgTitle"),
-          deleteOrgDesc: t("actions.deleteOrgDesc"),
-          disableUserTitle: t("actions.disableUserTitle"),
-          disableUserDesc: t("actions.disableUserDesc"),
-          deleteUserTitle: t("actions.deleteUserTitle"),
-          deleteUserDesc: t("actions.deleteUserDesc"),
-        },
-      }}
+      labels={labels}
     />
   );
 }
