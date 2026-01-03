@@ -45,6 +45,8 @@ export default async function AdminPageRoute({
   // Build labels object
   const labels = {
     title: tAdmin("title"),
+    subtitle: tAdmin("subtitle"),
+    description: tAdmin("description"),
     invitesTitle: tInvites("title"),
     invitesSubtitle: tInvites("subtitle"),
     invitesEmpty: tInvites("list.empty"),

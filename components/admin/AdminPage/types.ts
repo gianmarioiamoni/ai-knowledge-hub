@@ -17,6 +17,8 @@ export type UserRow = {
 
 export type AdminLabels = {
   title: string;
+  subtitle: string;
+  description: string;
   invitesTitle: string;
   invitesSubtitle: string;
   usersTitle: string;

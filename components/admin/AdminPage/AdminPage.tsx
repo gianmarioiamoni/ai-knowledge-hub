@@ -54,10 +54,12 @@ export function AdminPage({ locale, invites, users: initialUsers, labels }: Admi
   return (
     <div className={`mx-auto min-h-screen max-w-6xl px-6 py-4 sm:px-6 sm:py-6 lg:px-6 xl:px-0`}>
       {/* Header */}
-      <div className="mb-3 sm:mb-4">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary sm:text-xs">
+      <div className="mb-6 space-y-2">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
           {labels.title}
         </p>
+        <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{labels.subtitle}</h1>
+        <p className="text-sm text-muted-foreground">{labels.description}</p>
       </div>
 
       {/* Two Column Layout */}

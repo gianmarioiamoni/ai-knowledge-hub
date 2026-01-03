@@ -108,6 +108,8 @@
   },
   "admin": {
     "title": "Admin",
+    "subtitle": "Gestisci il tuo team",
+    "description": "Invita nuovi membri e gestisci i permessi utente per la tua organizzazione.",
     "deleteInvite": "Cancella invito",
     "deleteAllInvites": "Cancella tutti gli inviti"
   },

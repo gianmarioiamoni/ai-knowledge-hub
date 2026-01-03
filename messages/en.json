@@ -102,6 +102,8 @@
   },
   "admin": {
     "title": "Admin",
+    "subtitle": "Manage your team",
+    "description": "Invite new members and manage user permissions for your organization.",
     "deleteInvite": "Delete invite",
     "deleteAllInvites": "Delete all invites"
   },
