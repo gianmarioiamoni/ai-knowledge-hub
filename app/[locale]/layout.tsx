@@ -10,6 +10,7 @@ import { CommandPalette } from "@/components/navigation/CommandPalette";
 import { CommandHint } from "@/components/navigation/CommandHint";
 import { CommandLauncher } from "@/components/navigation/CommandLauncher";
 import { TopNav } from "@/components/navigation/TopNav";
+import { NavProvider } from "@/components/navigation/NavProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SentryClientInit } from "@/components/SentryClientInit";
 import { CookieBanner } from "@/components/CookieBanner/CookieBanner";
@@ -94,39 +95,41 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <SentryClientInit />
-          <div className="relative z-50 mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
-            {role !== "SUPER_ADMIN" && orgName ? (
-              <span className="hidden rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary ring-1 ring-primary/20 sm:inline">
-                {orgName}
-              </span>
-            ) : (
-              <span />
-            )}
-            <div className="flex items-center justify-end gap-3">
-              <TopNav items={navItems} helpHref="/help" helpLabel={tHelp("title")} />
-              <CommandHint />
-              <CommandLauncher />
-              <LanguageSwitcher />
-              <CommandPalette />
+          <NavProvider items={navItems}>
+            <SentryClientInit />
+            <div className="relative z-50 mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
+              {role !== "SUPER_ADMIN" && orgName ? (
+                <span className="hidden rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary ring-1 ring-primary/20 sm:inline">
+                  {orgName}
+                </span>
+              ) : (
+                <span />
+              )}
+              <div className="flex items-center justify-end gap-3">
+                <TopNav items={navItems} helpHref="/help" helpLabel={tHelp("title")} />
+                <CommandHint />
+                <CommandLauncher />
+                <LanguageSwitcher />
+                <CommandPalette />
+              </div>
             </div>
-          </div>
-          {children}
-          <CookieBanner
-            message={messages.cookies.banner.message}
-            acceptLabel={messages.cookies.banner.accept}
-            declineLabel={messages.cookies.banner.decline}
-            policyLabel={messages.cookies.banner.policy}
-            policyHref={`/${locale}/privacy`}
-            manageLabel={messages.cookies.banner.manage}
-          />
-          <Toaster position="top-right" richColors />
-          <FooterLinks
-            privacyLabel={messages.cookies.banner.policy}
-            cookiesLabel={messages.cookies.banner.manage}
-            contactLabel={messages.contact?.link ?? "Contact"}
-            locale={locale}
-          />
+            {children}
+            <CookieBanner
+              message={messages.cookies.banner.message}
+              acceptLabel={messages.cookies.banner.accept}
+              declineLabel={messages.cookies.banner.decline}
+              policyLabel={messages.cookies.banner.policy}
+              policyHref={`/${locale}/privacy`}
+              manageLabel={messages.cookies.banner.manage}
+            />
+            <Toaster position="top-right" richColors />
+            <FooterLinks
+              privacyLabel={messages.cookies.banner.policy}
+              cookiesLabel={messages.cookies.banner.manage}
+              contactLabel={messages.contact?.link ?? "Contact"}
+              locale={locale}
+            />
+          </NavProvider>
         </NextIntlClientProvider>
       </body>
     </html>

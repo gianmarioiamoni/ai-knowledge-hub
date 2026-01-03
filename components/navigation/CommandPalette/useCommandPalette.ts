@@ -2,18 +2,28 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
+import { useNavItems } from "../NavProvider";
 import type { CommandOption } from "./types";
-import { defaultOptions } from "./options";
 import { filterOptions } from "./filters";
 
 type UseCommandPaletteParams = {
   options?: CommandOption[];
 };
 
-export const useCommandPalette = ({ options = defaultOptions }: UseCommandPaletteParams) => {
+export const useCommandPalette = ({ options }: UseCommandPaletteParams = {}) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const router = useRouter();
+  const navItems = useNavItems();
+
+  // Convert navItems to CommandOptions if no options provided
+  const commandOptions = useMemo(() => {
+    if (options) return options;
+    return navItems.map((item) => ({
+      label: item.label,
+      href: item.href,
+    }));
+  }, [options, navItems]);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -37,8 +47,8 @@ export const useCommandPalette = ({ options = defaultOptions }: UseCommandPalett
   }, []);
 
   const filtered = useMemo(() => {
-    return filterOptions(options, query);
-  }, [options, query]);
+    return filterOptions(commandOptions, query);
+  }, [commandOptions, query]);
 
   const onSelect = (href: string) => {
     setOpen(false);
