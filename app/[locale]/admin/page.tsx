@@ -25,7 +25,7 @@ export default async function AdminPageRoute({
   
   const supabase = createSupabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) {
+  if (error || !data?.user) {
     redirect({ href: "/login", locale });
   }
 
@@ -37,7 +37,7 @@ export default async function AdminPageRoute({
   const invites = await listInvites({ organizationId, status: filters.status });
   const users = await listCompanyUsers({ 
     organizationId, 
-    excludeUserId: data.user.id // Exclude current user from the list
+    excludeUserId: data.user!.id // Non-null assertion: checked above
   });
 
   // Translations for the admin page - using static labels to avoid next-intl nested key issues
