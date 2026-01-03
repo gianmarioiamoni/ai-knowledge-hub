@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { JSX } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
 } from "@/app/[locale]/admin/actions";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Trash2, Ban, Check, UserMinus } from "lucide-react";
+import { toast } from "sonner";
 
 type InviteRow = {
   id: string;
@@ -89,12 +91,15 @@ function formatDate(value: string | null): string {
 export function AdminPage({
   locale,
   invites,
-  users,
+  users: initialUsers,
   labels,
 }: AdminPageProps): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  
+  // Local state for users to enable optimistic updates
+  const [users, setUsers] = useState<UserRow[]>(initialUsers);
 
   const bindAction =
     (action: (prevState: any, formData: FormData) => Promise<any>) =>
@@ -106,6 +111,78 @@ export function AdminPage({
       }
       return result;
     };
+  
+  // Handle role change with optimistic update
+  const handleRoleChange = async (userId: string, newRole: string) => {
+    // Optimistic update: update local state immediately
+    setUsers((prevUsers) =>
+      prevUsers.map((u) =>
+        u.id === userId ? { ...u, role: newRole } : u
+      )
+    );
+
+    // Call server action
+    const formData = new FormData();
+    formData.append("locale", locale);
+    formData.append("userId", userId);
+    formData.append("role", newRole);
+    
+    const result = await changeUserRole({}, formData);
+    
+    if (result?.error) {
+      // Revert optimistic update on error
+      setUsers(initialUsers);
+      toast.error(result.error);
+    } else if (result?.success) {
+      toast.success(labels.changeRole);
+      // Refresh to get fresh data from server in background
+      router.refresh();
+    }
+  };
+  
+  // Handle suspend/enable with optimistic update
+  const handleToggleDisabled = async (userId: string, currentlyDisabled: boolean) => {
+    // Optimistic update
+    setUsers((prevUsers) =>
+      prevUsers.map((u) =>
+        u.id === userId ? { ...u, disabled: !currentlyDisabled } : u
+      )
+    );
+
+    const formData = new FormData();
+    formData.append("locale", locale);
+    formData.append("userId", userId);
+    
+    const action = currentlyDisabled ? enableUser : suspendUser;
+    const result = await action({}, formData);
+    
+    if (result?.error) {
+      // Revert on error
+      setUsers(initialUsers);
+      toast.error(result.error);
+    } else if (result?.success) {
+      toast.success(currentlyDisabled ? labels.enable : labels.suspend);
+      router.refresh();
+    }
+  };
+  
+  // Handle delete user
+  const handleDeleteUser = async (userId: string) => {
+    const formData = new FormData();
+    formData.append("locale", locale);
+    formData.append("userId", userId);
+    
+    const result = await deleteUserMembership({}, formData);
+    
+    if (result?.error) {
+      toast.error(result.error);
+    } else if (result?.success) {
+      // Remove from local state
+      setUsers((prevUsers) => prevUsers.filter((u) => u.id !== userId));
+      toast.success(labels.deleteUser);
+      router.refresh();
+    }
+  };
 
   const currentStatus = searchParams.get("status") ?? "all";
   const filteredInvites =
@@ -269,20 +346,15 @@ export function AdminPage({
                 <tr key={u.id} className="border-t border-border/40">
                   <td className="px-3 py-2">{u.email ?? "—"}</td>
                   <td className="px-3 py-2">
-                    <form action={bindAction(changeUserRole)} className="flex items-center gap-2">
-                      <input type="hidden" name="locale" value={locale} />
-                      <input type="hidden" name="userId" value={u.id} />
+                    <div className="flex items-center gap-2">
                       <select
-                        name="role"
-                        defaultValue={u.role ?? "CONTRIBUTOR"}
+                        value={u.role ?? "CONTRIBUTOR"}
+                        onChange={(e) => handleRoleChange(u.id, e.target.value)}
                         className="rounded-md border border-border bg-background px-2 py-1 text-sm"
                       >
                         {roleOptions}
                       </select>
-                      <Button size="icon" variant="outline" title={labels.changeRole}>
-                        <Shield className="size-4" />
-                      </Button>
-                    </form>
+                    </div>
                   </td>
                   <td className="px-3 py-2">
                     <Badge variant={u.disabled ? "destructive" : "secondary"}>
@@ -292,20 +364,22 @@ export function AdminPage({
                   <td className="px-3 py-2">{formatDate(u.created_at)}</td>
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-2">
-                      <form action={bindAction(u.disabled ? enableUser : suspendUser)}>
-                        <input type="hidden" name="locale" value={locale} />
-                        <input type="hidden" name="userId" value={u.id} />
-                        <Button size="icon" variant="outline" title={u.disabled ? labels.enable : labels.suspend}>
-                          {u.disabled ? <Check className="size-4" /> : <Ban className="size-4" />}
-                        </Button>
-                      </form>
-                      <form action={bindAction(deleteUserMembership)}>
-                        <input type="hidden" name="locale" value={locale} />
-                        <input type="hidden" name="userId" value={u.id} />
-                        <Button size="icon" variant="outline" title={labels.deleteUser}>
-                          <UserMinus className="size-4" />
-                        </Button>
-                      </form>
+                      <Button 
+                        size="icon" 
+                        variant="outline" 
+                        title={u.disabled ? labels.enable : labels.suspend}
+                        onClick={() => handleToggleDisabled(u.id, u.disabled)}
+                      >
+                        {u.disabled ? <Check className="size-4" /> : <Ban className="size-4" />}
+                      </Button>
+                      <Button 
+                        size="icon" 
+                        variant="outline" 
+                        title={labels.deleteUser}
+                        onClick={() => handleDeleteUser(u.id)}
+                      >
+                        <UserMinus className="size-4" />
+                      </Button>
                     </div>
                   </td>
                 </tr>
