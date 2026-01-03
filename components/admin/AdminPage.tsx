@@ -18,6 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Shield, Trash2, Ban, Check, UserMinus } from "lucide-react";
 import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 
 type InviteRow = {
   id: string;
@@ -78,6 +79,10 @@ type AdminPageProps = {
     deleteUser: string;
     changeRole: string;
     usersEmpty?: string;
+    deleteUserConfirmTitle: string;
+    deleteUserConfirmDescription: string;
+    deleteUserConfirmButton: string;
+    cancel: string;
   };
 };
 
@@ -372,14 +377,22 @@ export function AdminPage({
                       >
                         {u.disabled ? <Check className="size-4" /> : <Ban className="size-4" />}
                       </Button>
-                      <Button 
-                        size="icon" 
-                        variant="outline" 
-                        title={labels.deleteUser}
-                        onClick={() => handleDeleteUser(u.id)}
-                      >
-                        <UserMinus className="size-4" />
-                      </Button>
+                      <ConfirmDialog
+                        title={labels.deleteUserConfirmTitle}
+                        description={labels.deleteUserConfirmDescription}
+                        confirmLabel={labels.deleteUserConfirmButton}
+                        cancelLabel={labels.cancel}
+                        onConfirm={() => handleDeleteUser(u.id)}
+                        trigger={
+                          <Button 
+                            size="icon" 
+                            variant="outline" 
+                            title={labels.deleteUser}
+                          >
+                            <UserMinus className="size-4" />
+                          </Button>
+                        }
+                      />
                     </div>
                   </td>
                 </tr>

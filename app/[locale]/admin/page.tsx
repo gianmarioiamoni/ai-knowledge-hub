@@ -86,6 +86,12 @@ export default async function AdminPageRoute({
         deleteUser: isItalian ? "Elimina utente" : "Delete user",
         changeRole: isItalian ? "Cambia ruolo" : "Change role",
         usersEmpty: isItalian ? "Nessun utente." : "No users.",
+        deleteUserConfirmTitle: isItalian ? "Elimina utente?" : "Delete user?",
+        deleteUserConfirmDescription: isItalian 
+          ? "Sei sicuro di voler eliminare questo utente? Questa azione non può essere annullata." 
+          : "Are you sure you want to delete this user? This action cannot be undone.",
+        deleteUserConfirmButton: isItalian ? "Elimina" : "Delete",
+        cancel: isItalian ? "Annulla" : "Cancel",
       }}
     />
   );
