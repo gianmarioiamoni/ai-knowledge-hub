@@ -21,7 +21,7 @@ import {
   suspendUser,
 } from "@/app/[locale]/admin/actions";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Trash2, Ban, Check, UserMinus } from "lucide-react";
+import { Trash2, Ban, Check, UserMinus } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 
@@ -143,52 +143,46 @@ export function AdminPage({
     formData.append("locale", locale);
     formData.append("userId", userId);
     formData.append("role", newRole);
-    
     const result = await changeUserRole({}, formData);
     
     if (result?.error) {
-      // Revert optimistic update on error
-      setUsers(initialUsers);
       toast.error(result.error);
+      // Rollback on error
+      setUsers(initialUsers);
     } else if (result?.success) {
       toast.success(labels.changeRole);
-      // Refresh to get fresh data from server in background
-      router.refresh();
+      // No need to refresh, optimistic update already done
     }
   };
-  
-  // Handle suspend/enable with optimistic update
-  const handleToggleDisabled = async (userId: string, currentlyDisabled: boolean) => {
+
+  const handleToggleDisabled = async (userId: string, currentDisabled: boolean) => {
     // Optimistic update
     setUsers((prevUsers) =>
       prevUsers.map((u) =>
-        u.id === userId ? { ...u, disabled: !currentlyDisabled } : u
+        u.id === userId ? { ...u, disabled: !currentDisabled } : u
       )
     );
 
     const formData = new FormData();
     formData.append("locale", locale);
     formData.append("userId", userId);
-    
-    const action = currentlyDisabled ? enableUser : suspendUser;
+    const action = currentDisabled ? enableUser : suspendUser;
     const result = await action({}, formData);
     
     if (result?.error) {
-      // Revert on error
-      setUsers(initialUsers);
       toast.error(result.error);
+      setUsers(initialUsers);
     } else if (result?.success) {
-      toast.success(currentlyDisabled ? labels.enable : labels.suspend);
+      const label = currentDisabled ? labels.enable : labels.suspend;
+      toast.success(label);
       router.refresh();
     }
   };
-  
-  // Handle delete user
+
   const handleDeleteUser = async (userId: string) => {
     const formData = new FormData();
     formData.append("locale", locale);
     formData.append("userId", userId);
-    
     const result = await deleteUserMembership({}, formData);
     
     if (result?.error) {
@@ -235,234 +229,220 @@ export function AdminPage({
   }, [inviteState, labels.inviteFormSuccess, router]);
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 py-12">
-      <div className="flex flex-col gap-1">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
+    <div className="mx-auto min-h-screen max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      {/* Header */}
+      <div className="mb-4 sm:mb-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary sm:text-sm">
           {labels.title}
         </p>
       </div>
       
-      {/* Invite Form */}
-      <Card className="p-6">
-        <h2 className="mb-4 text-lg font-semibold text-foreground">{labels.inviteFormTitle}</h2>
-        <form action={inviteAction} className="grid gap-4 sm:grid-cols-3">
-          <input type="hidden" name="locale" value={locale} />
-          <div className="flex flex-col gap-2 sm:col-span-2">
-            <Label htmlFor="email">{labels.inviteFormEmail}</Label>
-            <Input id="email" name="email" type="email" required />
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="role">{labels.inviteFormRole}</Label>
-            <select
-              id="role"
-              name="role"
-              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-              defaultValue="CONTRIBUTOR"
-            >
-              <option value="CONTRIBUTOR">{labels.inviteFormRoleContributor}</option>
-              <option value="VIEWER">{labels.inviteFormRoleViewer}</option>
-            </select>
-          </div>
-          <div className="sm:col-span-3 flex justify-end">
-            <Button type="submit" disabled={invitePending}>
-              {labels.inviteFormSubmit}
-            </Button>
-          </div>
-        </form>
-      </Card>
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
+        
+        {/* LEFT COLUMN: Invites */}
+        <div className="space-y-4">
+          {/* Invite Form */}
+          <Card className="p-3 sm:p-4">
+            <h2 className="mb-3 text-sm font-semibold text-foreground sm:text-base">{labels.inviteFormTitle}</h2>
+            <form action={inviteAction} className="space-y-3">
+              <input type="hidden" name="locale" value={locale} />
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-xs">{labels.inviteFormEmail}</Label>
+                <Input id="email" name="email" type="email" required className="h-8 text-xs sm:h-9 sm:text-sm" />
+              </div>
+              <div className="flex gap-2">
+                <div className="flex-1 space-y-2">
+                  <Label htmlFor="role" className="text-xs">{labels.inviteFormRole}</Label>
+                  <select
+                    id="role"
+                    name="role"
+                    className="h-8 w-full rounded-md border border-input bg-background px-2 text-xs sm:h-9 sm:px-3 sm:text-sm"
+                    defaultValue="CONTRIBUTOR"
+                  >
+                    <option value="CONTRIBUTOR">{labels.inviteFormRoleContributor}</option>
+                    <option value="VIEWER">{labels.inviteFormRoleViewer}</option>
+                  </select>
+                </div>
+                <div className="flex items-end">
+                  <Button type="submit" disabled={invitePending} size="sm" className="h-8 text-xs sm:h-9 sm:text-sm">
+                    {labels.inviteFormSubmit}
+                  </Button>
+                </div>
+              </div>
+            </form>
+          </Card>
 
-      {/* Invites */}
-      <div className="space-y-3 rounded-2xl border border-border/60 bg-white/70 p-6 shadow-sm backdrop-blur dark:bg-white/5">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-foreground">
-              {labels.invitesTitle}
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              {labels.invitesSubtitle}
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
+          {/* Invites List */}
+          <Card className="p-3 sm:p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-foreground sm:text-base">{labels.invitesTitle}</h3>
+              <span className="text-xs text-muted-foreground">{filteredInvites.length}</span>
+            </div>
+            
+            {/* Filters */}
+            <div className="mb-3 flex flex-col gap-2 sm:flex-row">
               <select
-              className="rounded-md border border-border bg-background px-3 py-2 text-sm"
-              value={currentStatus}
-              onChange={(e) => {
+                className="h-8 flex-1 rounded-md border border-border bg-background px-2 text-xs"
+                value={currentStatus}
+                onChange={(e) => {
                   const next = new URLSearchParams(searchParams.toString());
                   if (e.target.value === "all") next.delete("status");
                   else next.set("status", e.target.value);
                   router.replace(`${pathname}?${next.toString()}`);
-              }}
-            >
-              <option value="all">{labels.filterAll}</option>
-              <option value="pending">{labels.filterPending}</option>
-              <option value="accepted">{labels.filterAccepted}</option>
-              <option value="expired">{labels.filterExpired}</option>
-              <option value="revoked">{labels.filterRevoked}</option>
-            </select>
-            <form action={bindAction(deleteAllInvites)}>
-              <input type="hidden" name="locale" value={locale} />
-                <Button variant="outline" size="sm" type="submit">
-                {labels.deleteAllInvites}
-              </Button>
-            </form>
-          </div>
-        </div>
-        <div className="overflow-hidden rounded-xl border border-border/60">
-          <table className="min-w-full text-sm">
-            <thead className="bg-muted/50 text-left">
-              <tr>
-                <th className="px-3 py-2 font-semibold">
-                  {labels.headers.email}
-                </th>
-                <th className="px-3 py-2 font-semibold">
-                  {labels.headers.role}
-                </th>
-                <th className="px-3 py-2 font-semibold">
-                  {labels.headers.status}
-                </th>
-                <th className="px-3 py-2 font-semibold">
-                  {labels.headers.expires}
-                </th>
-                <th className="px-3 py-2 font-semibold">
-                  {labels.headers.actions}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredInvites.map((invite) => (
-                <tr key={invite.id} className="border-t border-border/40">
-                  <td className="px-3 py-2">{invite.email}</td>
-                  <td className="px-3 py-2">
-                    {roleLabel(invite.role)}
-                  </td>
-                  <td className="px-3 py-2">
-                    <Badge variant="secondary">
-                      {invite.status}
-                    </Badge>
-                  </td>
-                  <td className="px-3 py-2">{formatDate(invite.expires_at)}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex items-center gap-2">
-                      <form action={bindAction(revokeInvite)}>
-                        <input type="hidden" name="locale" value={locale} />
-                        <input type="hidden" name="id" value={invite.id} />
-                        <Button size="icon" variant="outline" title={labels.revoke}>
-                          <Ban className="size-4" />
-                        </Button>
-                      </form>
-                      <form action={bindAction(deleteInvite)}>
-                        <input type="hidden" name="locale" value={locale} />
-                        <input type="hidden" name="id" value={invite.id} />
-                        <Button size="icon" variant="outline" title={labels.deleteInvite}>
-                          <Trash2 className="size-4" />
-                        </Button>
-                      </form>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {filteredInvites.length === 0 ? (
-                <tr>
-                  <td className="px-3 py-4 text-muted-foreground" colSpan={5}>
-                    {labels.invitesEmpty ?? "No invites."}
-                  </td>
-                </tr>
-              ) : null}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                }}
+              >
+                <option value="all">{labels.filterAll}</option>
+                <option value="pending">{labels.filterPending}</option>
+                <option value="accepted">{labels.filterAccepted}</option>
+                <option value="expired">{labels.filterExpired}</option>
+                <option value="revoked">{labels.filterRevoked}</option>
+              </select>
+              <form action={bindAction(deleteAllInvites)}>
+                <input type="hidden" name="locale" value={locale} />
+                <Button variant="outline" size="sm" type="submit" className="h-8 w-full text-xs sm:w-auto">
+                  {labels.deleteAllInvites}
+                </Button>
+              </form>
+            </div>
 
-      {/* Users */}
-      <div className="space-y-3 rounded-2xl border border-border/60 bg-white/70 p-6 shadow-sm backdrop-blur dark:bg-white/5">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold text-foreground">{labels.usersTitle}</h2>
-          <p className="text-sm text-muted-foreground">{labels.usersSubtitle}</p>
+            {/* Invites Table */}
+            {filteredInvites.length === 0 ? (
+              <p className="py-4 text-center text-xs text-muted-foreground sm:py-6">{labels.invitesEmpty}</p>
+            ) : (
+              <div className="overflow-x-auto rounded-lg border border-border/60">
+                <table className="min-w-full text-xs">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="px-2 py-1.5 text-left font-semibold sm:px-3 sm:py-2">{labels.headers.email}</th>
+                      <th className="px-2 py-1.5 text-left font-semibold sm:px-3 sm:py-2">{labels.headers.role}</th>
+                      <th className="px-2 py-1.5 text-left font-semibold sm:px-3 sm:py-2">{labels.headers.status}</th>
+                      <th className="px-2 py-1.5 text-right font-semibold sm:px-3 sm:py-2">{labels.headers.actions}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/60 bg-background">
+                    {filteredInvites.map((inv) => (
+                      <tr key={inv.id} className="hover:bg-muted/30">
+                        <td className="max-w-[120px] truncate px-2 py-1.5 text-foreground sm:max-w-none sm:px-3 sm:py-2">{inv.email}</td>
+                        <td className="px-2 py-1.5 sm:px-3 sm:py-2">
+                          <Badge variant="secondary" className="text-[10px] sm:text-xs">{roleLabel(inv.role)}</Badge>
+                        </td>
+                        <td className="px-2 py-1.5 sm:px-3 sm:py-2">
+                          <Badge variant={inv.status === "pending" ? "default" : "outline"} className="text-[10px] sm:text-xs">
+                            {inv.status}
+                          </Badge>
+                        </td>
+                        <td className="px-2 py-1.5 sm:px-3 sm:py-2">
+                          <div className="flex justify-end gap-1">
+                            {inv.status === "pending" && (
+                              <form action={bindAction(revokeInvite)}>
+                                <input type="hidden" name="locale" value={locale} />
+                                <input type="hidden" name="id" value={inv.id} />
+                                <Button variant="ghost" size="icon" type="submit" className="size-6 sm:size-7">
+                                  <Ban className="size-3" />
+                                </Button>
+                              </form>
+                            )}
+                            <form action={bindAction(deleteInvite)}>
+                              <input type="hidden" name="locale" value={locale} />
+                              <input type="hidden" name="id" value={inv.id} />
+                              <Button variant="ghost" size="icon" type="submit" className="size-6 sm:size-7">
+                                <Trash2 className="size-3" />
+                              </Button>
+                            </form>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
         </div>
-        <div className="overflow-hidden rounded-xl border border-border/60">
-          <table className="min-w-full text-sm">
-            <thead className="bg-muted/50 text-left">
-              <tr>
-                <th className="px-3 py-2 font-semibold">
-                  {labels.headers.email}
-                </th>
-                <th className="px-3 py-2 font-semibold">
-                  {labels.headers.role}
-                </th>
-                <th className="px-3 py-2 font-semibold">
-                  {labels.headers.status}
-                </th>
-                <th className="px-3 py-2 font-semibold">
-                  {labels.headers.created}
-                </th>
-                <th className="px-3 py-2 font-semibold">
-                  {labels.headers.actions}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((u) => (
-                <tr key={u.id} className="border-t border-border/40">
-                  <td className="px-3 py-2">{u.email ?? "—"}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex items-center gap-2">
-                      <select
-                        value={u.role ?? "CONTRIBUTOR"}
-                        onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                        className="rounded-md border border-border bg-background px-2 py-1 text-sm"
-                      >
-                        {roleOptions}
-                      </select>
-                    </div>
-                  </td>
-                  <td className="px-3 py-2">
-                    <Badge variant={u.disabled ? "destructive" : "secondary"}>
-                      {u.disabled ? labels.statusSuspended : labels.statusActive}
-                    </Badge>
-                  </td>
-                  <td className="px-3 py-2">{formatDate(u.created_at)}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex items-center gap-2">
-                      <Button 
-                        size="icon" 
-                        variant="outline" 
-                        title={u.disabled ? labels.enable : labels.suspend}
-                        onClick={() => handleToggleDisabled(u.id, u.disabled)}
-                      >
-                        {u.disabled ? <Check className="size-4" /> : <Ban className="size-4" />}
-                      </Button>
-                      <ConfirmDialog
-                        title={labels.deleteUserConfirmTitle}
-                        description={labels.deleteUserConfirmDescription}
-                        confirmLabel={labels.deleteUserConfirmButton}
-                        cancelLabel={labels.cancel}
-                        onConfirm={() => handleDeleteUser(u.id)}
-                        trigger={
-                          <Button 
-                            size="icon" 
-                            variant="outline" 
-                            title={labels.deleteUser}
+
+        {/* RIGHT COLUMN: Users */}
+        <div className="space-y-4">
+          <Card className="p-3 sm:p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-foreground sm:text-base">{labels.usersTitle}</h3>
+                <p className="text-xs text-muted-foreground">{labels.usersSubtitle}</p>
+              </div>
+              <span className="text-xs text-muted-foreground">{users.length}</span>
+            </div>
+
+            {/* Users Table */}
+            {users.length === 0 ? (
+              <p className="py-4 text-center text-xs text-muted-foreground sm:py-6">{labels.usersEmpty}</p>
+            ) : (
+              <div className="overflow-x-auto rounded-lg border border-border/60">
+                <table className="min-w-full text-xs">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="px-2 py-1.5 text-left font-semibold sm:px-3 sm:py-2">{labels.headers.email}</th>
+                      <th className="px-2 py-1.5 text-left font-semibold sm:px-3 sm:py-2">{labels.headers.role}</th>
+                      <th className="px-2 py-1.5 text-left font-semibold sm:px-3 sm:py-2">{labels.headers.status}</th>
+                      <th className="px-2 py-1.5 text-right font-semibold sm:px-3 sm:py-2">{labels.headers.actions}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/60 bg-background">
+                    {users.map((u) => (
+                      <tr key={u.id} className="hover:bg-muted/30">
+                        <td className="max-w-[120px] truncate px-2 py-1.5 text-foreground sm:max-w-none sm:px-3 sm:py-2">{u.email ?? "—"}</td>
+                        <td className="px-2 py-1.5 sm:px-3 sm:py-2">
+                          <select
+                            value={u.role ?? "CONTRIBUTOR"}
+                            onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                            className="h-7 w-full rounded border border-border bg-background px-1 text-[10px] sm:w-auto sm:px-2 sm:text-xs"
                           >
-                            <UserMinus className="size-4" />
-                          </Button>
-                        }
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {users.length === 0 ? (
-                <tr>
-                  <td className="px-3 py-4 text-muted-foreground" colSpan={5}>
-                    {labels.usersEmpty ?? "No users."}
-                  </td>
-                </tr>
-              ) : null}
-            </tbody>
-          </table>
+                            {roleOptions}
+                          </select>
+                        </td>
+                        <td className="px-2 py-1.5 sm:px-3 sm:py-2">
+                          <Badge variant={u.disabled ? "destructive" : "default"} className="text-[10px] sm:text-xs">
+                            {u.disabled ? labels.statusSuspended : labels.statusActive}
+                          </Badge>
+                        </td>
+                        <td className="px-2 py-1.5 sm:px-3 sm:py-2">
+                          <div className="flex justify-end gap-1">
+                            <Button 
+                              size="icon" 
+                              variant="ghost"
+                              title={u.disabled ? labels.enable : labels.suspend}
+                              onClick={() => handleToggleDisabled(u.id, u.disabled)}
+                              className="size-6 sm:size-7"
+                            >
+                              {u.disabled ? <Check className="size-3" /> : <Ban className="size-3" />}
+                            </Button>
+                            <ConfirmDialog
+                              title={labels.deleteUserConfirmTitle}
+                              description={labels.deleteUserConfirmDescription}
+                              confirmLabel={labels.deleteUserConfirmButton}
+                              cancelLabel={labels.cancel}
+                              onConfirm={() => handleDeleteUser(u.id)}
+                              trigger={
+                                <Button 
+                                  size="icon" 
+                                  variant="ghost"
+                                  title={labels.deleteUser}
+                                  className="size-6 sm:size-7"
+                                >
+                                  <UserMinus className="size-3" />
+                                </Button>
+                              }
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
         </div>
       </div>
     </div>
   );
 }
-
