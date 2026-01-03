@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
@@ -142,6 +143,10 @@ export const changeUserRole = async (_prev: ActionResult, formData: FormData): P
     .eq("organization_id", organizationId)
     .eq("user_id", parsed.data.userId);
   if (error) return { error: error.message };
+  
+  // Revalidate the admin page to show updated data
+  revalidatePath(`/${parsed.data.locale}/admin`);
+  
   return { success: "ok" };
 };
 
@@ -162,6 +167,10 @@ export const suspendUser = async (_prev: ActionResult, formData: FormData): Prom
     .eq("organization_id", organizationId)
     .eq("user_id", parsed.data.userId);
   if (error) return { error: error.message };
+  
+  // Revalidate the admin page to show updated data
+  revalidatePath(`/${parsed.data.locale}/admin`);
+  
   return { success: "ok" };
 };
 
@@ -181,6 +190,10 @@ export const enableUser = async (_prev: ActionResult, formData: FormData): Promi
     .eq("organization_id", organizationId)
     .eq("user_id", parsed.data.userId);
   if (error) return { error: error.message };
+  
+  // Revalidate the admin page to show updated data
+  revalidatePath(`/${parsed.data.locale}/admin`);
+  
   return { success: "ok" };
 };
 
@@ -204,6 +217,10 @@ export const deleteUserMembership = async (_prev: ActionResult, formData: FormDa
     .eq("organization_id", organizationId)
     .eq("user_id", parsed.data.userId);
   if (error) return { error: error.message };
+  
+  // Revalidate the admin page to show updated data
+  revalidatePath(`/${parsed.data.locale}/admin`);
+  
   return { success: "ok" };
 };
 

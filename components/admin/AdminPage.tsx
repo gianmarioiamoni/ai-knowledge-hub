@@ -98,8 +98,14 @@ export function AdminPage({
 
   const bindAction =
     (action: (prevState: any, formData: FormData) => Promise<any>) =>
-    async (formData: FormData) =>
-      action({}, formData);
+    async (formData: FormData) => {
+      const result = await action({}, formData);
+      // Refresh the page to show updated data after any successful action
+      if (result?.success) {
+        router.refresh();
+      }
+      return result;
+    };
 
   const currentStatus = searchParams.get("status") ?? "all";
   const filteredInvites =
