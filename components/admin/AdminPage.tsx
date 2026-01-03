@@ -238,7 +238,7 @@ export function AdminPage({
       </div>
       
       {/* Two Column Layout */}
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
         
         {/* LEFT COLUMN: Invites */}
         <div className="space-y-4">
@@ -314,25 +314,27 @@ export function AdminPage({
                 <table className="min-w-full text-xs">
                   <thead className="bg-muted/50">
                     <tr>
-                      <th className="px-2 py-1.5 text-left font-semibold sm:px-3 sm:py-2">{labels.headers.email}</th>
-                      <th className="px-2 py-1.5 text-left font-semibold sm:px-3 sm:py-2">{labels.headers.role}</th>
-                      <th className="px-2 py-1.5 text-left font-semibold sm:px-3 sm:py-2">{labels.headers.status}</th>
-                      <th className="px-2 py-1.5 text-right font-semibold sm:px-3 sm:py-2">{labels.headers.actions}</th>
+                      <th className="min-w-[140px] px-2 py-1.5 text-left font-semibold sm:min-w-[180px] sm:px-3 sm:py-2">{labels.headers.email}</th>
+                      <th className="min-w-[90px] px-2 py-1.5 text-left font-semibold sm:min-w-[110px] sm:px-3 sm:py-2">{labels.headers.role}</th>
+                      <th className="min-w-[70px] px-2 py-1.5 text-left font-semibold sm:min-w-[90px] sm:px-3 sm:py-2">{labels.headers.status}</th>
+                      <th className="min-w-[70px] px-2 py-1.5 text-right font-semibold sm:min-w-[80px] sm:px-3 sm:py-2">{labels.headers.actions}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60 bg-background">
                     {filteredInvites.map((inv) => (
                       <tr key={inv.id} className="hover:bg-muted/30">
-                        <td className="max-w-[120px] truncate px-2 py-1.5 text-foreground sm:max-w-none sm:px-3 sm:py-2">{inv.email}</td>
-                        <td className="px-2 py-1.5 sm:px-3 sm:py-2">
+                        <td className="min-w-[140px] px-2 py-1.5 text-foreground sm:min-w-[180px] sm:px-3 sm:py-2">
+                          <div className="max-w-[140px] truncate sm:max-w-[180px]" title={inv.email}>{inv.email}</div>
+                        </td>
+                        <td className="min-w-[90px] px-2 py-1.5 sm:min-w-[110px] sm:px-3 sm:py-2">
                           <Badge variant="secondary" className="text-[10px] sm:text-xs">{roleLabel(inv.role)}</Badge>
                         </td>
-                        <td className="px-2 py-1.5 sm:px-3 sm:py-2">
+                        <td className="min-w-[70px] px-2 py-1.5 sm:min-w-[90px] sm:px-3 sm:py-2">
                           <Badge variant={inv.status === "pending" ? "default" : "outline"} className="text-[10px] sm:text-xs">
                             {inv.status}
                           </Badge>
                         </td>
-                        <td className="px-2 py-1.5 sm:px-3 sm:py-2">
+                        <td className="min-w-[70px] px-2 py-1.5 sm:min-w-[80px] sm:px-3 sm:py-2">
                           <div className="flex justify-end gap-1">
                             {inv.status === "pending" && (
                               <form action={bindAction(revokeInvite)}>
@@ -380,31 +382,33 @@ export function AdminPage({
                 <table className="min-w-full text-xs">
                   <thead className="bg-muted/50">
                     <tr>
-                      <th className="px-2 py-1.5 text-left font-semibold sm:px-3 sm:py-2">{labels.headers.email}</th>
-                      <th className="px-2 py-1.5 text-left font-semibold sm:px-3 sm:py-2">{labels.headers.role}</th>
-                      <th className="px-2 py-1.5 text-left font-semibold sm:px-3 sm:py-2">{labels.headers.status}</th>
-                      <th className="px-2 py-1.5 text-right font-semibold sm:px-3 sm:py-2">{labels.headers.actions}</th>
+                      <th className="min-w-[140px] px-2 py-1.5 text-left font-semibold sm:min-w-[180px] sm:px-3 sm:py-2">{labels.headers.email}</th>
+                      <th className="min-w-[110px] px-2 py-1.5 text-left font-semibold sm:min-w-[130px] sm:px-3 sm:py-2">{labels.headers.role}</th>
+                      <th className="min-w-[70px] px-2 py-1.5 text-left font-semibold sm:min-w-[90px] sm:px-3 sm:py-2">{labels.headers.status}</th>
+                      <th className="min-w-[80px] px-2 py-1.5 text-right font-semibold sm:min-w-[90px] sm:px-3 sm:py-2">{labels.headers.actions}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60 bg-background">
                     {users.map((u) => (
                       <tr key={u.id} className="hover:bg-muted/30">
-                        <td className="max-w-[120px] truncate px-2 py-1.5 text-foreground sm:max-w-none sm:px-3 sm:py-2">{u.email ?? "—"}</td>
-                        <td className="px-2 py-1.5 sm:px-3 sm:py-2">
+                        <td className="min-w-[140px] px-2 py-1.5 text-foreground sm:min-w-[180px] sm:px-3 sm:py-2">
+                          <div className="max-w-[140px] truncate sm:max-w-[180px]" title={u.email ?? "—"}>{u.email ?? "—"}</div>
+                        </td>
+                        <td className="min-w-[110px] px-2 py-1.5 sm:min-w-[130px] sm:px-3 sm:py-2">
                           <select
                             value={u.role ?? "CONTRIBUTOR"}
                             onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                            className="h-7 w-full rounded border border-border bg-background px-1 text-[10px] sm:w-auto sm:px-2 sm:text-xs"
+                            className="h-7 w-full rounded border border-border bg-background px-1 text-[10px] sm:px-2 sm:text-xs"
                           >
                             {roleOptions}
                           </select>
                         </td>
-                        <td className="px-2 py-1.5 sm:px-3 sm:py-2">
+                        <td className="min-w-[70px] px-2 py-1.5 sm:min-w-[90px] sm:px-3 sm:py-2">
                           <Badge variant={u.disabled ? "destructive" : "default"} className="text-[10px] sm:text-xs">
                             {u.disabled ? labels.statusSuspended : labels.statusActive}
                           </Badge>
                         </td>
-                        <td className="px-2 py-1.5 sm:px-3 sm:py-2">
+                        <td className="min-w-[80px] px-2 py-1.5 sm:min-w-[90px] sm:px-3 sm:py-2">
                           <div className="flex justify-end gap-1">
                             <Button 
                               size="icon" 
