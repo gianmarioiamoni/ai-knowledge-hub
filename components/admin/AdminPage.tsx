@@ -229,35 +229,35 @@ export function AdminPage({
   }, [inviteState, labels.inviteFormSuccess, router]);
 
   return (
-    <div className="mx-auto min-h-screen max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <div className="mx-auto min-h-screen max-w-7xl px-3 py-4 sm:px-4 sm:py-6 lg:px-6">
       {/* Header */}
-      <div className="mb-4 sm:mb-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary sm:text-sm">
+      <div className="mb-3 sm:mb-4">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary sm:text-xs">
           {labels.title}
         </p>
       </div>
       
       {/* Two Column Layout */}
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
         
         {/* LEFT COLUMN: Invites */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Invite Form */}
-          <Card className="p-3 sm:p-4">
-            <h2 className="mb-3 text-sm font-semibold text-foreground sm:text-base">{labels.inviteFormTitle}</h2>
-            <form action={inviteAction} className="space-y-3">
+          <Card className="p-2 sm:p-3">
+            <h2 className="mb-2 text-xs font-semibold text-foreground">{labels.inviteFormTitle}</h2>
+            <form action={inviteAction} className="space-y-2">
               <input type="hidden" name="locale" value={locale} />
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-xs">{labels.inviteFormEmail}</Label>
-                <Input id="email" name="email" type="email" required className="h-8 text-xs sm:h-9 sm:text-sm" />
+              <div className="space-y-1">
+                <Label htmlFor="email" className="text-[10px]">{labels.inviteFormEmail}</Label>
+                <Input id="email" name="email" type="email" required className="h-7 text-[11px]" />
               </div>
-              <div className="flex gap-2">
-                <div className="flex-1 space-y-2">
-                  <Label htmlFor="role" className="text-xs">{labels.inviteFormRole}</Label>
+              <div className="flex gap-1.5">
+                <div className="flex-1 space-y-1">
+                  <Label htmlFor="role" className="text-[10px]">{labels.inviteFormRole}</Label>
                   <select
                     id="role"
                     name="role"
-                    className="h-8 w-full rounded-md border border-input bg-background px-2 text-xs sm:h-9 sm:px-3 sm:text-sm"
+                    className="h-7 w-full rounded-md border border-input bg-background px-2 text-[11px]"
                     defaultValue="CONTRIBUTOR"
                   >
                     <option value="CONTRIBUTOR">{labels.inviteFormRoleContributor}</option>
@@ -265,7 +265,7 @@ export function AdminPage({
                   </select>
                 </div>
                 <div className="flex items-end">
-                  <Button type="submit" disabled={invitePending} size="sm" className="h-8 text-xs sm:h-9 sm:text-sm">
+                  <Button type="submit" disabled={invitePending} size="sm" className="h-7 px-2 text-[10px]">
                     {labels.inviteFormSubmit}
                   </Button>
                 </div>
@@ -274,16 +274,16 @@ export function AdminPage({
           </Card>
 
           {/* Invites List */}
-          <Card className="p-3 sm:p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-foreground sm:text-base">{labels.invitesTitle}</h3>
-              <span className="text-xs text-muted-foreground">{filteredInvites.length}</span>
+          <Card className="p-2 sm:p-3">
+            <div className="mb-2 flex items-center justify-between">
+              <h3 className="text-xs font-semibold text-foreground">{labels.invitesTitle}</h3>
+              <span className="text-[10px] text-muted-foreground">{filteredInvites.length}</span>
             </div>
             
             {/* Filters */}
-            <div className="mb-3 flex flex-col gap-2 sm:flex-row">
+            <div className="mb-2 flex flex-col gap-1.5 sm:flex-row">
               <select
-                className="h-8 flex-1 rounded-md border border-border bg-background px-2 text-xs"
+                className="h-7 flex-1 rounded-md border border-border bg-background px-1.5 text-[10px]"
                 value={currentStatus}
                 onChange={(e) => {
                   const next = new URLSearchParams(searchParams.toString());
@@ -300,7 +300,7 @@ export function AdminPage({
               </select>
               <form action={bindAction(deleteAllInvites)}>
                 <input type="hidden" name="locale" value={locale} />
-                <Button variant="outline" size="sm" type="submit" className="h-8 w-full text-xs sm:w-auto">
+                <Button variant="outline" size="sm" type="submit" className="h-7 w-full px-2 text-[10px] sm:w-auto">
                   {labels.deleteAllInvites}
                 </Button>
               </form>
@@ -308,48 +308,48 @@ export function AdminPage({
 
             {/* Invites Table */}
             {filteredInvites.length === 0 ? (
-              <p className="py-4 text-center text-xs text-muted-foreground sm:py-6">{labels.invitesEmpty}</p>
+              <p className="py-3 text-center text-[10px] text-muted-foreground">{labels.invitesEmpty}</p>
             ) : (
               <div className="overflow-x-auto rounded-lg border border-border/60">
-                <table className="min-w-full text-xs">
+                <table className="min-w-full text-[10px]">
                   <thead className="bg-muted/50">
                     <tr>
-                      <th className="min-w-[140px] px-2 py-1.5 text-left font-semibold sm:min-w-[180px] sm:px-3 sm:py-2">{labels.headers.email}</th>
-                      <th className="min-w-[90px] px-2 py-1.5 text-left font-semibold sm:min-w-[110px] sm:px-3 sm:py-2">{labels.headers.role}</th>
-                      <th className="min-w-[70px] px-2 py-1.5 text-left font-semibold sm:min-w-[90px] sm:px-3 sm:py-2">{labels.headers.status}</th>
-                      <th className="min-w-[70px] px-2 py-1.5 text-right font-semibold sm:min-w-[80px] sm:px-3 sm:py-2">{labels.headers.actions}</th>
+                      <th className="min-w-[100px] px-1.5 py-1 text-left font-semibold sm:min-w-[130px] sm:px-2">{labels.headers.email}</th>
+                      <th className="min-w-[70px] px-1.5 py-1 text-left font-semibold sm:min-w-[85px] sm:px-2">{labels.headers.role}</th>
+                      <th className="min-w-[55px] px-1.5 py-1 text-left font-semibold sm:min-w-[70px] sm:px-2">{labels.headers.status}</th>
+                      <th className="min-w-[50px] px-1.5 py-1 text-right font-semibold sm:min-w-[60px] sm:px-2">{labels.headers.actions}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60 bg-background">
                     {filteredInvites.map((inv) => (
                       <tr key={inv.id} className="hover:bg-muted/30">
-                        <td className="min-w-[140px] px-2 py-1.5 text-foreground sm:min-w-[180px] sm:px-3 sm:py-2">
-                          <div className="max-w-[140px] truncate sm:max-w-[180px]" title={inv.email}>{inv.email}</div>
+                        <td className="min-w-[100px] px-1.5 py-1 text-foreground sm:min-w-[130px] sm:px-2">
+                          <div className="max-w-[100px] truncate sm:max-w-[130px]" title={inv.email}>{inv.email}</div>
                         </td>
-                        <td className="min-w-[90px] px-2 py-1.5 sm:min-w-[110px] sm:px-3 sm:py-2">
-                          <Badge variant="secondary" className="text-[10px] sm:text-xs">{roleLabel(inv.role)}</Badge>
+                        <td className="min-w-[70px] px-1.5 py-1 sm:min-w-[85px] sm:px-2">
+                          <Badge variant="secondary" className="text-[9px]">{roleLabel(inv.role)}</Badge>
                         </td>
-                        <td className="min-w-[70px] px-2 py-1.5 sm:min-w-[90px] sm:px-3 sm:py-2">
-                          <Badge variant={inv.status === "pending" ? "default" : "outline"} className="text-[10px] sm:text-xs">
+                        <td className="min-w-[55px] px-1.5 py-1 sm:min-w-[70px] sm:px-2">
+                          <Badge variant={inv.status === "pending" ? "default" : "outline"} className="text-[9px]">
                             {inv.status}
                           </Badge>
                         </td>
-                        <td className="min-w-[70px] px-2 py-1.5 sm:min-w-[80px] sm:px-3 sm:py-2">
-                          <div className="flex justify-end gap-1">
+                        <td className="min-w-[50px] px-1.5 py-1 sm:min-w-[60px] sm:px-2">
+                          <div className="flex justify-end gap-0.5">
                             {inv.status === "pending" && (
                               <form action={bindAction(revokeInvite)}>
                                 <input type="hidden" name="locale" value={locale} />
                                 <input type="hidden" name="id" value={inv.id} />
-                                <Button variant="ghost" size="icon" type="submit" className="size-6 sm:size-7">
-                                  <Ban className="size-3" />
+                                <Button variant="ghost" size="icon" type="submit" className="size-5 sm:size-6">
+                                  <Ban className="size-2.5" />
                                 </Button>
                               </form>
                             )}
                             <form action={bindAction(deleteInvite)}>
                               <input type="hidden" name="locale" value={locale} />
                               <input type="hidden" name="id" value={inv.id} />
-                              <Button variant="ghost" size="icon" type="submit" className="size-6 sm:size-7">
-                                <Trash2 className="size-3" />
+                              <Button variant="ghost" size="icon" type="submit" className="size-5 sm:size-6">
+                                <Trash2 className="size-2.5" />
                               </Button>
                             </form>
                           </div>
@@ -364,60 +364,60 @@ export function AdminPage({
         </div>
 
         {/* RIGHT COLUMN: Users */}
-        <div className="space-y-4">
-          <Card className="p-3 sm:p-4">
-            <div className="mb-3 flex items-center justify-between">
+        <div className="space-y-3">
+          <Card className="p-2 sm:p-3">
+            <div className="mb-2 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-foreground sm:text-base">{labels.usersTitle}</h3>
-                <p className="text-xs text-muted-foreground">{labels.usersSubtitle}</p>
+                <h3 className="text-xs font-semibold text-foreground">{labels.usersTitle}</h3>
+                <p className="text-[10px] text-muted-foreground">{labels.usersSubtitle}</p>
               </div>
-              <span className="text-xs text-muted-foreground">{users.length}</span>
+              <span className="text-[10px] text-muted-foreground">{users.length}</span>
             </div>
 
             {/* Users Table */}
             {users.length === 0 ? (
-              <p className="py-4 text-center text-xs text-muted-foreground sm:py-6">{labels.usersEmpty}</p>
+              <p className="py-3 text-center text-[10px] text-muted-foreground">{labels.usersEmpty}</p>
             ) : (
               <div className="overflow-x-auto rounded-lg border border-border/60">
-                <table className="min-w-full text-xs">
+                <table className="min-w-full text-[10px]">
                   <thead className="bg-muted/50">
                     <tr>
-                      <th className="min-w-[140px] px-2 py-1.5 text-left font-semibold sm:min-w-[180px] sm:px-3 sm:py-2">{labels.headers.email}</th>
-                      <th className="min-w-[110px] px-2 py-1.5 text-left font-semibold sm:min-w-[130px] sm:px-3 sm:py-2">{labels.headers.role}</th>
-                      <th className="min-w-[70px] px-2 py-1.5 text-left font-semibold sm:min-w-[90px] sm:px-3 sm:py-2">{labels.headers.status}</th>
-                      <th className="min-w-[80px] px-2 py-1.5 text-right font-semibold sm:min-w-[90px] sm:px-3 sm:py-2">{labels.headers.actions}</th>
+                      <th className="min-w-[100px] px-1.5 py-1 text-left font-semibold sm:min-w-[130px] sm:px-2">{labels.headers.email}</th>
+                      <th className="min-w-[85px] px-1.5 py-1 text-left font-semibold sm:min-w-[100px] sm:px-2">{labels.headers.role}</th>
+                      <th className="min-w-[55px] px-1.5 py-1 text-left font-semibold sm:min-w-[70px] sm:px-2">{labels.headers.status}</th>
+                      <th className="min-w-[55px] px-1.5 py-1 text-right font-semibold sm:min-w-[65px] sm:px-2">{labels.headers.actions}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60 bg-background">
                     {users.map((u) => (
                       <tr key={u.id} className="hover:bg-muted/30">
-                        <td className="min-w-[140px] px-2 py-1.5 text-foreground sm:min-w-[180px] sm:px-3 sm:py-2">
-                          <div className="max-w-[140px] truncate sm:max-w-[180px]" title={u.email ?? "—"}>{u.email ?? "—"}</div>
+                        <td className="min-w-[100px] px-1.5 py-1 text-foreground sm:min-w-[130px] sm:px-2">
+                          <div className="max-w-[100px] truncate sm:max-w-[130px]" title={u.email ?? "—"}>{u.email ?? "—"}</div>
                         </td>
-                        <td className="min-w-[110px] px-2 py-1.5 sm:min-w-[130px] sm:px-3 sm:py-2">
+                        <td className="min-w-[85px] px-1.5 py-1 sm:min-w-[100px] sm:px-2">
                           <select
                             value={u.role ?? "CONTRIBUTOR"}
                             onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                            className="h-7 w-full rounded border border-border bg-background px-1 text-[10px] sm:px-2 sm:text-xs"
+                            className="h-6 w-full rounded border border-border bg-background px-1 text-[9px]"
                           >
                             {roleOptions}
                           </select>
                         </td>
-                        <td className="min-w-[70px] px-2 py-1.5 sm:min-w-[90px] sm:px-3 sm:py-2">
-                          <Badge variant={u.disabled ? "destructive" : "default"} className="text-[10px] sm:text-xs">
+                        <td className="min-w-[55px] px-1.5 py-1 sm:min-w-[70px] sm:px-2">
+                          <Badge variant={u.disabled ? "destructive" : "default"} className="text-[9px]">
                             {u.disabled ? labels.statusSuspended : labels.statusActive}
                           </Badge>
                         </td>
-                        <td className="min-w-[80px] px-2 py-1.5 sm:min-w-[90px] sm:px-3 sm:py-2">
-                          <div className="flex justify-end gap-1">
+                        <td className="min-w-[55px] px-1.5 py-1 sm:min-w-[65px] sm:px-2">
+                          <div className="flex justify-end gap-0.5">
                             <Button 
                               size="icon" 
                               variant="ghost"
                               title={u.disabled ? labels.enable : labels.suspend}
                               onClick={() => handleToggleDisabled(u.id, u.disabled)}
-                              className="size-6 sm:size-7"
+                              className="size-5 sm:size-6"
                             >
-                              {u.disabled ? <Check className="size-3" /> : <Ban className="size-3" />}
+                              {u.disabled ? <Check className="size-2.5" /> : <Ban className="size-2.5" />}
                             </Button>
                             <ConfirmDialog
                               title={labels.deleteUserConfirmTitle}
@@ -430,9 +430,9 @@ export function AdminPage({
                                   size="icon" 
                                   variant="ghost"
                                   title={labels.deleteUser}
-                                  className="size-6 sm:size-7"
+                                  className="size-5 sm:size-6"
                                 >
-                                  <UserMinus className="size-3" />
+                                  <UserMinus className="size-2.5" />
                                 </Button>
                               }
                             />
