@@ -35,7 +35,10 @@ export default async function AdminPageRoute({
   }
 
   const invites = await listInvites({ organizationId, status: filters.status });
-  const users = await listCompanyUsers({ organizationId });
+  const users = await listCompanyUsers({ 
+    organizationId, 
+    excludeUserId: data.user.id // Exclude current user from the list
+  });
 
   // Translations for the admin page - using static labels to avoid next-intl nested key issues
   const isItalian = locale === "it";

@@ -45,26 +45,77 @@ const ensureAtLeastOneAdmin = async (organizationId: string, skipUserId?: string
 
 export const listCompanyUsers = async ({
   organizationId,
+  excludeUserId,
 }: {
   organizationId: string;
+  excludeUserId?: string;
 }): Promise<
   { id: string; email: string | null; role: string | null; disabled: boolean; created_at: string | null }[]
 > => {
   const service = createSupabaseServiceClient();
-  const { data } = await service
+  
+  // First query: get organization members
+  let membersQuery = service
     .from("organization_members")
-    .select("user_id, role, disabled, created_at, users(email, created_at)")
-    .eq("organization_id", organizationId)
-    .order("created_at", { ascending: false });
-  return (
-    data?.map((row) => ({
-      id: row.user_id,
-      email: (row as any).users?.email ?? null,
-      role: row.role ?? null,
-      disabled: row.disabled ?? false,
-      created_at: row.created_at ?? null,
-    })) ?? []
+    .select("user_id, role, disabled, created_at")
+    .eq("organization_id", organizationId);
+  
+  // Exclude the current user (usually the Company Admin viewing the page)
+  if (excludeUserId) {
+    membersQuery = membersQuery.neq("user_id", excludeUserId);
+  }
+  
+  const { data: members, error: membersError } = await membersQuery.order("created_at", { ascending: false });
+  
+  if (membersError) {
+    console.error("[listCompanyUsers] Error fetching members:", membersError);
+    return [];
+  }
+  
+  if (!members || members.length === 0) {
+    console.log("[listCompanyUsers] No members found for organization:", organizationId);
+    return [];
+  }
+  
+  // Second query: get user details from auth.users using service role
+  // We need to call admin API for this
+  const userIds = members.map((m) => m.user_id);
+  
+  // Use admin.listUsers() to get email from auth.users
+  const { data: authData, error: authError } = await service.auth.admin.listUsers({
+    perPage: 1000, // Adjust if you have more users
+  });
+  
+  if (authError) {
+    console.error("[listCompanyUsers] Error fetching auth users:", authError);
+    // Return members without email if we can't fetch auth data
+    return members.map((member) => ({
+      id: member.user_id,
+      email: null,
+      role: member.role ?? null,
+      disabled: member.disabled ?? false,
+      created_at: member.created_at ?? null,
+    }));
+  }
+  
+  // Create a map of user_id -> email
+  const userEmailMap = new Map(
+    authData.users
+      .filter((u) => userIds.includes(u.id))
+      .map((u) => [u.id, u.email])
   );
+  
+  const users = members.map((member) => ({
+    id: member.user_id,
+    email: userEmailMap.get(member.user_id) ?? null,
+    role: member.role ?? null,
+    disabled: member.disabled ?? false,
+    created_at: member.created_at ?? null,
+  }));
+  
+  console.log("[listCompanyUsers] Processed users:", JSON.stringify(users, null, 2));
+  
+  return users;
 };
 
 export const changeUserRole = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {
