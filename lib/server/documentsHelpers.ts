@@ -32,7 +32,7 @@ export async function getDocumentsLabels(locale: string): Promise<DocumentsPageL
     },
     delete: {
       label: t("delete.label"),
-      confirm: t("delete.confirm"),
+      confirm: t.raw("delete.confirm") as string,
       cancel: t("delete.cancel"),
     },
     breadcrumbs: {

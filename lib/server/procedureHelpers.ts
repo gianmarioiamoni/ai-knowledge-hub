@@ -36,7 +36,7 @@ export async function getProceduresListLabels(locale: string): Promise<Procedure
     listExportMd: t("actions.exportMd"),
     listExportPdf: t("actions.exportPdf"),
     listDelete: t("actions.delete"),
-    listConfirmDelete: t("actions.confirmDelete", { title: "{title}" }),
+    listConfirmDelete: t.raw("actions.confirmDelete") as string,
     listEdit: t("actions.edit"),
     listSave: t("actions.save"),
     listCancel: t("actions.cancel"),
