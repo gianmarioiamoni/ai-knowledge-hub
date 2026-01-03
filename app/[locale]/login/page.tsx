@@ -74,14 +74,14 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
       : null;
 
   return (
-    <div className={`relative min-h-screen overflow-hidden ${LAYOUT_CLASSES.horizontalPadding} py-12 sm:py-16`}>
+    <div className="relative min-h-screen overflow-hidden py-12 sm:py-16">
       <div className="pointer-events-none absolute inset-0 opacity-70">
         <div className="absolute -left-32 -top-24 h-[36rem] w-[36rem] rounded-full bg-primary/20 blur-[120px]" />
         <div className="absolute bottom-[-18rem] right-[-12rem] h-[32rem] w-[32rem] rounded-full bg-accent/25 blur-[140px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.22)_1px,transparent_0)] bg-[size:42px_42px] mix-blend-screen dark:opacity-20" />
       </div>
 
-      <div className="relative mx-auto flex max-w-6xl flex-col gap-10">
+      <div className={`relative mx-auto flex w-full max-w-6xl flex-col gap-10 ${LAYOUT_CLASSES.horizontalPadding}`}>
         <BadgeBar label={t("badgeLabel")} hint={t("badgeHint")} />
 
         <div className="grid items-start justify-items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:justify-items-stretch">

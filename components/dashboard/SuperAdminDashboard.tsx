@@ -25,9 +25,9 @@ export function SuperAdminDashboard({
   adminLabels,
 }: SuperAdminDashboardProps): JSX.Element {
   return (
-    <div className={`relative min-h-screen overflow-hidden ${LAYOUT_CLASSES.horizontalPadding} py-12`}>
+    <div className="relative min-h-screen overflow-hidden py-12">
       <BackgroundGradient />
-      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-8">
+      <div className={`relative mx-auto flex w-full max-w-6xl flex-col gap-8 ${LAYOUT_CLASSES.horizontalPadding}`}>
         <HeaderBar
           title={title}
           headlinePrefix={greetingPrefix}
