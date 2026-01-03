@@ -57,6 +57,9 @@ type AdminPageProps = {
       company: string;
       contributor: string;
       viewer: string;
+      COMPANY_ADMIN: string;
+      CONTRIBUTOR: string;
+      VIEWER: string;
     };
     headers: {
       email: string;
@@ -105,16 +108,16 @@ export function AdminPage({
       : invites.filter((i) => i.status === currentStatus);
 
   const roleLabel = (role?: string | null) => {
-    if (role === "COMPANY_ADMIN") return labels.roles.company;
-    if (role === "VIEWER") return labels.roles.viewer;
-    return labels.roles.contributor;
+    if (role === "COMPANY_ADMIN") return labels.roles.COMPANY_ADMIN;
+    if (role === "VIEWER") return labels.roles.VIEWER;
+    return labels.roles.CONTRIBUTOR;
   };
 
   const roleOptions = (
     <>
-      <option value="COMPANY_ADMIN">{labels.roles.company}</option>
-      <option value="CONTRIBUTOR">{labels.roles.contributor}</option>
-      <option value="VIEWER">{labels.roles.viewer}</option>
+      <option value="COMPANY_ADMIN">{labels.roles.COMPANY_ADMIN}</option>
+      <option value="CONTRIBUTOR">{labels.roles.CONTRIBUTOR}</option>
+      <option value="VIEWER">{labels.roles.VIEWER}</option>
     </>
   );
 
@@ -166,11 +169,21 @@ export function AdminPage({
           <table className="min-w-full text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>
-                <th className="px-3 py-2 font-semibold">{labels.headers.email}</th>
-                <th className="px-3 py-2 font-semibold">{labels.headers.role}</th>
-                <th className="px-3 py-2 font-semibold">{labels.headers.status}</th>
-                <th className="px-3 py-2 font-semibold">{labels.headers.expires}</th>
-                <th className="px-3 py-2 font-semibold">{labels.headers.actions}</th>
+                <th className="px-3 py-2 font-semibold">
+                  {labels.headers.email}
+                </th>
+                <th className="px-3 py-2 font-semibold">
+                  {labels.headers.role}
+                </th>
+                <th className="px-3 py-2 font-semibold">
+                  {labels.headers.status}
+                </th>
+                <th className="px-3 py-2 font-semibold">
+                  {labels.headers.expires}
+                </th>
+                <th className="px-3 py-2 font-semibold">
+                  {labels.headers.actions}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -178,10 +191,12 @@ export function AdminPage({
                 <tr key={invite.id} className="border-t border-border/40">
                   <td className="px-3 py-2">{invite.email}</td>
                   <td className="px-3 py-2">
-                    {labels.roles[invite.role as keyof typeof labels.roles] ?? invite.role}
+                    {roleLabel(invite.role)}
                   </td>
                   <td className="px-3 py-2">
-                    <Badge variant="secondary">{invite.status}</Badge>
+                    <Badge variant="secondary">
+                      {invite.status}
+                    </Badge>
                   </td>
                   <td className="px-3 py-2">{formatDate(invite.expires_at)}</td>
                   <td className="px-3 py-2">
@@ -226,11 +241,21 @@ export function AdminPage({
           <table className="min-w-full text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>
-                <th className="px-3 py-2 font-semibold">{labels.headers.email}</th>
-                <th className="px-3 py-2 font-semibold">{labels.headers.role}</th>
-                <th className="px-3 py-2 font-semibold">{labels.headers.status}</th>
-                <th className="px-3 py-2 font-semibold">{labels.headers.created}</th>
-                <th className="px-3 py-2 font-semibold">{labels.headers.actions}</th>
+                <th className="px-3 py-2 font-semibold">
+                  {labels.headers.email}
+                </th>
+                <th className="px-3 py-2 font-semibold">
+                  {labels.headers.role}
+                </th>
+                <th className="px-3 py-2 font-semibold">
+                  {labels.headers.status}
+                </th>
+                <th className="px-3 py-2 font-semibold">
+                  {labels.headers.created}
+                </th>
+                <th className="px-3 py-2 font-semibold">
+                  {labels.headers.actions}
+                </th>
               </tr>
             </thead>
             <tbody>

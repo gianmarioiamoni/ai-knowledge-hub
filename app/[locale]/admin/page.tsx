@@ -6,7 +6,7 @@ import { requireActiveOrganization } from "@/lib/server/organizations";
 import { canManageOrg } from "@/lib/server/roles";
 import { AdminPage } from "@/components/admin/AdminPage";
 import { listCompanyUsers } from "@/app/[locale]/admin/actions";
-import { listInvites, revokeInvite, deleteInvite, deleteAllInvites } from "@/app/[locale]/invites/actions";
+import { listInvites } from "@/app/[locale]/invites/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -22,8 +22,7 @@ export default async function AdminPageRoute({
 
   const tAdmin = await getTranslations({ locale, namespace: "admin" });
   const tInvites = await getTranslations({ locale, namespace: "invites" });
-  const tUsers = await getTranslations({ locale, namespace: "adminUsers" });
-
+  
   const supabase = createSupabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
   if (error || !data.user) {
@@ -38,6 +37,9 @@ export default async function AdminPageRoute({
   const invites = await listInvites({ organizationId, status: filters.status });
   const users = await listCompanyUsers({ organizationId });
 
+  // Translations for the admin page - using static labels to avoid next-intl nested key issues
+  const isItalian = locale === "it";
+
   return (
     <AdminPage
       locale={locale}
@@ -47,9 +49,9 @@ export default async function AdminPageRoute({
         title: tAdmin("title"),
         invitesTitle: tInvites("title"),
         invitesSubtitle: tInvites("subtitle"),
-      invitesEmpty: tInvites("list.empty"),
-        usersTitle: tUsers("title"),
-        usersSubtitle: tUsers("subtitle"),
+        invitesEmpty: tInvites("list.empty"),
+        usersTitle: isItalian ? "Utenti" : "Users",
+        usersSubtitle: isItalian ? "Gestisci i membri della tua organizzazione." : "Manage members of your organization.",
         filterAll: tInvites("filter.all"),
         filterPending: tInvites("filter.pending"),
         filterAccepted: tInvites("filter.accepted"),
@@ -59,25 +61,28 @@ export default async function AdminPageRoute({
         deleteInvite: tAdmin("deleteInvite"),
         deleteAllInvites: tAdmin("deleteAllInvites"),
         roles: {
-          company: tUsers("roles.company", { fallback: "Company Admin" }),
-          contributor: tUsers("roles.contributor", { fallback: "Contributor" }),
-          viewer: tUsers("roles.viewer", { fallback: "Viewer" }),
+          company: "Company Admin",
+          contributor: "Contributor",
+          viewer: "Viewer",
+          COMPANY_ADMIN: "Company Admin",
+          CONTRIBUTOR: "Contributor",
+          VIEWER: "Viewer",
         },
         headers: {
-          email: tUsers("headers.email", { fallback: "Email" }),
-          role: tUsers("headers.role", { fallback: "Role" }),
-          status: tUsers("headers.status", { fallback: "Status" }),
-          expires: tUsers("headers.expires", { fallback: "Expires" }),
-          created: tUsers("headers.created", { fallback: "Created" }),
-          actions: tUsers("headers.actions", { fallback: "Actions" }),
+          email: "Email",
+          role: isItalian ? "Ruolo" : "Role",
+          status: isItalian ? "Stato" : "Status",
+          expires: isItalian ? "Scadenza" : "Expires",
+          created: isItalian ? "Creato" : "Created",
+          actions: isItalian ? "Azioni" : "Actions",
         },
-        statusActive: tUsers("statusActive", { fallback: "Active" }),
-        statusSuspended: tUsers("statusSuspended", { fallback: "Suspended" }),
-        suspend: tUsers("suspend", { fallback: "Suspend" }),
-        enable: tUsers("enable", { fallback: "Enable" }),
-        deleteUser: tUsers("deleteUser", { fallback: "Delete user" }),
-        changeRole: tUsers("changeRole", { fallback: "Change role" }),
-      usersEmpty: tUsers("empty", { fallback: "No users." }),
+        statusActive: isItalian ? "Attivo" : "Active",
+        statusSuspended: isItalian ? "Sospeso" : "Suspended",
+        suspend: isItalian ? "Sospendi" : "Suspend",
+        enable: isItalian ? "Riattiva" : "Enable",
+        deleteUser: isItalian ? "Elimina utente" : "Delete user",
+        changeRole: isItalian ? "Cambia ruolo" : "Change role",
+        usersEmpty: isItalian ? "Nessun utente." : "No users.",
       }}
     />
   );
