@@ -66,5 +66,6 @@ export type AdminLabels = {
   deleteUserConfirmDescription: string;
   deleteUserConfirmButton: string;
   cancel: string;
+  logout: string;
 };
 

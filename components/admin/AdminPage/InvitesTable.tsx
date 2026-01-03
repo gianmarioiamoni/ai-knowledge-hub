@@ -3,7 +3,6 @@
 import type { JSX } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { Trash2, Ban } from "lucide-react";
 import { deleteInvite, deleteAllInvites, revokeInvite } from "@/app/[locale]/admin/actions";
 import type { InviteRow, AdminLabels } from "./types";
@@ -27,7 +26,7 @@ export function InvitesTable({
   bindAction,
 }: InvitesTableProps): JSX.Element {
   return (
-    <Card className="p-2 sm:p-3">
+    <>
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-xs font-semibold text-foreground">{labels.invitesTitle}</h3>
         <span className="text-[10px] text-muted-foreground">{invites.length}</span>
@@ -120,7 +119,7 @@ export function InvitesTable({
           </table>
         </div>
       )}
-    </Card>
+    </>
   );
 }
 

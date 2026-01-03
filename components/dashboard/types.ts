@@ -16,6 +16,7 @@ export type DashboardLabels = {
   greetingPrefix: string;
   email: string;
   profileTooltip: string;
+  logout: string;
   tenant: string;
   pgvector: string;
   sop: string;

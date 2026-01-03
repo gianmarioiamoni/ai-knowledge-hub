@@ -4,7 +4,6 @@ import type { JSX } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
 import type { AdminLabels } from "./types";
 
 type InviteFormProps = {
@@ -16,14 +15,12 @@ type InviteFormProps = {
 
 export function InviteForm({ locale, labels, inviteAction, invitePending }: InviteFormProps): JSX.Element {
   return (
-    <Card className="p-2 sm:p-3">
-      <h2 className="mb-2 text-xs font-semibold text-foreground">{labels.inviteFormTitle}</h2>
-      <form action={inviteAction} className="space-y-2">
-        <input type="hidden" name="locale" value={locale} />
-        <div className="space-y-1">
-          <Label htmlFor="email" className="text-[10px]">
-            {labels.inviteFormEmail}
-          </Label>
+    <form action={inviteAction} className="space-y-2">
+      <input type="hidden" name="locale" value={locale} />
+      <div className="space-y-1">
+        <Label htmlFor="email" className="text-[10px]">
+          {labels.inviteFormEmail}
+        </Label>
           <Input id="email" name="email" type="email" required className="h-7 text-[11px]" />
         </div>
         <div className="flex gap-1.5">
@@ -48,7 +45,6 @@ export function InviteForm({ locale, labels, inviteAction, invitePending }: Invi
           </div>
         </div>
       </form>
-    </Card>
   );
 }
 

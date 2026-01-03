@@ -39,6 +39,7 @@ export function DashboardPage({
         greetingPrefix={labels.greetingPrefix}
         email={labels.email}
         profileTooltip={labels.profileTooltip}
+        logout={labels.logout}
         adminLabels={adminLabels}
       />
     );

@@ -21,6 +21,7 @@ export default async function AdminPageRoute({
 
   const tAdmin = await getTranslations({ locale, namespace: "admin" });
   const tInvites = await getTranslations({ locale, namespace: "invites" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
   
   const supabase = createSupabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
@@ -96,6 +97,7 @@ export default async function AdminPageRoute({
       : "Are you sure you want to delete this user? This action cannot be undone.",
     deleteUserConfirmButton: isItalian ? "Elimina" : "Delete",
     cancel: isItalian ? "Annulla" : "Cancel",
+    logout: tCommon("logout"),
   };
 
   return (

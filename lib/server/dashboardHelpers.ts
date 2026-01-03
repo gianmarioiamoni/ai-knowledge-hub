@@ -19,6 +19,7 @@ export async function getDashboardLabels({
   isSuperAdmin,
 }: GetDashboardLabelsParams): Promise<DashboardLabelsResult> {
   const t = await getTranslations({ locale, namespace: "dashboard" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
 
   const greetingPrefix = t("user", { email: "" }).trim() || "Hi,";
 
@@ -29,6 +30,7 @@ export async function getDashboardLabels({
     greetingPrefix,
     email,
     profileTooltip: t("profileTooltip"),
+    logout: tCommon("logout"),
     tenant: t("tenant"),
     pgvector: t("pgvector"),
     sop: t("sop"),

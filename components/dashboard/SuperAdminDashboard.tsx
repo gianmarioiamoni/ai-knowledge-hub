@@ -4,6 +4,7 @@ import type { JSX } from "react";
 import { HeaderBar } from "./HeaderBar";
 import { SuperAdminPanel } from "@/components/admin/SuperAdminPanel";
 import { BackgroundGradient } from "./BackgroundGradient";
+import { LogoutButton } from "@/components/common/LogoutButton";
 import type { SuperAdminLabels } from "./types";
 import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
@@ -12,6 +13,7 @@ type SuperAdminDashboardProps = {
   greetingPrefix: string;
   email: string;
   profileTooltip: string;
+  logout: string;
   adminLabels: SuperAdminLabels;
 };
 
@@ -20,6 +22,7 @@ export function SuperAdminDashboard({
   greetingPrefix,
   email,
   profileTooltip,
+  logout,
   adminLabels,
 }: SuperAdminDashboardProps): JSX.Element {
   return (
@@ -32,6 +35,7 @@ export function SuperAdminDashboard({
           headlineLinkLabel={email}
           headlineHref="/profile"
           headlineTooltip={profileTooltip}
+          actionSlot={<LogoutButton label={logout} variant="outline" />}
         />
         <SuperAdminPanel labels={adminLabels} />
       </div>

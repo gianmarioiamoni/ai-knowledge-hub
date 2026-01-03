@@ -2,6 +2,8 @@
 
 import type { JSX } from "react";
 import { useRouter } from "next/navigation";
+import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/common/PageHeader";
 import type { InviteRow, UserRow, AdminLabels } from "./types";
 import { useUserManagement } from "./useUserManagement";
 import { useInviteForm } from "./useInviteForm";
@@ -52,46 +54,53 @@ export function AdminPage({ locale, invites, users: initialUsers, labels }: Admi
   );
 
   return (
-    <div className={`mx-auto min-h-screen max-w-6xl px-6 py-4 sm:px-6 sm:py-6 lg:px-6 xl:px-0`}>
-      {/* Header */}
-      <div className="mb-6 space-y-2">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-          {labels.title}
-        </p>
-        <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{labels.subtitle}</h1>
-        <p className="text-sm text-muted-foreground">{labels.description}</p>
-      </div>
+    <div className={`mx-auto min-h-screen max-w-6xl ${LAYOUT_CLASSES.horizontalPadding} py-4 sm:py-6`}>
+      {/* Header with logout */}
+      <PageHeader
+        title={labels.title}
+        subtitle={labels.subtitle}
+        description={labels.description}
+        showLogout
+        logoutLabel={labels.logout}
+      />
 
       {/* Two Column Layout */}
-      <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
         {/* LEFT COLUMN: Invites */}
         <div className="space-y-3">
-          <InviteForm
-            locale={locale}
-            labels={labels}
-            inviteAction={inviteAction}
-            invitePending={invitePending}
-          />
-          <InvitesTable
-            locale={locale}
-            invites={filteredInvites}
-            currentStatus={currentStatus}
-            labels={labels}
-            onStatusChange={handleStatusChange}
-            bindAction={bindAction}
-          />
+          <Card className="p-2">
+            <h2 className="mb-2 text-sm font-semibold text-foreground">{labels.inviteFormTitle}</h2>
+            <InviteForm
+              locale={locale}
+              labels={labels}
+              inviteAction={inviteAction}
+              invitePending={invitePending}
+            />
+          </Card>
+          <Card className="p-2 flex-grow">
+            <InvitesTable
+              locale={locale}
+              invites={filteredInvites}
+              currentStatus={currentStatus}
+              labels={labels}
+              onStatusChange={handleStatusChange}
+              bindAction={bindAction}
+            />
+          </Card>
         </div>
 
         {/* RIGHT COLUMN: Users */}
         <div className="space-y-3">
-          <UsersTable
-            users={users}
-            labels={labels}
-            roleOptions={roleOptions}
-            onRoleChange={handleRoleChange}
-            onToggleDisabled={handleToggleDisabled}
-            onDeleteUser={handleDeleteUser}
-          />
+          <Card className="p-2 flex-grow">
+            <UsersTable
+              users={users}
+              labels={labels}
+              roleOptions={roleOptions}
+              onRoleChange={handleRoleChange}
+              onToggleDisabled={handleToggleDisabled}
+              onDeleteUser={handleDeleteUser}
+            />
+          </Card>
         </div>
       </div>
     </div>

@@ -3,7 +3,6 @@
 import type { JSX } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { Ban, Check, UserMinus } from "lucide-react";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import type { UserRow, AdminLabels } from "./types";
@@ -26,7 +25,7 @@ export function UsersTable({
   onDeleteUser,
 }: UsersTableProps): JSX.Element {
   return (
-    <Card className="p-2 sm:p-3">
+    <>
       <div className="mb-2 flex items-center justify-between">
         <div>
           <h3 className="text-xs font-semibold text-foreground">{labels.usersTitle}</h3>
@@ -110,7 +109,7 @@ export function UsersTable({
           </table>
         </div>
       )}
-    </Card>
+    </>
   );
 }
 

@@ -11,6 +11,7 @@ import { BackgroundGradient } from "./BackgroundGradient";
 import { StatsGrid } from "./StatsGrid";
 import { PipelineCard } from "./PipelineCard";
 import { RecommendedActionsCard } from "./RecommendedActionsCard";
+import { LogoutButton } from "@/components/common/LogoutButton";
 import type { DashboardLabels, DashboardStat, PipelineStep, IngestionData } from "./types";
 import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
@@ -42,6 +43,7 @@ export function RegularDashboard({
           headlineLinkLabel={labels.email}
           headlineHref="/profile"
           headlineTooltip={labels.profileTooltip}
+          actionSlot={<LogoutButton label={labels.logout} variant="outline" />}
         />
 
         <BadgePills
