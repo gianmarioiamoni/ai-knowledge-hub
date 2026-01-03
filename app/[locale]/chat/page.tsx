@@ -10,6 +10,7 @@ import { ensureActivePlan } from "@/lib/server/subscriptions";
 import { buildMetadata } from "@/lib/seo";
 import { canUseChat } from "@/lib/server/roles";
 import { redirect } from "@/i18n/navigation";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,7 @@ export default async function ChatPage({ params }: ChatPageProps): Promise<JSX.E
   const t = await getTranslations({ locale, namespace: "chatPage" });
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-10 sm:px-8 lg:px-0">
+    <div className={LAYOUT_CLASSES.pageContainer}>
       <Breadcrumbs
         items={[
           { label: t("breadcrumbs.home"), href: `/${locale}/dashboard` },

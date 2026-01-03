@@ -5,6 +5,7 @@ import { HeaderBar } from "./HeaderBar";
 import { SuperAdminPanel } from "@/components/admin/SuperAdminPanel";
 import { BackgroundGradient } from "./BackgroundGradient";
 import type { SuperAdminLabels } from "./types";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type SuperAdminDashboardProps = {
   title: string;
@@ -24,9 +25,9 @@ export function SuperAdminDashboard({
   adminLabels,
 }: SuperAdminDashboardProps): JSX.Element {
   return (
-    <div className="relative min-h-screen overflow-hidden px-6 py-12">
+    <div className={`relative min-h-screen overflow-hidden ${LAYOUT_CLASSES.horizontalPadding} py-12`}>
       <BackgroundGradient />
-      <div className="relative mx-auto flex max-w-6xl flex-col gap-8">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-8">
         <HeaderBar
           title={title}
           headlinePrefix={greetingPrefix}

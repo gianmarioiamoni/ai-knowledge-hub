@@ -14,6 +14,7 @@ import type { Stat } from "@/components/login/StatsGrid";
 import { buildMetadata } from "@/lib/seo";
 import { Alert } from "@/components/ui/alert";
 import { routing } from "@/i18n/routing";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type LoginPageProps = {
   params: Promise<{ locale: string }> | { locale: string };
@@ -73,7 +74,7 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
       : null;
 
   return (
-    <div className="relative min-h-screen overflow-hidden px-6 py-12 sm:py-16">
+    <div className={`relative min-h-screen overflow-hidden ${LAYOUT_CLASSES.horizontalPadding} py-12 sm:py-16`}>
       <div className="pointer-events-none absolute inset-0 opacity-70">
         <div className="absolute -left-32 -top-24 h-[36rem] w-[36rem] rounded-full bg-primary/20 blur-[120px]" />
         <div className="absolute bottom-[-18rem] right-[-12rem] h-[32rem] w-[32rem] rounded-full bg-accent/25 blur-[140px]" />

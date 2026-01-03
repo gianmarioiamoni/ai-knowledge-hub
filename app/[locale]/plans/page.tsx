@@ -8,6 +8,7 @@ import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { startPlanCheckout } from "./actions";
 import { requireActiveOrganization } from "@/lib/server/organizations";
 import { canManageOrg, canSeePlans } from "@/lib/server/roles";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 export default async function PlansPage({ params }: { params: Promise<{ locale: string }> }): Promise<JSX.Element> {
   const { locale } = await params;
@@ -76,7 +77,7 @@ export default async function PlansPage({ params }: { params: Promise<{ locale: 
   ];
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 py-12 sm:px-8 lg:px-0">
+    <div className={LAYOUT_CLASSES.pageContainerWide}>
       <div className="flex flex-col gap-2">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{t("title")}</p>
         <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{t("subtitle")}</h1>

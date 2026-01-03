@@ -12,6 +12,7 @@ import { StatsGrid } from "./StatsGrid";
 import { PipelineCard } from "./PipelineCard";
 import { RecommendedActionsCard } from "./RecommendedActionsCard";
 import type { DashboardLabels, DashboardStat, PipelineStep, IngestionData } from "./types";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type RegularDashboardProps = {
   labels: DashboardLabels;
@@ -33,10 +34,10 @@ export function RegularDashboard({
   logoutButton,
 }: RegularDashboardProps): JSX.Element {
   return (
-    <div className="relative min-h-screen overflow-hidden px-6 py-12">
+    <div className={`relative min-h-screen overflow-hidden ${LAYOUT_CLASSES.horizontalPadding} py-12`}>
       <BackgroundGradient />
 
-      <div className="relative mx-auto flex max-w-6xl flex-col gap-8">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-8">
         <HeaderBar
           title={labels.title}
           headlinePrefix={labels.greetingPrefix}
