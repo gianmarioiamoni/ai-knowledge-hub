@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { JSX } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
 import {
   deleteInvite,
   deleteAllInvites,
   revokeInvite,
-} from "@/app/[locale]/invites/actions";
+  createInvite,
+} from "@/app/[locale]/admin/actions";
 import {
   changeUserRole,
   deleteUserMembership,
@@ -56,6 +61,13 @@ type AdminPageProps = {
     deleteInvite: string;
     deleteAllInvites: string;
     invitesEmpty?: string;
+    inviteFormTitle: string;
+    inviteFormEmail: string;
+    inviteFormRole: string;
+    inviteFormRoleContributor: string;
+    inviteFormRoleViewer: string;
+    inviteFormSubmit: string;
+    inviteFormSuccess: string;
     roles: {
       company: string;
       contributor: string;
@@ -208,6 +220,19 @@ export function AdminPage({
       <option value="VIEWER">{labels.roles.VIEWER}</option>
     </>
   );
+  
+  // Invite form state
+  const [inviteState, inviteAction, invitePending] = useActionState(createInvite, {} as any);
+  
+  useEffect(() => {
+    if (!inviteState) return;
+    if (inviteState.error) {
+      toast.error(inviteState.error);
+    } else if (inviteState.success) {
+      toast.success(labels.inviteFormSuccess);
+      router.refresh();
+    }
+  }, [inviteState, labels.inviteFormSuccess, router]);
 
   return (
     <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 py-12">
@@ -216,6 +241,35 @@ export function AdminPage({
           {labels.title}
         </p>
       </div>
+      
+      {/* Invite Form */}
+      <Card className="p-6">
+        <h2 className="mb-4 text-lg font-semibold text-foreground">{labels.inviteFormTitle}</h2>
+        <form action={inviteAction} className="grid gap-4 sm:grid-cols-3">
+          <input type="hidden" name="locale" value={locale} />
+          <div className="flex flex-col gap-2 sm:col-span-2">
+            <Label htmlFor="email">{labels.inviteFormEmail}</Label>
+            <Input id="email" name="email" type="email" required />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="role">{labels.inviteFormRole}</Label>
+            <select
+              id="role"
+              name="role"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              defaultValue="CONTRIBUTOR"
+            >
+              <option value="CONTRIBUTOR">{labels.inviteFormRoleContributor}</option>
+              <option value="VIEWER">{labels.inviteFormRoleViewer}</option>
+            </select>
+          </div>
+          <div className="sm:col-span-3 flex justify-end">
+            <Button type="submit" disabled={invitePending}>
+              {labels.inviteFormSubmit}
+            </Button>
+          </div>
+        </form>
+      </Card>
 
       {/* Invites */}
       <div className="space-y-3 rounded-2xl border border-border/60 bg-white/70 p-6 shadow-sm backdrop-blur dark:bg-white/5">

@@ -61,7 +61,6 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const tProcedures = await getTranslations({ locale, namespace: "proceduresPage" });
   const tPlans = await getTranslations({ locale, namespace: "plans" });
   const tHelp = await getTranslations({ locale, namespace: "help" });
-  const tInvites = await getTranslations({ locale, namespace: "invites" });
 
   const baseNav = [
     { label: tDashboard("title"), href: "/dashboard" },
@@ -71,11 +70,6 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   ];
 
   const plansNav = role === "COMPANY_ADMIN" ? [{ label: tPlans("title"), href: "/plans" }] : [];
-
-  const invitesNav =
-    role === "COMPANY_ADMIN"
-      ? [{ label: tInvites("title"), href: "/invites" }]
-      : [];
 
   const adminNav = role === "COMPANY_ADMIN" ? [{ label: "Admin", href: "/admin" }] : [];
 
@@ -90,7 +84,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const navItems = isAuthenticated
     ? role === "SUPER_ADMIN"
       ? superNav
-      : [...baseNav, ...plansNav, ...invitesNav, ...adminNav]
+      : [...baseNav, ...plansNav, ...adminNav]
     : publicNav;
   const orgName =
     (data.user?.user_metadata as { organization_name?: string } | null)?.organization_name ??

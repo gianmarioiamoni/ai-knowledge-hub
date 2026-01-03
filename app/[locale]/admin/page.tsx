@@ -5,8 +5,7 @@ import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { requireActiveOrganization } from "@/lib/server/organizations";
 import { canManageOrg } from "@/lib/server/roles";
 import { AdminPage } from "@/components/admin/AdminPage";
-import { listCompanyUsers } from "@/app/[locale]/admin/actions";
-import { listInvites } from "@/app/[locale]/invites/actions";
+import { listCompanyUsers, listInvites } from "@/app/[locale]/admin/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -53,6 +52,13 @@ export default async function AdminPageRoute({
         invitesTitle: tInvites("title"),
         invitesSubtitle: tInvites("subtitle"),
         invitesEmpty: tInvites("list.empty"),
+        inviteFormTitle: isItalian ? "Invita un nuovo membro" : "Invite new member",
+        inviteFormEmail: tInvites("form.email"),
+        inviteFormRole: tInvites("form.role"),
+        inviteFormRoleContributor: tInvites("form.roles.contributor"),
+        inviteFormRoleViewer: tInvites("form.roles.viewer"),
+        inviteFormSubmit: tInvites("form.submit"),
+        inviteFormSuccess: tInvites("form.success"),
         usersTitle: isItalian ? "Utenti" : "Users",
         usersSubtitle: isItalian ? "Gestisci i membri della tua organizzazione." : "Manage members of your organization.",
         filterAll: tInvites("filter.all"),
