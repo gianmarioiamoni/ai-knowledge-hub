@@ -6,6 +6,7 @@ import { UploadForm } from "./UploadForm";
 import { DocumentsTable } from "./DocumentsTable";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import type { DocumentRow, DocumentsPageLabels } from "./types";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type DocumentsPageProps = {
   locale: string;
@@ -23,7 +24,7 @@ export function DocumentsPage({
   uploadAction,
 }: DocumentsPageProps): JSX.Element {
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 py-10 sm:px-8 lg:px-0">
+    <div className={LAYOUT_CLASSES.pageContainer}>
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[

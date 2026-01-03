@@ -6,6 +6,7 @@ import { HelpCards } from "./HelpCards";
 import { FAQSection } from "./FAQSection";
 import { QuickLinks } from "./QuickLinks";
 import type { HelpPageLabels } from "./types";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type HelpPageProps = {
   labels: HelpPageLabels;
@@ -14,7 +15,7 @@ type HelpPageProps = {
 
 export function HelpPage({ labels, manualUrl }: HelpPageProps): JSX.Element {
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 py-12">
+    <div className={LAYOUT_CLASSES.pageContainerWide}>
       {/* Header */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-3">

@@ -7,6 +7,7 @@ import { Toolbar } from "./SuperAdminPanel/Toolbar";
 import { UsersTable } from "./SuperAdminPanel/UsersTable";
 import { useSuperAdminUsers } from "./SuperAdminPanel/useSuperAdminUsers";
 import type { SuperAdminPanelProps } from "./SuperAdminPanel/types";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 function SuperAdminPanel({ labels }: SuperAdminPanelProps): JSX.Element {
   const {
@@ -21,7 +22,7 @@ function SuperAdminPanel({ labels }: SuperAdminPanelProps): JSX.Element {
   } = useSuperAdminUsers(labels);
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-10 sm:px-8 lg:px-0">
+    <div className={`mx-auto flex w-full max-w-6xl flex-col gap-6 ${LAYOUT_CLASSES.horizontalPadding} py-10`}>
       <div className="flex flex-col gap-2">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{labels.title}</p>
         <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{labels.subtitle}</h1>

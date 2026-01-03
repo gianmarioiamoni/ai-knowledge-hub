@@ -6,6 +6,7 @@ import { useOrgActions } from "./useOrgActions";
 import { useUserActions } from "./useUserActions";
 import { OrganizationsList } from "./OrganizationsList";
 import { UsersList } from "./UsersList";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type SuperAdminUsersPageProps = {
   locale: string;
@@ -24,7 +25,7 @@ export function SuperAdminUsersPage({
   const { handleEnableUser, handleDisableUser, handleDeleteUser } = useUserActions(locale);
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-12">
+    <div className={LAYOUT_CLASSES.pageContainerWide}>
       <div className="space-y-2">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{labels.title}</p>
         <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{labels.subtitle}</h1>

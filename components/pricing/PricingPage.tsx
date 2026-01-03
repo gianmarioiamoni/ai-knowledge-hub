@@ -5,6 +5,7 @@ import type { Plan } from "@/components/subscriptions/PlansSection/types";
 import { PricingCards } from "./PricingCards";
 import { CTACard } from "./CTACard";
 import type { PricingPageLabels } from "./types";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type PricingPageProps = {
   plans: Plan[];
@@ -13,7 +14,7 @@ type PricingPageProps = {
 
 export function PricingPage({ plans, labels }: PricingPageProps): JSX.Element {
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 py-12">
+    <div className={LAYOUT_CLASSES.pageContainerWide}>
       {/* Header */}
       <div className="flex flex-col gap-2">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{labels.title}</p>

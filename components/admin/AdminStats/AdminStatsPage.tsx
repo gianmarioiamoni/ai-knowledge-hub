@@ -5,6 +5,7 @@ import type { PlatformStats, AdminStatsLabels } from "./types";
 import { StatCard } from "./StatCard";
 import { DocumentsByStatus } from "./DocumentsByStatus";
 import { TimeSeriesCharts } from "./TimeSeriesCharts";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type AdminStatsPageProps = {
   stats: PlatformStats;
@@ -13,7 +14,7 @@ type AdminStatsPageProps = {
 
 export function AdminStatsPage({ stats, labels }: AdminStatsPageProps): JSX.Element {
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-12">
+    <div className={LAYOUT_CLASSES.pageContainerWide}>
       {/* Header */}
       <div className="space-y-2">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{labels.title}</p>

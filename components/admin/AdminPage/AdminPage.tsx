@@ -9,6 +9,7 @@ import { useInviteFilters } from "./useInviteFilters";
 import { InviteForm } from "./InviteForm";
 import { InvitesTable } from "./InvitesTable";
 import { UsersTable } from "./UsersTable";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type AdminPageProps = {
   locale: string;
@@ -51,7 +52,7 @@ export function AdminPage({ locale, invites, users: initialUsers, labels }: Admi
   );
 
   return (
-    <div className="mx-auto min-h-screen max-w-7xl px-3 py-4 sm:px-4 sm:py-6 lg:px-6">
+    <div className={`mx-auto min-h-screen max-w-6xl px-6 py-4 sm:px-6 sm:py-6 lg:px-6 xl:px-0`}>
       {/* Header */}
       <div className="mb-3 sm:mb-4">
         <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary sm:text-xs">

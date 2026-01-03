@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { ProcedureList } from "./ProcedureList";
 import { GenerateSopDialog } from "./GenerateSopDialog";
 import type { ProcedureRow, ProceduresPageLabels } from "./proceduresPageTypes";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type ProceduresListPageProps = {
   locale: string;
@@ -23,7 +24,7 @@ export function ProceduresListPage({
   generateAction,
 }: ProceduresListPageProps): JSX.Element {
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 py-10 sm:px-8 lg:px-0">
+    <div className={LAYOUT_CLASSES.pageContainer}>
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[

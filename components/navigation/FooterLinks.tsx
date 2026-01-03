@@ -2,6 +2,7 @@
 
 import { JSX } from "react";
 import { Link } from "@/i18n/navigation";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type FooterLinksProps = {
   privacyLabel: string;
@@ -27,7 +28,7 @@ function FooterLinks({
   const contactHref = "/contact";
 
   return (
-    <div className="mx-auto flex max-w-6xl items-center justify-end gap-4 px-6 pb-6 text-sm text-muted-foreground">
+    <div className={`mx-auto flex max-w-6xl items-center justify-end gap-4 ${LAYOUT_CLASSES.horizontalPadding} pb-6 text-sm text-muted-foreground`}>
       {contactLabel ? (
         <Link href={contactHref} className="hover:text-foreground underline underline-offset-2">
           {contactLabel}

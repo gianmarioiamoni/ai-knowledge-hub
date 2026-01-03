@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Link } from "@/i18n/navigation";
 import { MarkdownContent } from "./MarkdownContent";
 import type { ProcedurePageLabels } from "./types";
+import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type ProcedureDetailPageProps = {
   title: string;
@@ -21,7 +22,7 @@ export function ProcedureDetailPage({
   labels,
 }: ProcedureDetailPageProps): JSX.Element {
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-6 py-10 sm:px-8 lg:px-0">
+    <div className={LAYOUT_CLASSES.pageContainer}>
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[
