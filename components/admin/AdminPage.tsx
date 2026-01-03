@@ -238,7 +238,7 @@ export function AdminPage({
       </div>
       
       {/* Two Column Layout */}
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 xl:grid-cols-2">
         
         {/* LEFT COLUMN: Invites */}
         <div className="space-y-4">
