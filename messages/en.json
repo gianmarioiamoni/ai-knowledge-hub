@@ -346,8 +346,11 @@
     },
     "delete": {
       "label": "Delete",
-      "confirm": "Are you sure you want to delete “{title}”? This cannot be undone.",
+      "confirm": "Are you sure you want to delete "{title}"? This cannot be undone.",
       "cancel": "Cancel"
+    },
+    "errors": {
+      "limitDocuments": "Document limit reached ({count} max). Please upgrade your plan or delete old documents."
     }
   },
   "chatPage": {
@@ -474,6 +477,9 @@
     "breadcrumbs": {
       "home": "Dashboard",
       "procedures": "Procedures"
+    },
+    "errors": {
+      "limitProcedures": "Procedure limit reached ({count} max). Please upgrade your plan or delete old procedures."
     }
   },
   "privacy": {

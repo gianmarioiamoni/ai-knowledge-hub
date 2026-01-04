@@ -9,6 +9,8 @@ import { generateSop } from "@/lib/server/sop";
 import { rateLimit } from "@/lib/server/rateLimit";
 import { embedQuery, searchSimilarChunks } from "@/lib/server/rag";
 import { canGenerateSop } from "@/lib/server/roles";
+import { getOrganizationPlanId, getPlanLimits } from "@/lib/server/subscriptions";
+import { getTranslations } from "next-intl/server";
 
 const messages = {
   en: {
@@ -69,6 +71,20 @@ export const handleGenerateSop = async (_prev: ActionResult, formData: FormData)
   }
 
   const organizationId = await ensureUserOrganization({ supabase });
+
+  // Check plan limits for procedures
+  const planId = await getOrganizationPlanId(organizationId);
+  const limits = getPlanLimits(planId);
+  
+  const { count: proceduresCount } = await service
+    .from("procedures")
+    .select("id", { count: "exact", head: true })
+    .eq("organization_id", organizationId);
+  
+  if ((proceduresCount ?? 0) >= limits.maxProcedures) {
+    const t = await getTranslations({ locale: parsed.data.locale, namespace: "proceduresPage" });
+    return { error: t("errors.limitProcedures", { count: limits.maxProcedures }) };
+  }
 
   const allowFree = parsed.data.allowFree === "on";
 

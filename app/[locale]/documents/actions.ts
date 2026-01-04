@@ -7,6 +7,8 @@ import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { createEmbeddingModel, createTextSplitter } from "@/lib/server/langchain";
 import { canUploadDocs } from "@/lib/server/roles";
 import { requireActiveOrganizationId } from "@/lib/server/organizations";
+import { getOrganizationPlanId, getPlanLimits } from "@/lib/server/subscriptions";
+import { getTranslations } from "next-intl/server";
 
 const uploadSchema = z.object({
   locale: z.string().min(2),
@@ -59,6 +61,20 @@ export async function uploadDocument(formData: FormData): Promise<ActionResult> 
   }
 
   const organizationId = await requireActiveOrganizationId({ supabase, locale: parsedLocale.data.locale });
+
+  // Check plan limits for documents
+  const planId = await getOrganizationPlanId(organizationId);
+  const limits = getPlanLimits(planId);
+  
+  const { count: documentsCount } = await service
+    .from("documents")
+    .select("id", { count: "exact", head: true })
+    .eq("organization_id", organizationId);
+  
+  if ((documentsCount ?? 0) >= limits.maxDocuments) {
+    const t = await getTranslations({ locale: parsedLocale.data.locale, namespace: "documentsPage" });
+    return { error: t("errors.limitDocuments", { count: limits.maxDocuments }) };
+  }
 
   const filePath = `${organizationId}/${crypto.randomUUID()}-${file.name}`;
 

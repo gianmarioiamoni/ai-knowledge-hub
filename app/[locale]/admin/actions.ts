@@ -137,6 +137,51 @@ export const changeUserRole = async (_prev: ActionResult, formData: FormData): P
   }
 
   const service = createSupabaseServiceClient();
+  
+  // Get current role before change
+  const { data: currentMember } = await service
+    .from("organization_members")
+    .select("role")
+    .eq("organization_id", organizationId)
+    .eq("user_id", parsed.data.userId)
+    .single();
+  
+  const currentRole = currentMember?.role;
+  const newRole = parsed.data.role;
+  
+  // Check plan limits only if upgrading from VIEWER to CONTRIBUTOR or adding new CONTRIBUTOR
+  if (
+    currentRole && 
+    newRole !== currentRole && 
+    (newRole === "CONTRIBUTOR" && currentRole === "VIEWER")
+  ) {
+    const planId = await getOrganizationPlanId(organizationId);
+    const limits = getPlanLimits(planId);
+    
+    // Count current contributors (excluding the user being changed)
+    const { count: contributorsCount } = await service
+      .from("organization_members")
+      .select("user_id", { count: "exact", head: true })
+      .eq("organization_id", organizationId)
+      .eq("role", "CONTRIBUTOR")
+      .neq("user_id", parsed.data.userId);
+    
+    // Count pending contributor invites
+    const { count: pendingContributorsCount } = await service
+      .from("organization_invites")
+      .select("id", { count: "exact", head: true })
+      .eq("organization_id", organizationId)
+      .eq("role", "CONTRIBUTOR")
+      .eq("status", "pending");
+    
+    const totalContributors = (contributorsCount ?? 0) + (pendingContributorsCount ?? 0);
+    
+    if (totalContributors >= limits.maxContributors) {
+      const t = await getTranslations({ locale: parsed.data.locale, namespace: "invites" });
+      return { error: t("errors.limitContributor", { count: limits.maxContributors }) };
+    }
+  }
+
   const { error } = await service
     .from("organization_members")
     .update({ role: parsed.data.role })

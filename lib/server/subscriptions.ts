@@ -26,13 +26,40 @@ type PlanStatus = {
 type PlanLimits = {
   maxContributors: number;
   maxViewers: number;
+  maxDocuments: number;
+  maxProcedures: number;
+  maxConversations: number;
 };
 
 const planLimits: Record<string, PlanLimits> = {
-  trial: { maxContributors: 5, maxViewers: 20 },
-  smb: { maxContributors: 20, maxViewers: 100 },
-  enterprise: { maxContributors: 200, maxViewers: 1000 },
-  expired: { maxContributors: 0, maxViewers: 0 },
+  trial: { 
+    maxContributors: 5, 
+    maxViewers: 20,
+    maxDocuments: 10,
+    maxProcedures: 5,
+    maxConversations: 20,
+  },
+  smb: { 
+    maxContributors: 20, 
+    maxViewers: 100,
+    maxDocuments: 100,
+    maxProcedures: 50,
+    maxConversations: 200,
+  },
+  enterprise: { 
+    maxContributors: 200, 
+    maxViewers: 1000,
+    maxDocuments: 1000,
+    maxProcedures: 500,
+    maxConversations: 2000,
+  },
+  expired: { 
+    maxContributors: 0, 
+    maxViewers: 0,
+    maxDocuments: 0,
+    maxProcedures: 0,
+    maxConversations: 0,
+  },
 };
 
 const getPlanStatus = (user: User): PlanStatus => {

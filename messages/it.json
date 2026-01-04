@@ -346,8 +346,11 @@
     },
     "delete": {
       "label": "Elimina",
-      "confirm": "Sei sicuro di voler eliminare “{title}”? L’azione è irreversibile.",
+      "confirm": "Sei sicuro di voler eliminare "{title}"? L'azione è irreversibile.",
       "cancel": "Annulla"
+    },
+    "errors": {
+      "limitDocuments": "Limite documenti raggiunto ({count} max). Aggiorna il piano o elimina vecchi documenti."
     }
   },
   "chatPage": {
@@ -474,6 +477,9 @@
     "breadcrumbs": {
       "home": "Dashboard",
       "procedures": "Procedure"
+    },
+    "errors": {
+      "limitProcedures": "Limite procedure raggiunto ({count} max). Aggiorna il piano o elimina vecchie procedure."
     }
   },
   "privacy": {
