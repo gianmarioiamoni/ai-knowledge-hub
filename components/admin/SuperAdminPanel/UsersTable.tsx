@@ -2,6 +2,7 @@
 
 import type { JSX } from "react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import type { AdminUserRow, SuperAdminLabels } from "./types";
 
 type UsersTableProps = {
@@ -9,10 +10,9 @@ type UsersTableProps = {
   labels: SuperAdminLabels;
   isPending: boolean;
   onAction: (action: string, userId?: string) => void;
-  onDelete: (user: AdminUserRow) => void;
 };
 
-function UsersTable({ rows, labels, isPending, onAction, onDelete }: UsersTableProps): JSX.Element {
+function UsersTable({ rows, labels, isPending, onAction }: UsersTableProps): JSX.Element {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-border/80 text-sm">
@@ -73,9 +73,18 @@ function UsersTable({ rows, labels, isPending, onAction, onDelete }: UsersTableP
                   >
                     {user.banned ? labels.enable : labels.disable}
                   </Button>
-                  <Button size="sm" variant="destructive" onClick={() => onDelete(user)} disabled={isPending}>
-                    {labels.delete}
-                  </Button>
+                  <ConfirmDialog
+                    title={labels.deleteUserTitle}
+                    description={`${labels.deleteUserDesc}\n\n${user.email ?? user.id}`}
+                    confirmLabel={labels.delete}
+                    cancelLabel={labels.cancel}
+                    onConfirm={() => onAction("delete", user.id)}
+                    trigger={
+                      <Button size="sm" variant="destructive" disabled={isPending}>
+                        {labels.delete}
+                      </Button>
+                    }
+                  />
                 </div>
               </td>
             </tr>

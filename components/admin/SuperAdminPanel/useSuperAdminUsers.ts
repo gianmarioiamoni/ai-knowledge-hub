@@ -21,7 +21,6 @@ const useSuperAdminUsers = (labels: SuperAdminLabels) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [deleteTarget, setDeleteTarget] = useState<AdminUserRow | null>(null);
 
   const handleRefresh = async () => {
     setLoading(true);
@@ -76,8 +75,6 @@ const useSuperAdminUsers = (labels: SuperAdminLabels) => {
     loading,
     message,
     isPending,
-    deleteTarget,
-    setDeleteTarget,
     handleRefresh,
     handleAction,
   };

@@ -27,7 +27,9 @@ type SuperAdminLabels = {
   active: string;
   error: string;
   ok: string;
-  cancel?: string;
+  cancel: string;
+  deleteUserTitle: string;
+  deleteUserDesc: string;
 };
 
 type SuperAdminPanelProps = {

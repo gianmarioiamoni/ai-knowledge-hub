@@ -2,7 +2,6 @@
 
 import type { JSX } from "react";
 import { Card } from "@/components/ui/card";
-import { DeleteDialog } from "./SuperAdminPanel/DeleteDialog";
 import { Toolbar } from "./SuperAdminPanel/Toolbar";
 import { UsersTable } from "./SuperAdminPanel/UsersTable";
 import { useSuperAdminUsers } from "./SuperAdminPanel/useSuperAdminUsers";
@@ -15,8 +14,6 @@ function SuperAdminPanel({ labels }: SuperAdminPanelProps): JSX.Element {
     loading,
     message,
     isPending,
-    deleteTarget,
-    setDeleteTarget,
     handleRefresh,
     handleAction,
   } = useSuperAdminUsers(labels);
@@ -31,20 +28,8 @@ function SuperAdminPanel({ labels }: SuperAdminPanelProps): JSX.Element {
       <Toolbar labels={labels} loading={loading} isPending={isPending} message={message} onRefresh={handleRefresh} />
 
       <Card className="border border-white/40 bg-white/70 p-4 backdrop-blur dark:border-white/10 dark:bg-white/5">
-        <UsersTable rows={rows} labels={labels} isPending={isPending} onAction={handleAction} onDelete={setDeleteTarget} />
+        <UsersTable rows={rows} labels={labels} isPending={isPending} onAction={handleAction} />
       </Card>
-
-      <DeleteDialog
-        labels={labels}
-        target={deleteTarget}
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={() => {
-          if (deleteTarget) {
-            handleAction("delete", deleteTarget.id);
-          }
-          setDeleteTarget(null);
-        }}
-      />
     </div>
   );
 }

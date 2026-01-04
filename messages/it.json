@@ -442,7 +442,10 @@
       "banned": "Disabilitato",
       "active": "Attivo",
       "error": "Errore inatteso",
-      "ok": "Fatto"
+      "ok": "Fatto",
+      "cancel": "Annulla",
+      "deleteUserTitle": "Elimina utente",
+      "deleteUserDesc": "Sei sicuro di voler eliminare questo utente? Questa azione non può essere annullata."
     },
     "actions": [
       "Carica nuovi manuali o procedure interne.",

@@ -58,6 +58,9 @@ export type SuperAdminLabels = {
   active: string;
   error: string;
   ok: string;
+  cancel: string;
+  deleteUserTitle: string;
+  deleteUserDesc: string;
 };
 
 export type IngestionData = {

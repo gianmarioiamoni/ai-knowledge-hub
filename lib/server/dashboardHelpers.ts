@@ -73,6 +73,9 @@ export async function getDashboardLabels({
         active: t("super.active"),
         error: t("super.error"),
         ok: t("super.ok"),
+        cancel: t("super.cancel"),
+        deleteUserTitle: t("super.deleteUserTitle"),
+        deleteUserDesc: t("super.deleteUserDesc"),
       }
     : undefined;
 
