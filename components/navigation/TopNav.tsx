@@ -22,7 +22,7 @@ function TopNav({ items, helpHref, helpLabel }: TopNavProps): JSX.Element {
   const navItems = items ?? [];
 
   return (
-    <nav className="hidden items-center gap-2 sm:flex">
+    <nav className="hidden items-center gap-2 lg:flex">
       {navItems.map((item) => {
         const active = pathname?.startsWith(item.href);
         return (
