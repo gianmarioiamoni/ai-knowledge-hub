@@ -39,6 +39,13 @@ const planLimits: Record<string, PlanLimits> = {
     maxProcedures: 5,
     maxConversations: 20,
   },
+  demo: {
+    maxContributors: 5,
+    maxViewers: 20,
+    maxDocuments: 10,
+    maxProcedures: 5,
+    maxConversations: 20,
+  },
   smb: { 
     maxContributors: 20, 
     maxViewers: 100,
@@ -70,6 +77,12 @@ const getPlanStatus = (user: User): PlanStatus => {
   const renewalAt = meta.renewalAt ?? null;
   const subscriptionId = meta.subscriptionId ?? null;
   let expired = false;
+  
+  // Demo plan never expires
+  if (planId === "demo") {
+    return { planId, trialEndsAt, billingCycle, renewalAt, subscriptionId, expired: false };
+  }
+  
   if (planId === "trial" && trialEndsAt) {
     expired = new Date(trialEndsAt).getTime() < Date.now();
   }
@@ -87,6 +100,8 @@ const isUnlimitedRole = (user: User): boolean => {
 const ensureActivePlan = (user: User, locale: string, skipRedirect = false): void => {
   if (isUnlimitedRole(user)) return;
   const status = getPlanStatus(user);
+  // Demo plan is always active
+  if (status.planId === "demo") return;
   if (status.planId === "smb" || status.planId === "enterprise") return;
   if (status.planId === "trial" && !status.expired) return;
   if (!skipRedirect) {

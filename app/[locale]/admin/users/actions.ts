@@ -5,7 +5,6 @@ import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { setUserBan, deleteUserWithCascade } from "@/lib/server/adminUsers";
-import { isDemoUser } from "@/lib/server/demoUsers";
 
 type ActionResult = { error?: string; success?: string };
 

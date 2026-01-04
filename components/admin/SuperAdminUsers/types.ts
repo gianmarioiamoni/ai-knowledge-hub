@@ -11,6 +11,7 @@ export type MemberRow = {
   disabled: boolean;
   email: string | null;
   created_at: string | null;
+  is_demo_user: boolean;
 };
 
 export type SuperAdminLabels = {

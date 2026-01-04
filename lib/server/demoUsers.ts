@@ -99,7 +99,7 @@ export const createDemoUsersIfNeeded = async (): Promise<void> => {
         organization_name: org.name,
         is_demo_user: true, // Flag to identify demo users
         plan: {
-          id: "smb",
+          id: "demo",
           billingCycle: "monthly",
         },
       },

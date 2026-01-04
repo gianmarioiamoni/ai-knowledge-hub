@@ -50,8 +50,13 @@ export default async function AdminUsersRoute({
 
   const { data: usersData } = await service.auth.admin.listUsers();
   const usersById =
-    usersData?.users?.reduce<Record<string, { email: string | null; created_at: string | null }>>((acc, u) => {
-      acc[u.id] = { email: u.email ?? null, created_at: u.created_at ?? null };
+    usersData?.users?.reduce<Record<string, { email: string | null; created_at: string | null; is_demo_user: boolean }>>((acc, u) => {
+      const isDemoUser = (u.user_metadata as { is_demo_user?: boolean } | null)?.is_demo_user ?? false;
+      acc[u.id] = { 
+        email: u.email ?? null, 
+        created_at: u.created_at ?? null,
+        is_demo_user: isDemoUser,
+      };
       return acc;
     }, {}) ?? {};
 
@@ -59,6 +64,7 @@ export default async function AdminUsersRoute({
     ...m,
     email: usersById[m.user_id]?.email ?? null,
     created_at: usersById[m.user_id]?.created_at ?? null,
+    is_demo_user: usersById[m.user_id]?.is_demo_user ?? false,
   }));
 
   // Build labels object
