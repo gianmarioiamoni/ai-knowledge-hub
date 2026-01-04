@@ -7,6 +7,7 @@ import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import type { PlanMetadata } from "@/lib/server/subscriptions";
 import { stripe } from "@/lib/server/stripe";
 import { sendAdminAccountDeleted } from "@/lib/server/email";
+import { isDemoUser } from "@/lib/server/demoUsers";
 
 type ActionResult = { error?: string; success?: string };
 
@@ -20,6 +21,14 @@ const passwordSchema = z
   });
 
 export const changePassword = async (_prev: ActionResult, formData: FormData): Promise<ActionResult> => {
+  const supabase = createSupabaseServerClient();
+  const { data } = await supabase.auth.getUser();
+  
+  // Check if demo user
+  if (data.user && isDemoUser(data.user.email)) {
+    return { error: "Demo users cannot change their password" };
+  }
+
   const parsed = passwordSchema.safeParse({
     password: formData.get("password"),
     confirm: formData.get("confirm"),
@@ -28,7 +37,6 @@ export const changePassword = async (_prev: ActionResult, formData: FormData): P
     return { error: parsed.error.issues[0]?.message ?? "Dati non validi" };
   }
 
-  const supabase = createSupabaseServerClient();
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
   if (error) {
     return { error: error.message };
@@ -42,6 +50,11 @@ export const deleteAccount = async (): Promise<ActionResult> => {
   const user = data.user;
   if (error || !user) {
     return { error: "Not authenticated" };
+  }
+
+  // Check if demo user
+  if (isDemoUser(user.email)) {
+    return { error: "Demo users cannot delete their account" };
   }
 
   const service = createSupabaseServiceClient();

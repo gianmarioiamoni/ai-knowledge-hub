@@ -5,6 +5,7 @@ import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import { setUserBan, deleteUserWithCascade } from "@/lib/server/adminUsers";
+import { isDemoUser } from "@/lib/server/demoUsers";
 
 type ActionResult = { error?: string; success?: string };
 
@@ -61,6 +62,14 @@ export const deleteUser = async (_: ActionResult, formData: FormData): Promise<A
   });
   if (!parsed.success) return { error: "Invalid data" };
   await ensureSuper(parsed.data.locale);
+
+  // Check if it's a demo user by fetching user data
+  const service = createSupabaseServiceClient();
+  const { data: userData } = await service.auth.admin.getUserById(parsed.data.userId);
+  
+  if (userData?.user && isDemoUser(userData.user.email)) {
+    return { error: "Demo users cannot be deleted" };
+  }
 
   await deleteUserWithCascade(parsed.data.userId);
   return { success: "ok" };

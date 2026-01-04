@@ -1,6 +1,7 @@
 import { env } from "@/lib/env";
 import { logError, logInfo } from "@/lib/server/logger";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
+import { createDemoUsersIfNeeded } from "@/lib/server/demoUsers";
 
 const ensureSuperAdmin = async (): Promise<void> => {
   const { SUPERADMIN_EMAIL, SUPERADMIN_PASSWORD, SUPERADMIN_NAME } = env;
@@ -31,13 +32,21 @@ const ensureSuperAdmin = async (): Promise<void> => {
     // Ignore duplicate user errors, log others
     if (error.message?.toLowerCase().includes("already registered") || error.status === 422) {
       logInfo("Super admin already exists", { email: SUPERADMIN_EMAIL });
-      return;
+    } else {
+      logError("Failed to create super admin", { error: error.message, status: error.status });
+      throw error;
     }
-    logError("Failed to create super admin", { error: error.message, status: error.status });
-    throw error;
+  } else {
+    logInfo("Super admin ensured (created)", { email: SUPERADMIN_EMAIL });
   }
 
-  logInfo("Super admin ensured (created)", { email: SUPERADMIN_EMAIL });
+  // Create demo users after super admin
+  try {
+    await createDemoUsersIfNeeded();
+  } catch (error) {
+    logError("Failed to create demo users", { error });
+    // Don't throw - demo users are optional
+  }
 };
 
 export { ensureSuperAdmin };

@@ -27,6 +27,9 @@ const envSchema = z
     SUPERADMIN_EMAIL: z.string().email().optional(),
     SUPERADMIN_PASSWORD: z.string().min(8).optional(),
     SUPERADMIN_NAME: z.string().min(1).optional(),
+    DEMO_USER_EMAIL: z.string().email().optional(),
+    DEMO_USER_PASSWORD: z.string().min(8).optional(),
+    DEMO_USER_NAME: z.string().min(1).optional(),
   })
   .superRefine((value, ctx) => {
     const hasGmail = Boolean(value.GMAIL_USER && value.GMAIL_APP_PASSWORD);
@@ -53,6 +56,16 @@ const envSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "SUPERADMIN_EMAIL, SUPERADMIN_PASSWORD and SUPERADMIN_NAME must all be set together",
+      });
+    }
+
+    const demoProvided = [value.DEMO_USER_EMAIL, value.DEMO_USER_PASSWORD, value.DEMO_USER_NAME].filter(
+      (v) => v !== undefined
+    ).length;
+    if (demoProvided > 0 && demoProvided < 3) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "DEMO_USER_EMAIL, DEMO_USER_PASSWORD and DEMO_USER_NAME must all be set together or all omitted",
       });
     }
   });
