@@ -16,7 +16,7 @@ function MessageList({ messages, fetching, loadingLabel, emptyLabel }: MessageLi
 
   useEffect(() => {
     if (endRef.current) {
-      endRef.current.scrollIntoView({ behavior: "smooth" });
+      endRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   }, [messages]);
 
