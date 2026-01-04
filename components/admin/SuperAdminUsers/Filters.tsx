@@ -2,17 +2,16 @@
 
 import type { JSX } from "react";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Search, ChevronDown } from "lucide-react";
 import type { OrgRow, SuperAdminLabels } from "./types";
+import { SearchFilter } from "./Filters/SearchFilter";
+import { FilterDropdown } from "./Filters/FilterDropdown";
+import {
+  getCompanyLabel,
+  getStatusLabel,
+  getPlanLabel,
+  getRoleLabel,
+  getDemoLabel,
+} from "./Filters/helpers";
 
 type FiltersProps = {
   labels: SuperAdminLabels;
@@ -47,181 +46,93 @@ export function Filters({
   onShowDemoChange,
   onSearchChange,
 }: FiltersProps): JSX.Element {
-  const getCompanyLabel = (): string => {
-    if (selectedCompany === "all") return labels.filters.all;
-    const org = orgs.find((o) => o.id === selectedCompany);
-    return org?.name ?? labels.filters.all;
-  };
+  // Company dropdown options
+  const companyOptions = [
+    { value: "all", label: labels.filters.all },
+    ...orgs.map((org) => ({ value: org.id, label: org.name })),
+  ];
 
-  const getStatusLabel = (): string => {
-    if (selectedStatus === "all") return labels.filters.all;
-    return selectedStatus === "active" ? labels.status.active : labels.status.disabled;
-  };
+  // Status dropdown options
+  const statusOptions = [
+    { value: "all", label: labels.filters.all },
+    { value: "active", label: labels.status.active },
+    { value: "disabled", label: labels.status.disabled },
+  ];
 
-  const getPlanLabel = (): string => {
-    if (selectedPlan === "all") return labels.filters.all;
-    return labels.plans[selectedPlan as keyof typeof labels.plans] ?? selectedPlan;
-  };
+  // Plan dropdown options
+  const planOptions = [
+    { value: "all", label: labels.filters.all },
+    { value: "demo", label: labels.plans.demo },
+    { value: "trial", label: labels.plans.trial },
+    { value: "smb", label: labels.plans.smb },
+    { value: "enterprise", label: labels.plans.enterprise },
+    { value: "expired", label: labels.plans.expired },
+  ];
 
-  const getRoleLabel = (): string => {
-    if (selectedRole === "all") return labels.filters.all;
-    return selectedRole.replace("_", " ");
-  };
+  // Role dropdown options
+  const roleOptions = [
+    { value: "all", label: labels.filters.all },
+    { value: "COMPANY_ADMIN", label: "Company Admin" },
+    { value: "CONTRIBUTOR", label: "Contributor" },
+    { value: "VIEWER", label: "Viewer" },
+  ];
 
-  const getDemoLabel = (): string => {
-    return showDemoOnly ? "Demo Users" : labels.filters.all;
-  };
+  // Demo users dropdown options
+  const demoOptions = [
+    { value: "all", label: labels.filters.all },
+    { value: "demo", label: "Demo Users" },
+  ];
 
   return (
     <Card className="p-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        {/* Search */}
-        <div className="space-y-1">
-          <Label htmlFor="search" className="text-xs text-muted-foreground">
-            {labels.filters.search}
-          </Label>
-          <div className="relative">
-            <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
-            <Input
-              id="search"
-              type="text"
-              placeholder="Email..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-8"
-            />
-          </div>
-        </div>
+        <SearchFilter
+          label={labels.filters.search}
+          value={searchQuery}
+          onChange={onSearchChange}
+        />
 
-        {/* Company */}
-        <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">{labels.filters.company}</Label>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full justify-between">
-                {getCompanyLabel()}
-                <ChevronDown className="ml-2 size-4 opacity-50" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuItem onClick={() => onCompanyChange("all")}>
-                {labels.filters.all}
-              </DropdownMenuItem>
-              {orgs.map((org) => (
-                <DropdownMenuItem key={org.id} onClick={() => onCompanyChange(org.id)}>
-                  {org.name}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <FilterDropdown
+          label={labels.filters.company}
+          currentLabel={getCompanyLabel(selectedCompany, orgs, labels.filters.all)}
+          options={companyOptions}
+          onSelect={onCompanyChange}
+        />
 
-        {/* Status */}
-        <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">{labels.filters.status}</Label>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full justify-between">
-                {getStatusLabel()}
-                <ChevronDown className="ml-2 size-4 opacity-50" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuItem onClick={() => onStatusChange("all")}>
-                {labels.filters.all}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onStatusChange("active")}>
-                {labels.status.active}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onStatusChange("disabled")}>
-                {labels.status.disabled}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <FilterDropdown
+          label={labels.filters.status}
+          currentLabel={getStatusLabel(selectedStatus, {
+            all: labels.filters.all,
+            active: labels.status.active,
+            disabled: labels.status.disabled,
+          })}
+          options={statusOptions}
+          onSelect={onStatusChange}
+        />
 
-        {/* Plan */}
-        <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">{labels.filters.plan}</Label>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full justify-between">
-                {getPlanLabel()}
-                <ChevronDown className="ml-2 size-4 opacity-50" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuItem onClick={() => onPlanChange("all")}>
-                {labels.filters.all}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onPlanChange("demo")}>
-                {labels.plans.demo}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onPlanChange("trial")}>
-                {labels.plans.trial}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onPlanChange("smb")}>
-                {labels.plans.smb}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onPlanChange("enterprise")}>
-                {labels.plans.enterprise}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onPlanChange("expired")}>
-                {labels.plans.expired}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <FilterDropdown
+          label={labels.filters.plan}
+          currentLabel={getPlanLabel(selectedPlan, labels.plans, labels.filters.all)}
+          options={planOptions}
+          onSelect={onPlanChange}
+        />
 
-        {/* Role */}
-        <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">{labels.filters.role}</Label>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full justify-between">
-                {getRoleLabel()}
-                <ChevronDown className="ml-2 size-4 opacity-50" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuItem onClick={() => onRoleChange("all")}>
-                {labels.filters.all}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onRoleChange("COMPANY_ADMIN")}>
-                Company Admin
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onRoleChange("CONTRIBUTOR")}>
-                Contributor
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onRoleChange("VIEWER")}>
-                Viewer
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <FilterDropdown
+          label={labels.filters.role}
+          currentLabel={getRoleLabel(selectedRole, labels.filters.all)}
+          options={roleOptions}
+          onSelect={onRoleChange}
+        />
 
-        {/* Demo Users */}
-        <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">{labels.filters.showDemo}</Label>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full justify-between">
-                {getDemoLabel()}
-                <ChevronDown className="ml-2 size-4 opacity-50" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuItem onClick={() => onShowDemoChange("all")}>
-                {labels.filters.all}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onShowDemoChange("demo")}>
-                Demo Users
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <FilterDropdown
+          label={labels.filters.showDemo}
+          currentLabel={getDemoLabel(showDemoOnly, labels.filters.all)}
+          options={demoOptions}
+          onSelect={onShowDemoChange}
+        />
       </div>
     </Card>
   );
 }
+
 
