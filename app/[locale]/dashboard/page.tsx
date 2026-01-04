@@ -53,6 +53,12 @@ export default async function DashboardPageRoute({
   // Non-null assertion safe here because redirect throws
   const user = data.user!;
 
+  // Redirect Super Admin to /admin/users
+  const role = (user.user_metadata as { role?: string } | null)?.role;
+  if (role === "SUPER_ADMIN") {
+    redirect({ href: "/admin/users", locale });
+  }
+
   // Plan check
   ensureActivePlan(user, locale);
 

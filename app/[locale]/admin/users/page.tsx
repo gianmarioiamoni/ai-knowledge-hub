@@ -127,7 +127,7 @@ export default async function AdminUsersRoute({
       disableOrgDesc: t("actions.disableOrgDesc"),
       deleteOrgTitle: t("actions.deleteOrgTitle"),
       deleteOrgDesc: t("actions.deleteOrgDesc"),
-      deleteOrgWarning: t("actions.deleteOrgWarning"),
+      deleteOrgWarning: t.raw("actions.deleteOrgWarning") as string,
       disableUserTitle: t("actions.disableUserTitle"),
       disableUserDesc: t("actions.disableUserDesc"),
       deleteUserTitle: t("actions.deleteUserTitle"),
