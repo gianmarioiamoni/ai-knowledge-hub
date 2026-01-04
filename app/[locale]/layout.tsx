@@ -77,9 +77,8 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const publicNav = [{ label: tPlans("title"), href: "/pricing" }];
 
   const superNav = [
-    { label: tDashboard("title"), href: "/dashboard" },
+    { label: "Users & Organizations", href: "/admin/users" },
     { label: tDashboard("super.statsNav"), href: "/admin-stats" },
-    { label: "Users", href: "/admin/users" },
   ];
 
   const navItems = isAuthenticated
