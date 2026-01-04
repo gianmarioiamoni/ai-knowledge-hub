@@ -346,7 +346,7 @@
     },
     "delete": {
       "label": "Elimina",
-      "confirm": "Sei sicuro di voler eliminare "{title}"? L'azione è irreversibile.",
+      "confirm": "Sei sicuro di voler eliminare \"{title}\"? L'azione è irreversibile.",
       "cancel": "Annulla"
     },
     "errors": {

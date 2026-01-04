@@ -346,7 +346,7 @@
     },
     "delete": {
       "label": "Delete",
-      "confirm": "Are you sure you want to delete "{title}"? This cannot be undone.",
+      "confirm": "Are you sure you want to delete \"{title}\"? This cannot be undone.",
       "cancel": "Cancel"
     },
     "errors": {

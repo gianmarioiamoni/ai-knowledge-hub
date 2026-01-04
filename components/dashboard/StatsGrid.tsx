@@ -1,5 +1,3 @@
-"use client";
-
 import type { JSX } from "react";
 import { StatusCard } from "./StatusCard";
 import type { DashboardStat } from "./types";
