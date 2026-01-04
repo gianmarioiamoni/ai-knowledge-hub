@@ -582,6 +582,29 @@
       "status": "Status",
       "actions": "Actions",
       "count": "users"
+    },
+    "demoData": {
+      "title": "Demo Data Management",
+      "description": "Seed and reset demo data for demo users",
+      "statusActive": "Demo data is active",
+      "statusNotSeeded": "No demo data seeded yet",
+      "documents": "Documents",
+      "conversations": "Conversations",
+      "procedures": "Procedures",
+      "chunks": "chunks",
+      "messages": "messages",
+      "seedButton": "Seed Demo Data",
+      "resetButton": "Reset to Initial State",
+      "resetTitle": "Reset demo data?",
+      "resetDescription": "This will delete all demo organization data and recreate the initial seed. Demo users can login and see fresh sample data. This action cannot be undone.",
+      "resetConfirm": "Reset Demo Data",
+      "cancel": "Cancel",
+      "seeding": "Seeding...",
+      "resetting": "Resetting...",
+      "seedSuccess": "Demo data seeded successfully",
+      "seedError": "Failed to seed demo data",
+      "resetSuccess": "Demo data reset successfully",
+      "resetError": "Failed to reset demo data"
     }
   }
     }

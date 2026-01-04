@@ -1,0 +1,259 @@
+VPN SETUP GUIDE
+Remote Access Connection - FortiClient
+
+DOCUMENT TYPE: TECHNICAL GUIDE
+VERSION: 2.1
+LAST UPDATED: December 2024
+SUPPORT: vpn@company.com
+
+=== WHAT IS VPN? ===
+
+A Virtual Private Network (VPN) creates a secure, encrypted connection between your device and the company network. It allows you to access internal resources safely from anywhere in the world.
+
+When to use VPN:
+- Working from home or remote location
+- Traveling for business
+- Accessing company servers, databases, or file shares
+- Using public Wi-Fi (required for security)
+
+=== PREREQUISITES ===
+
+Before you begin, ensure you have:
+✓ Company-issued laptop OR approved personal device
+✓ Active employee email account
+✓ Two-factor authentication (2FA) app installed (Microsoft Authenticator or Google Authenticator)
+✓ Stable internet connection
+✓ Admin rights on your device (for installation)
+
+=== STEP 1: DOWNLOAD FORTICLIENT ===
+
+1.1 Access Download Portal
+- Open web browser
+- Navigate to: https://vpn.company.com/downloads
+- Log in with your company email and password
+- Complete 2FA verification
+
+1.2 Select Your Operating System
+Windows:
+- Click "Download FortiClient VPN for Windows"
+- File: FortiClientVPN_7.0_x64.exe
+- Size: ~45 MB
+
+macOS:
+- Click "Download FortiClient VPN for macOS"  
+- File: FortiClientVPN_7.0.dmg
+- Size: ~52 MB
+
+Linux:
+- Select your distribution (Ubuntu, Fedora, etc.)
+- Follow distribution-specific instructions
+
+=== STEP 2: INSTALL FORTICLIENT ===
+
+2.1 Windows Installation
+1. Locate downloaded file (usually in Downloads folder)
+2. Right-click > "Run as Administrator"
+3. Click "Yes" when User Account Control prompt appears
+4. Follow installation wizard:
+   - Accept license agreement
+   - Choose "Complete Installation"
+   - Default installation path is fine
+5. Click "Install"
+6. Restart computer when prompted
+
+2.2 macOS Installation
+1. Open downloaded .dmg file
+2. Drag FortiClient icon to Applications folder
+3. Open Applications > FortiClient VPN
+4. Click "Open" when security warning appears
+5. Grant necessary permissions:
+   - Network Extension permission (required)
+   - Notifications (recommended)
+6. Enter Mac password when prompted
+
+=== STEP 3: CONFIGURE VPN CONNECTION ===
+
+3.1 Open FortiClient
+- Windows: Start Menu > FortiClient
+- macOS: Applications > FortiClient VPN
+- First launch may take 30 seconds to initialize
+
+3.2 Create New VPN Connection
+1. Click "Remote Access" tab (left sidebar)
+2. Click "Configure VPN"
+3. Click "Add a new connection" (+ icon)
+
+3.3 Enter Connection Details
+Connection Name: TechCorp VPN
+Description: Company VPN Connection
+
+Remote Gateway: vpn.company.com
+Port: 443
+Protocol: SSL-VPN
+
+Authentication:
+- Username: your.email@company.com
+- Password: Your company password
+- Two-Factor Authentication: Required (prompted on connect)
+
+Advanced Settings:
+- ☑ Save Password (optional, for convenience)
+- ☑ Auto-connect on startup (optional)
+- Timeout: 12 hours (default)
+
+4. Click "Save"
+
+=== STEP 4: CONNECT TO VPN ===
+
+4.1 First Connection
+1. Select "TechCorp VPN" from connection list
+2. Click "Connect" button
+3. Enter credentials:
+   - Email: your.email@company.com
+   - Password: Your company password
+4. Open 2FA app on phone
+5. Enter 6-digit code when prompted
+6. Wait for "Connected" status (10-20 seconds)
+
+4.2 Connection Indicators
+Connected:
+- Green shield icon in system tray
+- Status: "Connected to vpn.company.com"
+- IP address displayed
+
+Disconnected:
+- Gray shield icon
+- Status: "Not connected"
+
+Connecting:
+- Yellow/orange icon
+- Status: "Connecting..."
+
+=== TROUBLESHOOTING ===
+
+5.1 Connection Fails
+Problem: "Connection timeout" or "Authentication failed"
+
+Solutions:
+✓ Check internet connection (try accessing google.com)
+✓ Verify credentials are correct
+✓ Ensure 2FA code is current (codes expire after 30 seconds)
+✓ Try disconnecting and reconnecting
+✓ Restart FortiClient application
+✓ Check firewall isn't blocking port 443
+
+5.2 VPN Keeps Disconnecting
+Problem: Connected but drops frequently
+
+Solutions:
+✓ Check internet stability
+✓ Move closer to Wi-Fi router
+✓ Disable power-saving mode on network adapter
+✓ Update FortiClient to latest version
+✓ Clear VPN cache: Settings > Clear Cache > Restart
+
+5.3 Slow Connection
+Problem: VPN connected but very slow
+
+Solutions:
+✓ Check local internet speed (speedtest.net)
+✓ Close unnecessary applications using bandwidth
+✓ Try different time of day (less network congestion)
+✓ Check company VPN status: status.company.com
+✓ If persistent, contact IT: slow speeds may indicate issue
+
+5.4 Cannot Access Internal Resources
+Problem: VPN connected but can't reach company servers
+
+Solutions:
+✓ Verify VPN is actually connected (check green shield)
+✓ Ping test: ping 10.0.0.1 (internal server IP)
+✓ Check DNS settings are correct
+✓ Try accessing by IP instead of hostname
+✓ Verify you have permission to access the resource
+✓ Contact IT if specific server is unreachable
+
+=== BEST PRACTICES ===
+
+6.1 Security
+- Always use VPN when on public Wi-Fi
+- Never share VPN credentials
+- Log out when finished working
+- Set VPN to auto-disconnect after 12 hours
+- Report suspicious VPN activity immediately
+
+6.2 Performance
+- Connect to VPN only when needed (saves bandwidth)
+- Disconnect when doing non-work tasks (streaming, gaming)
+- Keep FortiClient updated for best performance
+- Restart VPN connection if speeds degrade
+
+6.3 Troubleshooting Steps
+Before contacting IT, try:
+1. Disconnect and reconnect VPN
+2. Restart FortiClient application
+3. Restart your computer
+4. Check company VPN status page
+5. Try from different network (mobile hotspot)
+
+=== MOBILE VPN SETUP ===
+
+7.1 iOS (iPhone/iPad)
+- Download "FortiClient VPN" from App Store
+- Open app, tap "Add VPN"
+- Enter same settings as desktop
+- Grant VPN configuration permission
+- Connect using company credentials + 2FA
+
+7.2 Android
+- Download "FortiClient VPN" from Google Play
+- Open app, tap "+" to add connection
+- Enter vpn.company.com as remote gateway
+- Use company email and password
+- Enable 2FA when prompted
+
+=== SUPPORT & CONTACTS ===
+
+VPN Support Portal: vpn.company.com
+IT Help Desk: helpdesk@company.com
+Phone: ext. 5555 (Mon-Fri, 8AM-6PM)
+Emergency Support: ext. 9911 (24/7)
+
+Self-Service:
+- Password reset: password.company.com
+- VPN status: status.company.com
+- Download latest version: vpn.company.com/downloads
+
+When contacting support, provide:
+- Your employee email
+- Operating system (Windows/Mac/Linux)
+- FortiClient version (Help > About)
+- Error message (screenshot if possible)
+- Time when issue occurred
+
+=== FAQ ===
+
+Q: Do I need VPN at home?
+A: Yes, when accessing company resources or sensitive data.
+
+Q: Can I use VPN on personal devices?
+A: Only if enrolled in BYOD program and approved by IT.
+
+Q: Does VPN slow down my connection?
+A: Slightly, due to encryption. Usually 5-10% slower.
+
+Q: Can I stay connected all day?
+A: Yes, but will auto-disconnect after 12 hours for security.
+
+Q: What if I forgot my password?
+A: Use password.company.com for self-service reset.
+
+Q: VPN works but I can't access a specific server?
+A: Contact IT - you may need access permissions.
+
+=== VERSION HISTORY ===
+v2.1 (Dec 2024): Added mobile setup instructions
+v2.0 (Sep 2024): Updated for FortiClient 7.0
+v1.9 (Jun 2024): Added troubleshooting section
+v1.8 (Mar 2024): Initial guide published
+

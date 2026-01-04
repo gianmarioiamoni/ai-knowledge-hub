@@ -1,0 +1,327 @@
+NEW EMPLOYEE IT ONBOARDING CHECKLIST
+TechCorp - IT Department
+
+DOCUMENT TYPE: PROCESS CHECKLIST
+VERSION: 1.5
+EFFECTIVE: January 2025
+OWNER: IT Onboarding Team
+
+=== OVERVIEW ===
+
+This checklist ensures all new employees receive proper IT setup, access, and training. Timeline: 3-5 business days for complete onboarding.
+
+Roles Involved:
+- HR: Initiates onboarding, provides employee details
+- IT: Executes technical setup
+- Manager: Approves access requests
+- New Employee: Completes required tasks
+
+=== PRE-ARRIVAL (5 Days Before Start Date) ===
+
+HR Provides to IT:
+☐ Employee full name
+☐ Personal email address
+☐ Department and role/title
+☐ Start date
+☐ Manager name
+☐ Office location and desk number
+☐ Equipment needs (laptop model, monitor, etc.)
+
+IT Preparation:
+☐ Create Active Directory account
+   - Username format: firstname.lastname
+   - Temporary password: Welcome@2025!
+   - Add to domain: TECHCORP.LOCAL
+   
+☐ Provision email account
+   - Email: firstname.lastname@company.com
+   - Mailbox quota: 50GB
+   - Add to global address list
+   
+☐ Order/prepare hardware
+   - Laptop (MacBook Pro for engineers, ThinkPad for others)
+   - External monitor (if requested)
+   - Docking station
+   - Mouse and keyboard
+   - Headset (for remote work)
+   - Desk phone
+   
+☐ Prepare software image
+   - Install OS and updates
+   - Install core applications
+   - Configure security settings
+   - Apply company wallpaper and branding
+
+=== DAY 1 - MORNING (8:00 AM - 12:00 PM) ===
+
+Workspace Setup:
+☐ Hardware delivered to desk
+☐ Desk phone installed and tested
+   - Assign extension number
+   - Configure voicemail
+   - Add to company directory
+   
+☐ Network connections verified
+   - Ethernet cable or Wi-Fi configured
+   - Test internet connectivity
+   - Verify printer access
+
+Initial Account Setup:
+☐ Employee logs in for first time
+   - Username: firstname.lastname
+   - Temporary password provided by IT
+   - Force password change on first login
+   - New password must meet policy (12+ chars, complexity)
+   
+☐ Email account access verified
+   - Configure Outlook or Mail app
+   - Test send/receive
+   - Set up email signature template
+   
+☐ Two-Factor Authentication (2FA) setup
+   - Install Microsoft Authenticator or Google Authenticator
+   - Scan QR code to link account
+   - Test 2FA login
+   - Save backup codes in secure location
+
+Communication Tools:
+☐ Add to Slack workspace
+   - Assign to #general, #announcements
+   - Add to department channel (e.g., #engineering, #sales)
+   - Add to team channel
+   - Brief introduction posted
+   
+☐ Microsoft Teams setup
+   - Add to organization
+   - Add to relevant teams
+   - Test video call functionality
+   - Configure notification preferences
+
+=== DAY 1 - AFTERNOON (1:00 PM - 5:00 PM) ===
+
+Core Applications:
+☐ Google Workspace access
+   - Add to organization
+   - Share relevant folders
+   - Set up Drive sync if needed
+   
+☐ Project Management Tools
+   - Jira: Create account, add to projects
+   - Confluence: Wiki access, add to spaces
+   - Trello/Asana (if used by team)
+   
+☐ Communication & Collaboration
+   - Zoom: Create account, test video
+   - SharePoint: Access to team sites
+   - OneDrive: Set up folder sync
+
+Department-Specific Tools:
+Engineering:
+☐ GitHub/GitLab access
+☐ AWS/Cloud platform accounts
+☐ Development environment setup
+☐ VPN and remote development access
+☐ Database access (staging environment only initially)
+
+Sales/Marketing:
+☐ CRM system (Salesforce, HubSpot)
+☐ Marketing automation tools
+☐ Analytics platforms
+☐ Social media management tools
+
+Finance:
+☐ Accounting software access
+☐ Expense reporting system
+☐ Invoice management tools
+☐ Financial databases (read-only initially)
+
+=== DAY 2 - VPN & REMOTE ACCESS ===
+
+VPN Configuration:
+☐ Install FortiClient VPN software
+   - Download from vpn.company.com
+   - Install on laptop
+   - Configure connection settings
+   
+☐ VPN profile setup
+   - Server: vpn.company.com
+   - Port: 443
+   - Username: firstname.lastname@company.com
+   - Test connection from office
+   - Test connection from home/remote location
+   
+☐ Provide VPN troubleshooting guide
+   - Email PDF guide to employee
+   - Bookmark vpn.company.com/help
+   - IT contact info for VPN issues
+
+Remote Work Setup:
+☐ Test remote desktop access (if required)
+☐ Configure home Wi-Fi (best practices shared)
+☐ Verify all applications accessible remotely
+☐ Set up video conferencing from home
+
+=== DAY 2-3 - SECURITY & COMPLIANCE ===
+
+Security Training:
+☐ Schedule 2-hour security awareness session
+   - Password policy review
+   - Data classification training
+   - Phishing awareness demo
+   - Social engineering prevention
+   
+☐ Policy acknowledgment
+   - IT Security Policy (read and sign)
+   - Acceptable Use Policy
+   - BYOD Policy (if applicable)
+   - Confidentiality Agreement
+   
+☐ Security best practices guide provided
+   - Email PDF guide
+   - Physical security (desk locking, visitor badges)
+   - Data handling procedures
+   - Incident reporting process
+
+Additional Access:
+☐ File server access
+   - Map network drives
+   - Set up department shared folders
+   - Configure sync settings
+   - Permissions verified
+   
+☐ Business applications
+   - ERP system (if applicable)
+   - Time tracking software
+   - HR self-service portal
+   - Learning management system
+
+=== DAY 3-5 - SPECIALIZED ACCESS ===
+
+Role-Specific Setup:
+☐ Manager approval obtained for:
+   - Database access (production)
+   - Admin privileges (if required)
+   - Sensitive data access
+   - External system access
+   
+☐ Specialized software
+   - Design tools (Adobe, Figma)
+   - Analytics platforms
+   - Industry-specific applications
+   - Custom internal tools
+
+Mobile Device Setup (if applicable):
+☐ Company phone issued (if required)
+   - Configure phone settings
+   - Install business apps
+   - Enroll in MDM (Mobile Device Management)
+   - Test calls and data
+   
+☐ BYOD enrollment (if approved)
+   - Install MDM profile
+   - Configure work/personal separation
+   - Install required security apps
+   - Sign BYOD agreement
+
+=== WEEK 2 - FOLLOW-UP ===
+
+Check-in Meeting:
+☐ Schedule 30-minute check-in with IT
+   - All systems working properly?
+   - Any access issues or questions?
+   - Additional tools needed?
+   - Feedback on onboarding process
+   
+☐ Verify core capabilities
+   - Can send/receive emails
+   - Can access all required systems
+   - VPN working from remote locations
+   - No outstanding access requests
+   
+☐ Address any issues
+   - Troubleshoot reported problems
+   - Submit pending access requests
+   - Update any incorrect information
+   - Schedule additional training if needed
+
+Documentation:
+☐ Employee added to IT asset inventory
+   - Laptop serial number and model
+   - Phone extension
+   - Software licenses assigned
+   - Access rights documented
+   
+☐ Onboarding ticket closed
+   - All tasks completed
+   - Manager approval obtained
+   - Employee confirmed ready to work
+   - Documentation filed
+
+=== COMMON ISSUES & SOLUTIONS ===
+
+Problem: Account locked after first login attempt
+Solution: Reset password using password.company.com or contact IT
+
+Problem: Email not syncing on phone
+Solution: Check MDM enrollment, verify credentials, test on Wi-Fi
+
+Problem: Cannot access file server
+Solution: Check VPN connection, verify network drive mappings
+
+Problem: 2FA app lost/reset
+Solution: Contact IT to reset 2FA, provide employee ID for verification
+
+Problem: Software not installed on laptop
+Solution: Submit IT ticket with application name and business justification
+
+=== OFFBOARDING REFERENCE ===
+
+When employee leaves:
+☐ Disable Active Directory account (same day)
+☐ Disable email account (same day)
+☐ Revoke VPN access (same day)
+☐ Remove from all systems (within 24 hours)
+☐ Collect hardware (laptop, phone, access badges)
+☐ Backup personal files (manager approval required)
+☐ Remove from communication tools (Slack, Teams)
+☐ Delete 30 days after last day (data retention policy)
+
+=== CONTACTS ===
+
+IT Help Desk:
+- Email: helpdesk@company.com
+- Phone: ext. 5555
+- Hours: Monday-Friday, 8AM-6PM ET
+
+Emergency Support:
+- Phone: ext. 9911
+- Available 24/7 for critical issues
+
+Self-Service:
+- Password reset: password.company.com
+- IT knowledge base: help.company.com
+- Submit ticket: helpdesk.company.com/newticket
+
+=== METRICS & SLA ===
+
+Target Timelines:
+- Day 1 setup: Complete by noon
+- Full onboarding: 3-5 business days
+- Access requests: 24-48 hours with manager approval
+- IT ticket response: Within 4 business hours
+- Critical issues: Within 1 hour
+
+Success Criteria:
+✓ Employee can log in to all required systems
+✓ Email sending and receiving works
+✓ VPN connects successfully
+✓ Department-specific tools accessible
+✓ Security training completed
+✓ No outstanding access issues
+
+=== REVISION HISTORY ===
+v1.5 (Jan 2025): Added mobile device section, updated software list
+v1.4 (Oct 2024): Added Week 2 follow-up section
+v1.3 (Jul 2024): Expanded security training requirements
+v1.2 (Apr 2024): Initial published version
+

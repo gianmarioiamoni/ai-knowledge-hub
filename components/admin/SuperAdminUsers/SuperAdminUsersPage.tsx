@@ -8,6 +8,7 @@ import { useFilters } from "./useFilters";
 import { CompanyGroupView } from "./CompanyGroupView";
 import { Filters } from "./Filters";
 import { PageHeader } from "@/components/common/PageHeader";
+import { DemoDataControl } from "@/components/admin/DemoDataControl";
 import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type SuperAdminUsersPageProps = {
@@ -51,6 +52,10 @@ export function SuperAdminUsersPage({
         showLogout
         logoutLabel={labels.logout}
       />
+
+      <div className="mb-6">
+        <DemoDataControl locale={locale} labels={labels.demoData} />
+      </div>
 
       <Filters
         labels={labels}

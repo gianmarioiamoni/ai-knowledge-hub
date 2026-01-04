@@ -72,5 +72,28 @@ export type SuperAdminLabels = {
     deleteUserTitle: string;
     deleteUserDesc: string;
   };
+  demoData: {
+    title: string;
+    description: string;
+    statusActive: string;
+    statusNotSeeded: string;
+    documents: string;
+    conversations: string;
+    procedures: string;
+    chunks: string;
+    messages: string;
+    seedButton: string;
+    resetButton: string;
+    resetTitle: string;
+    resetDescription: string;
+    resetConfirm: string;
+    cancel: string;
+    seeding: string;
+    resetting: string;
+    seedSuccess: string;
+    seedError: string;
+    resetSuccess: string;
+    resetError: string;
+  };
 };
 

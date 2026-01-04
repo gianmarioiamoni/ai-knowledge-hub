@@ -582,6 +582,29 @@
       "status": "Stato",
       "actions": "Azioni",
       "count": "utenti"
+    },
+    "demoData": {
+      "title": "Gestione Dati Demo",
+      "description": "Crea e ripristina i dati demo per gli utenti demo",
+      "statusActive": "Dati demo attivi",
+      "statusNotSeeded": "Nessun dato demo ancora creato",
+      "documents": "Documenti",
+      "conversations": "Conversazioni",
+      "procedures": "Procedure",
+      "chunks": "chunk",
+      "messages": "messaggi",
+      "seedButton": "Crea Dati Demo",
+      "resetButton": "Ripristina Stato Iniziale",
+      "resetTitle": "Ripristinare i dati demo?",
+      "resetDescription": "Questo cancellerà tutti i dati dell'organizzazione demo e ricreerà il seed iniziale. Gli utenti demo potranno accedere e vedere dati di esempio freschi. Questa azione non può essere annullata.",
+      "resetConfirm": "Ripristina Dati Demo",
+      "cancel": "Annulla",
+      "seeding": "Creazione in corso...",
+      "resetting": "Ripristino in corso...",
+      "seedSuccess": "Dati demo creati con successo",
+      "seedError": "Errore durante la creazione dei dati demo",
+      "resetSuccess": "Dati demo ripristinati con successo",
+      "resetError": "Errore durante il ripristino dei dati demo"
     }
   }
     }

@@ -1,0 +1,209 @@
+IT SECURITY POLICY 2025
+TechCorp - Information Technology Department
+
+DOCUMENT CLASSIFICATION: INTERNAL
+VERSION: 3.2
+EFFECTIVE DATE: January 1, 2025
+LAST REVIEWED: December 15, 2024
+
+=== SECTION 1: PASSWORD REQUIREMENTS ===
+
+1.1 Password Complexity
+All employee passwords must meet the following requirements:
+- Minimum length: 12 characters
+- Must include at least one uppercase letter (A-Z)
+- Must include at least one lowercase letter (a-z)
+- Must include at least one number (0-9)
+- Must include at least one special character (!@#$%^&*)
+- Cannot contain username or common dictionary words
+- Cannot be identical to any of the last 10 passwords used
+
+1.2 Password Expiration
+- Passwords must be changed every 90 days
+- System will notify users 14 days before expiration
+- Grace period: 3 days after expiration with daily reminders
+- After grace period, account will be locked until password is reset
+
+1.3 Password Reset Procedures
+Self-Service Reset:
+- Access https://password.company.com
+- Click "Forgot Password"
+- Verify identity with registered email or phone
+- Reset link expires after 1 hour
+- Must set new password meeting all requirements
+
+IT Support Reset:
+- Contact IT Help Desk: ext. 5555 or helpdesk@company.com
+- Provide employee ID and answer security questions
+- Temporary password will be emailed
+- Must change temporary password on first login
+
+=== SECTION 2: DATA CLASSIFICATION ===
+
+2.1 Classification Levels
+PUBLIC:
+- Marketing materials, press releases
+- Published company information
+- Public website content
+- Can be freely shared externally
+
+INTERNAL:
+- Internal communications, memos
+- Non-sensitive business documents
+- Employee directories (basic info)
+- For company use only, not for external sharing
+
+CONFIDENTIAL:
+- Financial data, budgets
+- Customer information, contracts
+- HR records, salary information
+- Encryption required for storage and transmission
+- Access restricted to authorized personnel
+
+CRITICAL:
+- Trade secrets, proprietary algorithms
+- Executive strategy documents
+- Merger and acquisition data
+- Board meeting minutes
+- Highest level of protection required
+- Access requires executive approval
+
+2.2 Handling Requirements
+- Label all documents with appropriate classification
+- Store CONFIDENTIAL and CRITICAL data on encrypted drives only
+- Never send sensitive data via personal email
+- Use company-approved secure file sharing (SharePoint, encrypted email)
+- Shred physical documents containing sensitive information
+
+=== SECTION 3: INCIDENT RESPONSE ===
+
+3.1 Reporting Security Incidents
+Immediately report any of the following:
+- Suspected malware or virus infection
+- Phishing emails received
+- Lost or stolen company devices
+- Unauthorized access attempts
+- Data breaches or leaks
+- Suspicious network activity
+
+Report to: security@company.com or ext. 9911 (24/7 Security Hotline)
+
+3.2 Incident Response Protocol
+DO:
+- Report incident immediately (within 1 hour of discovery)
+- Document what happened: date, time, details
+- Disconnect affected device from network if safe to do so
+- Preserve evidence: don't delete logs or files
+- Follow instructions from security team
+
+DO NOT:
+- Attempt to fix security issues yourself
+- Continue using compromised systems
+- Share incident details publicly or on social media
+- Delete any files or logs before security team reviews
+
+3.3 Investigation Process
+- Security team will assess severity (P0-Critical to P3-Low)
+- Affected systems may be isolated
+- Forensic analysis conducted
+- Incident report created within 24 hours
+- Follow-up actions assigned to prevent recurrence
+
+=== SECTION 4: DEVICE SECURITY ===
+
+4.1 Company Devices
+- All company laptops must have full-disk encryption enabled
+- Screen lock required after 5 minutes of inactivity
+- Biometric authentication (fingerprint/face) recommended
+- Install all security updates within 48 hours of release
+- Anti-malware software must be active at all times
+
+4.2 Mobile Devices
+- Use strong passcode (minimum 6 digits or biometric)
+- Enable remote wipe capability
+- Do not jailbreak or root devices
+- Only install apps from official stores
+- Report lost/stolen devices immediately
+
+4.3 Personal Devices (BYOD)
+If approved for BYOD:
+- Must enroll in Mobile Device Management (MDM)
+- Company data stored separately from personal data
+- Comply with all security policies
+- Allow remote wipe of company data if device is lost
+
+=== SECTION 5: NETWORK SECURITY ===
+
+5.1 VPN Requirements
+When working remotely:
+- Always connect via company VPN
+- VPN required for accessing internal resources
+- Use FortiClient VPN software
+- Two-factor authentication required
+- Do not disable VPN while accessing company systems
+
+5.2 Wi-Fi Security
+- Never use public Wi-Fi without VPN
+- Avoid hotel/café Wi-Fi for sensitive work
+- If public Wi-Fi is necessary, use VPN immediately
+- Disable automatic Wi-Fi connection on devices
+
+5.3 Remote Access
+- All remote access requires VPN + 2FA
+- Remote desktop connections only through approved tools
+- Log out when session ends
+- Report suspicious remote access attempts
+
+=== SECTION 6: EMAIL & COMMUNICATION ===
+
+6.1 Email Security
+- Be cautious of unexpected attachments
+- Verify sender before clicking links
+- Never share passwords via email
+- Use encrypted email for CONFIDENTIAL data
+- Report phishing attempts to security@company.com
+
+6.2 Phishing Awareness
+Red flags:
+- Urgent requests for passwords or financial info
+- Sender email doesn't match claimed identity
+- Generic greetings ("Dear User" instead of your name)
+- Spelling and grammar errors
+- Suspicious links (hover to preview URL)
+- Unexpected attachments, especially .exe or .zip files
+
+=== SECTION 7: COMPLIANCE & TRAINING ===
+
+7.1 Mandatory Training
+- Annual security awareness training (2 hours)
+- Phishing simulation tests quarterly
+- Role-specific security training as required
+- New employee security orientation
+
+7.2 Policy Compliance
+- All employees must acknowledge this policy annually
+- Violations may result in disciplinary action
+- Repeated or severe violations: termination
+- Contractors and vendors must comply when accessing systems
+
+7.3 Audit & Monitoring
+- IT Security performs regular audits
+- System access logs retained for 1 year
+- Unusual activity triggers automated alerts
+- Random security compliance checks
+
+=== CONTACT INFORMATION ===
+
+IT Help Desk: helpdesk@company.com | ext. 5555
+Security Team: security@company.com | ext. 9911
+VPN Support: vpn.company.com
+Password Reset: password.company.com
+Security Training: training.company.com
+
+Emergency Security Hotline: ext. 9911 (24/7)
+
+=== REVISION HISTORY ===
+Version 3.2 - January 2025: Updated password requirements to 12 characters
+Version 3.1 - July 2024: Added BYOD section
+Version 3.0 - January 2024: Complete policy revision
+
