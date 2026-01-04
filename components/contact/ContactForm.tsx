@@ -106,11 +106,6 @@ function ContactForm({ defaultEmail, locale, topics, labels }: ContactFormProps)
             </div>
           </div>
 
-          {state?.success ? (
-            <p className="text-sm font-semibold text-green-600">{labels.success}</p>
-          ) : null}
-          {state?.error ? <p className="text-sm font-semibold text-destructive">{labels.error}</p> : null}
-
           <Button type="submit" className="self-start">
             {labels.submit}
           </Button>

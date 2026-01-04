@@ -36,11 +36,7 @@ function ChangePasswordForm({ labels }: ChangePasswordFormProps): JSX.Element {
         <form action={formAction} className="flex flex-col gap-3 max-w-md">
           <Input name="password" type="password" placeholder={labels.newPassword} required minLength={8} />
           <Input name="confirm" type="password" placeholder={labels.confirmPassword} required minLength={8} />
-          <div className="flex items-center gap-3">
-            <Button type="submit">{labels.submit}</Button>
-            {state?.success ? <span className="text-sm text-emerald-600">{labels.success}</span> : null}
-            {state?.error ? <span className="text-sm text-rose-600">{state.error || labels.error}</span> : null}
-          </div>
+          <Button type="submit">{labels.submit}</Button>
         </form>
       </div>
     </div>

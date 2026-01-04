@@ -59,9 +59,6 @@ function GenerateSopDialog({ locale, labels, action = handleGenerateSop }: Gener
     setOpen(false);
   };
 
-  const showError = open && state?.error;
-  const showSuccess = open && state?.success;
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -113,8 +110,6 @@ function GenerateSopDialog({ locale, labels, action = handleGenerateSop }: Gener
               {pending ? labels.submit + "..." : labels.submit}
             </Button>
           </div>
-          {showError ? <p className="text-xs text-rose-600">{state.error}</p> : null}
-          {showSuccess ? <p className="text-xs text-emerald-700">{labels.success}</p> : null}
         </form>
       </DialogContent>
     </Dialog>

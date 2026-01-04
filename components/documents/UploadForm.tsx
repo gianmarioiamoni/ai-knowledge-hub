@@ -1,6 +1,6 @@
 "use client";
 
-import { JSX, useActionState, useEffect, useRef, useState, useTransition } from "react";
+import { JSX, useActionState, useEffect, useRef, useTransition } from "react";
 import { toast } from "sonner";
 import { handleUploadWithState } from "@/app/[locale]/documents/actions";
 
@@ -41,7 +41,6 @@ function SubmitButton({ labels, pending }: SubmitButtonProps): JSX.Element {
 function UploadForm({ locale, labels, action = handleUploadWithState }: UploadFormProps): JSX.Element {
   const [state, formAction] = useActionState<FormState, FormData>(action, {});
   const [pending, startTransition] = useTransition();
-  const [localError, setLocalError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -55,14 +54,13 @@ function UploadForm({ locale, labels, action = handleUploadWithState }: UploadFo
   const handleSubmit = (formData: FormData) => {
     const file = fileRef.current?.files?.[0];
     if (!file) {
-      setLocalError("Please select a file.");
+      toast.error("Please select a file.");
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      setLocalError("File too large. Max 10MB.");
+      toast.error("File too large. Max 10MB.");
       return;
     }
-    setLocalError(null);
     startTransition(() => {
       formAction(formData);
     });
@@ -80,7 +78,6 @@ function UploadForm({ locale, labels, action = handleUploadWithState }: UploadFo
           accept="application/pdf"
           ref={fileRef}
           className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-primary/90"
-          onChange={() => setLocalError(null)}
         />
       </label>
       <div className="flex items-center justify-between">
@@ -89,9 +86,6 @@ function UploadForm({ locale, labels, action = handleUploadWithState }: UploadFo
         </p>
         <SubmitButton labels={labels} pending={pending} />
       </div>
-      {state?.error ? <p className="text-xs text-rose-600">{state.error}</p> : null}
-      {state?.success ? <p className="text-xs text-emerald-700">{state.success}</p> : null}
-      {localError ? <p className="text-xs text-rose-600">{localError}</p> : null}
     </form>
   );
 }

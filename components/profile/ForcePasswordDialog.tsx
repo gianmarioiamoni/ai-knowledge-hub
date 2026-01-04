@@ -47,7 +47,6 @@ function ForcePasswordDialog({ open, locale, labels }: ForcePasswordDialogProps)
           <Button type="submit" className="w-full">
             {labels.submit}
           </Button>
-          {state?.error ? <p className="text-sm font-semibold text-rose-600">{state.error || labels.error}</p> : null}
         </form>
       </DialogContent>
     </Dialog>
