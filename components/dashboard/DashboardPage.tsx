@@ -1,5 +1,3 @@
-"use client";
-
 import type { JSX } from "react";
 import { SuperAdminDashboard } from "./SuperAdminDashboard";
 import { RegularDashboard } from "./RegularDashboard";

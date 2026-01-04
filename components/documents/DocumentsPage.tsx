@@ -1,5 +1,3 @@
-"use client";
-
 import type { JSX } from "react";
 import { Card } from "@/components/ui/card";
 import { UploadForm } from "./UploadForm";

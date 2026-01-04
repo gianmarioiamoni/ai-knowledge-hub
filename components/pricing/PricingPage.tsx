@@ -1,5 +1,3 @@
-"use client";
-
 import type { JSX } from "react";
 import type { Plan } from "@/components/subscriptions/PlansSection/types";
 import { PricingCards } from "./PricingCards";

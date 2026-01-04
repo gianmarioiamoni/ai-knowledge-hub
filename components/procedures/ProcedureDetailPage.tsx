@@ -1,5 +1,3 @@
-"use client";
-
 import type { JSX } from "react";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { Card } from "@/components/ui/card";

@@ -1,5 +1,3 @@
-"use client";
-
 import type { JSX } from "react";
 import type { PlatformStats, AdminStatsLabels } from "./types";
 import { StatCard } from "./StatCard";
