@@ -76,15 +76,15 @@ DEMO_USER_NAME=Demo Admin
 ## Restrictions
 
 ### ❌ Demo Users CANNOT:
-1. Delete their own account
-2. Change their password
-3. Be deleted by Super Admin
+1. Delete their own account (self-deletion blocked)
+2. Change their password (password change blocked)
 
 ### ✅ Demo Users CAN:
 1. Be enabled/disabled by Super Admin
-2. Login normally
-3. Use all features based on their role
-4. Be managed like regular users (except deletion)
+2. Be deleted by Super Admin (for cleanup/reset)
+3. Login normally
+4. Use all features based on their role
+5. Be managed like regular users
 
 ---
 
@@ -152,8 +152,10 @@ From `/admin/users` page (Super Admin only):
 - Demo users can be temporarily disabled
 
 **Delete Demo Users**:
-- ❌ Not allowed - "Demo users cannot be deleted" error
-- Protection prevents accidental deletion
+- ✅ Available - Super Admin can delete demo users
+- Useful for cleanup or reset
+- Demo users will NOT be recreated automatically (only on server restart)
+- Self-deletion by demo users is still blocked
 
 ---
 
