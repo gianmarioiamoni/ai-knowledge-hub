@@ -77,7 +77,6 @@ export const listCompanyUsers = async ({
   }
   
   if (!members || members.length === 0) {
-    console.log("[listCompanyUsers] No members found for organization:", organizationId);
     return [];
   }
   
@@ -116,8 +115,6 @@ export const listCompanyUsers = async ({
     disabled: member.disabled ?? false,
     created_at: member.created_at ?? null,
   }));
-  
-  console.log("[listCompanyUsers] Processed users:", JSON.stringify(users, null, 2));
   
   return users;
 };
