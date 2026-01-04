@@ -1,23 +1,13 @@
-import type { User } from "@supabase/supabase-js";
 import { getTranslations } from "next-intl/server";
-import type { DashboardLabels, SuperAdminLabels, DashboardStat, PipelineStep } from "@/components/dashboard/types";
+import type { DashboardLabels, DashboardStat, PipelineStep } from "@/components/dashboard/types";
 
 type GetDashboardLabelsParams = {
   locale: string;
-  email: string;
-  isSuperAdmin: boolean;
-};
-
-type DashboardLabelsResult = {
-  labels: DashboardLabels;
-  adminLabels?: SuperAdminLabels;
 };
 
 export async function getDashboardLabels({
   locale,
-  email,
-  isSuperAdmin,
-}: GetDashboardLabelsParams): Promise<DashboardLabelsResult> {
+}: GetDashboardLabelsParams): Promise<DashboardLabels> {
   const t = await getTranslations({ locale, namespace: "dashboard" });
   const tCommon = await getTranslations({ locale, namespace: "common" });
 
@@ -28,7 +18,7 @@ export async function getDashboardLabels({
     headline: t("headline"),
     subtitle: t("subtitle"),
     greetingPrefix,
-    email,
+    email: "", // Will be set by the page
     profileTooltip: t("profileTooltip"),
     logout: tCommon("logout"),
     tenant: t("tenant"),
@@ -53,33 +43,7 @@ export async function getDashboardLabels({
     synced: t("synced"),
   };
 
-  const adminLabels: SuperAdminLabels | undefined = isSuperAdmin
-    ? {
-        title: t("super.title"),
-        subtitle: t("super.subtitle"),
-        email: t("super.email"),
-        role: t("super.role"),
-        status: t("super.status"),
-        created: t("super.created"),
-        actions: t("super.actions"),
-        loading: t("super.loading"),
-        refresh: t("super.refresh"),
-        promote: t("super.promote"),
-        demote: t("super.demote"),
-        disable: t("super.disable"),
-        enable: t("super.enable"),
-        delete: t("super.delete"),
-        banned: t("super.banned"),
-        active: t("super.active"),
-        error: t("super.error"),
-        ok: t("super.ok"),
-        cancel: t("super.cancel"),
-        deleteUserTitle: t("super.deleteUserTitle"),
-        deleteUserDesc: t("super.deleteUserDesc"),
-      }
-    : undefined;
-
-  return { labels, adminLabels };
+  return labels;
 }
 
 type BuildDashboardStatsParams = {
@@ -137,11 +101,5 @@ export async function buildPipelineSteps(locale: string): Promise<PipelineStep[]
 export async function getNextActions(locale: string): Promise<string[]> {
   const t = await getTranslations({ locale, namespace: "dashboard" });
   return t.raw("actions") as string[];
-}
-
-export function extractUserRole(user: User): { role: string | null; isSuperAdmin: boolean } {
-  const role = (user.user_metadata as { role?: string } | null)?.role ?? null;
-  const isSuperAdmin = role === "SUPER_ADMIN";
-  return { role, isSuperAdmin };
 }
 

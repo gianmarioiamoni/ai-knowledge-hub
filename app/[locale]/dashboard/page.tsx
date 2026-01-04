@@ -14,7 +14,6 @@ import {
   buildDashboardStats,
   buildPipelineSteps,
   getNextActions,
-  extractUserRole,
 } from "@/lib/server/dashboardHelpers";
 
 export const dynamic = "force-dynamic";
@@ -71,12 +70,8 @@ export default async function DashboardPageRoute({
     redirect({ href: "/profile?forcePassword=true", locale });
   }
 
-  // User metadata
-  const email = user.email ?? "User";
-  const { isSuperAdmin } = extractUserRole(user);
-
   // Translations and labels
-  const { labels, adminLabels } = await getDashboardLabels({ locale, email, isSuperAdmin });
+  const labels = await getDashboardLabels({ locale });
 
   // Data fetching
   const organizationId = await ensureUserOrganization({ supabase });
@@ -96,9 +91,7 @@ export default async function DashboardPageRoute({
 
   return (
     <DashboardPage
-      isSuperAdmin={isSuperAdmin}
       labels={labels}
-      adminLabels={adminLabels}
       stats={stats}
       pipelineSteps={pipelineSteps}
       nextActions={nextActions}
