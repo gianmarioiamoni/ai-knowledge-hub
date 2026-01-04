@@ -6,10 +6,6 @@ const getUserRole = (user: User): UserRole => {
   return (user.user_metadata as { role?: string } | null)?.role as UserRole;
 };
 
-const isUserSuperAdmin = (user: User): boolean => {
-  return getUserRole(user) === "SUPER_ADMIN";
-};
-
 const isSuperAdmin = (role: UserRole): boolean => role === "SUPER_ADMIN";
 const isCompanyAdmin = (role: UserRole): boolean => role === "COMPANY_ADMIN";
 const isContributor = (role: UserRole): boolean => role === "CONTRIBUTOR";
@@ -26,7 +22,6 @@ const canSeePlans = (role: UserRole): boolean => isSuperAdmin(role) || isCompany
 
 export {
   getUserRole,
-  isUserSuperAdmin,
   isSuperAdmin,
   isCompanyAdmin,
   isContributor,

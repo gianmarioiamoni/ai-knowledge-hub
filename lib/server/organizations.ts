@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createSupabaseServiceClient } from "./supabaseService";
 import { redirect } from "@/i18n/navigation";
 import type { UserRole } from "./roles";
-import { isUserSuperAdmin } from "./roles";
+import { getUserRole, isSuperAdmin } from "./roles";
 
 type EnsureOrganizationParams = {
   supabase: SupabaseClient;
@@ -27,7 +27,7 @@ export const ensureUserOrganization = async ({
   }
 
   // Prevent organization creation for Super Admin
-  if (isUserSuperAdmin(userData.user)) {
+  if (isSuperAdmin(getUserRole(userData.user))) {
     throw new Error("Super Admin users should not have an organization");
   }
 
@@ -131,7 +131,7 @@ export const requireActiveOrganization = async ({
   }
 
   // Super Admin should not access organization-specific pages
-  if (isUserSuperAdmin(userData.user!)) {
+  if (isSuperAdmin(getUserRole(userData.user!))) {
     redirect({ href: "/admin/users", locale });
   }
 
