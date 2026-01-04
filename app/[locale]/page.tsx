@@ -14,15 +14,6 @@ export default async function LocaleIndexPage({ params }: LocalePageProps): Prom
 
   const target = data.user ? `/${locale}/dashboard` : `/${locale}/login`;
 
-  if (process.env.NODE_ENV !== "production") {
-    console.info("[locale/page] redirecting", {
-      locale,
-      hasUser: Boolean(data.user),
-      error: error?.message,
-      target,
-    });
-  }
-
   redirect(target);
 }
 

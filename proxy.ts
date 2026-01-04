@@ -12,15 +12,6 @@ const intlProxy = createMiddleware({
 export default function proxy(request: NextRequest) {
   const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
 
-  if (process.env.NODE_ENV !== "production") {
-    // Debug: trace incoming path and detected locale to diagnose redirects
-    console.info("[proxy] incoming", {
-      pathname: request.nextUrl.pathname,
-      search: request.nextUrl.search,
-      locale: request.nextUrl.locale,
-    });
-  }
-
   const response = intlProxy(request);
 
   const [, maybeLocaleRaw] = request.nextUrl.pathname.split("/");
