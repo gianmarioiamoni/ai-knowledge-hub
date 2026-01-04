@@ -36,7 +36,7 @@ export default async function AdminUsersRoute({
   const service = createSupabaseServiceClient();
 
   const { data: orgRows } = await service.from("organizations").select("id,name,disabled");
-  const orgs: OrgRow[] = (orgRows ?? []) as OrgRow[];
+  const rawOrgs = (orgRows ?? []) as Array<{ id: string; name: string; disabled: boolean }>;
 
   const { data: memberRows } = await service
     .from("organization_members")
@@ -50,12 +50,14 @@ export default async function AdminUsersRoute({
 
   const { data: usersData } = await service.auth.admin.listUsers();
   const usersById =
-    usersData?.users?.reduce<Record<string, { email: string | null; created_at: string | null; is_demo_user: boolean }>>((acc, u) => {
+    usersData?.users?.reduce<Record<string, { email: string | null; created_at: string | null; is_demo_user: boolean; plan_id: string }>>((acc, u) => {
       const isDemoUser = (u.user_metadata as { is_demo_user?: boolean } | null)?.is_demo_user ?? false;
+      const planId = ((u.user_metadata as { plan?: { id?: string } } | null)?.plan?.id) ?? "trial";
       acc[u.id] = { 
         email: u.email ?? null, 
         created_at: u.created_at ?? null,
         is_demo_user: isDemoUser,
+        plan_id: planId,
       };
       return acc;
     }, {}) ?? {};
@@ -67,6 +69,19 @@ export default async function AdminUsersRoute({
     is_demo_user: usersById[m.user_id]?.is_demo_user ?? false,
   }));
 
+  // Count members per org and get plan_id from first COMPANY_ADMIN
+  const orgs: OrgRow[] = rawOrgs.map((org) => {
+    const orgMembers = members.filter((m) => m.organization_id === org.id);
+    const adminMember = orgMembers.find((m) => m.role === "COMPANY_ADMIN");
+    const planId = adminMember ? (usersById[adminMember.user_id]?.plan_id ?? "trial") : "trial";
+    
+    return {
+      ...org,
+      plan_id: planId,
+      member_count: orgMembers.length,
+    };
+  });
+
   // Build labels object
   const labels = {
     title: t("title"),
@@ -75,9 +90,25 @@ export default async function AdminUsersRoute({
     orgsTitle: t("orgsTitle"),
     usersTitle: t("usersTitle"),
     empty: t("empty"),
+    filters: {
+      all: t("filters.all"),
+      company: t("filters.company"),
+      status: t("filters.status"),
+      plan: t("filters.plan"),
+      role: t("filters.role"),
+      showDemo: t("filters.showDemo"),
+      search: t("filters.search"),
+    },
     status: {
       active: t("status.active"),
       disabled: t("status.disabled"),
+    },
+    plans: {
+      trial: t("plans.trial"),
+      demo: t("plans.demo"),
+      smb: t("plans.smb"),
+      enterprise: t("plans.enterprise"),
+      expired: t("plans.expired"),
     },
     users: {
       email: t("users.email"),
@@ -85,6 +116,7 @@ export default async function AdminUsersRoute({
       role: t("users.role"),
       status: t("users.status"),
       actions: t("users.actions"),
+      count: t("users.count"),
     },
     actions: {
       enable: t("actions.enable"),
@@ -95,6 +127,7 @@ export default async function AdminUsersRoute({
       disableOrgDesc: t("actions.disableOrgDesc"),
       deleteOrgTitle: t("actions.deleteOrgTitle"),
       deleteOrgDesc: t("actions.deleteOrgDesc"),
+      deleteOrgWarning: t("actions.deleteOrgWarning"),
       disableUserTitle: t("actions.disableUserTitle"),
       disableUserDesc: t("actions.disableUserDesc"),
       deleteUserTitle: t("actions.deleteUserTitle"),

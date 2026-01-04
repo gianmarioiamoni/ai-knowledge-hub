@@ -2,6 +2,8 @@ export type OrgRow = {
   id: string;
   name: string;
   disabled: boolean;
+  plan_id: string;
+  member_count: number;
 };
 
 export type MemberRow = {
@@ -14,6 +16,11 @@ export type MemberRow = {
   is_demo_user: boolean;
 };
 
+export type CompanyGroup = {
+  org: OrgRow;
+  members: MemberRow[];
+};
+
 export type SuperAdminLabels = {
   title: string;
   subtitle: string;
@@ -21,9 +28,25 @@ export type SuperAdminLabels = {
   orgsTitle: string;
   usersTitle: string;
   empty: string;
+  filters: {
+    all: string;
+    company: string;
+    status: string;
+    plan: string;
+    role: string;
+    showDemo: string;
+    search: string;
+  };
   status: {
     active: string;
     disabled: string;
+  };
+  plans: {
+    trial: string;
+    demo: string;
+    smb: string;
+    enterprise: string;
+    expired: string;
   };
   users: {
     email: string;
@@ -31,6 +54,7 @@ export type SuperAdminLabels = {
     role: string;
     status: string;
     actions: string;
+    count: string;
   };
   actions: {
     enable: string;
@@ -41,6 +65,7 @@ export type SuperAdminLabels = {
     disableOrgDesc: string;
     deleteOrgTitle: string;
     deleteOrgDesc: string;
+    deleteOrgWarning: string;
     disableUserTitle: string;
     disableUserDesc: string;
     deleteUserTitle: string;

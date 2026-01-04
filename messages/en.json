@@ -537,9 +537,25 @@
     "orgsTitle": "Organizations",
     "usersTitle": "Users",
     "empty": "No data.",
+    "filters": {
+      "all": "All",
+      "company": "Company",
+      "status": "Status",
+      "plan": "Plan",
+      "role": "Role",
+      "showDemo": "User Type",
+      "search": "Search"
+    },
     "status": {
       "active": "Active",
       "disabled": "Disabled"
+    },
+    "plans": {
+      "trial": "Trial",
+      "demo": "Demo",
+      "smb": "SMB",
+      "enterprise": "Enterprise",
+      "expired": "Expired"
     },
     "actions": {
       "disable": "Disable",
@@ -550,6 +566,7 @@
       "disableOrgDesc": "Users will be blocked but data is kept.",
       "deleteOrgTitle": "Delete organization?",
       "deleteOrgDesc": "This removes the organization and all data.",
+      "deleteOrgWarning": "Warning: This will delete all {count} users in this organization.",
       "disableUserTitle": "Disable user?",
       "disableUserDesc": "User will be blocked but data is kept.",
       "deleteUserTitle": "Delete user?",
@@ -560,7 +577,10 @@
       "org": "Organization",
       "role": "Role",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "count": "users"
+    }
+  }
     }
   }
 }

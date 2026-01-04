@@ -4,8 +4,9 @@ import type { JSX } from "react";
 import type { OrgRow, MemberRow, SuperAdminLabels } from "./types";
 import { useOrgActions } from "./useOrgActions";
 import { useUserActions } from "./useUserActions";
-import { OrganizationsList } from "./OrganizationsList";
-import { UsersList } from "./UsersList";
+import { useFilters } from "./useFilters";
+import { CompanyGroupView } from "./CompanyGroupView";
+import { Filters } from "./Filters";
 import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type SuperAdminUsersPageProps = {
@@ -24,6 +25,22 @@ export function SuperAdminUsersPage({
   const { handleEnableOrg, handleDisableOrg, handleDeleteOrg } = useOrgActions(locale);
   const { handleEnableUser, handleDisableUser, handleDeleteUser } = useUserActions(locale);
 
+  const {
+    selectedCompany,
+    selectedStatus,
+    selectedPlan,
+    selectedRole,
+    showDemoOnly,
+    searchQuery,
+    filteredGroups,
+    setSelectedCompany,
+    setSelectedStatus,
+    setSelectedPlan,
+    setSelectedRole,
+    setShowDemoOnly,
+    setSearchQuery,
+  } = useFilters(orgs, members);
+
   return (
     <div className={LAYOUT_CLASSES.pageContainerWide}>
       <div className="space-y-2">
@@ -32,22 +49,42 @@ export function SuperAdminUsersPage({
         <p className="text-sm text-muted-foreground">{labels.description}</p>
       </div>
 
-      <OrganizationsList
-        orgs={orgs}
+      <Filters
         labels={labels}
-        onEnableOrg={handleEnableOrg}
-        onDisableOrg={handleDisableOrg}
-        onDeleteOrg={handleDeleteOrg}
+        orgs={orgs}
+        selectedCompany={selectedCompany}
+        selectedStatus={selectedStatus}
+        selectedPlan={selectedPlan}
+        selectedRole={selectedRole}
+        showDemoOnly={showDemoOnly}
+        searchQuery={searchQuery}
+        onCompanyChange={setSelectedCompany}
+        onStatusChange={setSelectedStatus}
+        onPlanChange={setSelectedPlan}
+        onRoleChange={setSelectedRole}
+        onShowDemoChange={(value) => setShowDemoOnly(value === "demo")}
+        onSearchChange={setSearchQuery}
       />
 
-      <UsersList
-        members={members}
-        orgs={orgs}
-        labels={labels}
-        onEnableUser={handleEnableUser}
-        onDisableUser={handleDisableUser}
-        onDeleteUser={handleDeleteUser}
-      />
+      <div className="space-y-4">
+        {filteredGroups.length === 0 ? (
+          <p className="py-8 text-center text-sm text-muted-foreground">{labels.empty}</p>
+        ) : (
+          filteredGroups.map((group) => (
+            <CompanyGroupView
+              key={group.org.id}
+              group={group}
+              labels={labels}
+              onEnableOrg={handleEnableOrg}
+              onDisableOrg={handleDisableOrg}
+              onDeleteOrg={handleDeleteOrg}
+              onEnableUser={handleEnableUser}
+              onDisableUser={handleDisableUser}
+              onDeleteUser={handleDeleteUser}
+            />
+          ))
+        )}
+      </div>
     </div>
   );
 }
