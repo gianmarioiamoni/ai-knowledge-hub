@@ -205,7 +205,7 @@
   "plans": {
     "title": "Prezzi",
     "subtitle": "Scegli il piano giusto per il tuo team.",
-    "description": "Puoi cambiare piano in qualsiasi momento. I piani annuali includono un risparmio rispetto al mensile.",
+    "description": "Puoi cambiare piano in qualsiasi momento. I piani annuali includono un risparmio rispetto al mensile. Tutti i limiti sono per azienda.",
     "labels": {
       "monthly": "Mensile",
       "annual": "Annuale (fatturato anno)",
@@ -217,9 +217,10 @@
       "desc": "30 giorni con tutte le funzioni.",
       "price": "€0",
       "limits": {
-        "docs": "Fino a 50 documenti",
-        "chat": "Fino a 500 messaggi chat",
-        "procedures": "Fino a 50 procedure"
+        "users": "5 Contributor + 20 Viewer",
+        "docs": "10 documenti",
+        "chat": "20 conversazioni",
+        "procedures": "5 procedure"
       }
     },
     "smb": {
@@ -228,9 +229,10 @@
       "monthly": "€79/mese",
       "annual": "€790/anno (risparmi 17%)",
       "limits": {
-        "docs": "Fino a 1.000 documenti",
-        "chat": "Fino a 10.000 messaggi chat",
-        "procedures": "Fino a 500 procedure"
+        "users": "20 Contributor + 100 Viewer",
+        "docs": "100 documenti",
+        "chat": "200 conversazioni",
+        "procedures": "50 procedure"
       }
     },
     "enterprise": {
@@ -239,9 +241,10 @@
       "monthly": "€290/mese",
       "annual": "€2.900/anno (risparmi 17%)",
       "limits": {
-        "docs": "Fino a 10.000 documenti",
-        "chat": "Fino a 100.000 messaggi chat",
-        "procedures": "Fino a 5.000 procedure",
+        "users": "200 Contributor + 1.000 Viewer",
+        "docs": "1.000 documenti",
+        "chat": "2.000 conversazioni",
+        "procedures": "500 procedure",
         "support": "Supporto SLA e onboarding dedicato"
       }
     }

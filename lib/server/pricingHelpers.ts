@@ -33,7 +33,12 @@ export async function buildPricingPlans(locale: string): Promise<Plan[]> {
       description: tp("trial.desc"),
       monthly: tp("trial.price"),
       annual: tp("trial.price"),
-      limits: [tp("trial.limits.docs"), tp("trial.limits.chat"), tp("trial.limits.procedures")],
+      limits: [
+        tp("trial.limits.users"),
+        tp("trial.limits.docs"),
+        tp("trial.limits.chat"),
+        tp("trial.limits.procedures"),
+      ],
     },
     {
       id: "smb",
@@ -41,7 +46,12 @@ export async function buildPricingPlans(locale: string): Promise<Plan[]> {
       description: tp("smb.desc"),
       monthly: tp("smb.monthly"),
       annual: tp("smb.annual"),
-      limits: [tp("smb.limits.docs"), tp("smb.limits.chat"), tp("smb.limits.procedures")],
+      limits: [
+        tp("smb.limits.users"),
+        tp("smb.limits.docs"),
+        tp("smb.limits.chat"),
+        tp("smb.limits.procedures"),
+      ],
       highlight: true,
     },
     {
@@ -51,6 +61,7 @@ export async function buildPricingPlans(locale: string): Promise<Plan[]> {
       monthly: tp("enterprise.monthly"),
       annual: tp("enterprise.annual"),
       limits: [
+        tp("enterprise.limits.users"),
         tp("enterprise.limits.docs"),
         tp("enterprise.limits.chat"),
         tp("enterprise.limits.procedures"),
