@@ -552,6 +552,6 @@ MIT License - see LICENSE file for details
 
 ---
 
-**Built with** ❤️ **by** [Your Name/Team]  
+**Built with** ❤️ **by** Gianmario Iamoni   
 **Version**: 2.0  
 **Last Updated**: January 2026
