@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createSupabaseServiceClient } from "./supabaseService";
 import { redirect } from "@/i18n/navigation";
 import type { UserRole } from "./roles";
+import { isUserSuperAdmin } from "./roles";
 
 type EnsureOrganizationParams = {
   supabase: SupabaseClient;
@@ -12,6 +13,9 @@ type EnsureOrganizationParams = {
 /**
  * Returns an organization_id for the authenticated user, creating a default one if none exists.
  * Relies on RLS + trigger to add the creator as ORG_ADMIN.
+ * 
+ * IMPORTANT: Super Admin users should NOT have an organization.
+ * This function throws an error if called for a Super Admin.
  */
 export const ensureUserOrganization = async ({
   supabase,
@@ -20,6 +24,11 @@ export const ensureUserOrganization = async ({
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
     throw new Error("User not authenticated");
+  }
+
+  // Prevent organization creation for Super Admin
+  if (isUserSuperAdmin(userData.user)) {
+    throw new Error("Super Admin users should not have an organization");
   }
 
   const service = createSupabaseServiceClient();
@@ -119,6 +128,11 @@ export const requireActiveOrganization = async ({
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
     redirect({ href: "/login", locale });
+  }
+
+  // Super Admin should not access organization-specific pages
+  if (isUserSuperAdmin(userData.user!)) {
+    redirect({ href: "/admin/users", locale });
   }
 
   let membership = await fetchMembership(userData.user!.id);
