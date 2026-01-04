@@ -7,6 +7,7 @@ import { useUserActions } from "./useUserActions";
 import { useFilters } from "./useFilters";
 import { CompanyGroupView } from "./CompanyGroupView";
 import { Filters } from "./Filters";
+import { PageHeader } from "@/components/common/PageHeader";
 import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type SuperAdminUsersPageProps = {
@@ -43,11 +44,13 @@ export function SuperAdminUsersPage({
 
   return (
     <div className={LAYOUT_CLASSES.pageContainerWide}>
-      <div className="space-y-2">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{labels.title}</p>
-        <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{labels.subtitle}</h1>
-        <p className="text-sm text-muted-foreground">{labels.description}</p>
-      </div>
+      <PageHeader
+        title={labels.title}
+        subtitle={labels.subtitle}
+        description={labels.description}
+        showLogout
+        logoutLabel={labels.logout}
+      />
 
       <Filters
         labels={labels}

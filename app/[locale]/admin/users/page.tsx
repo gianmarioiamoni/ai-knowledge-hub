@@ -31,6 +31,7 @@ export default async function AdminUsersRoute({
 
   // Translations
   const t = await getTranslations({ locale, namespace: "adminUsers" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
   
   // Data fetching
   const service = createSupabaseServiceClient();
@@ -50,24 +51,32 @@ export default async function AdminUsersRoute({
 
   const { data: usersData } = await service.auth.admin.listUsers();
   const usersById =
-    usersData?.users?.reduce<Record<string, { email: string | null; created_at: string | null; is_demo_user: boolean; plan_id: string }>>((acc, u) => {
+    usersData?.users?.reduce<Record<string, { email: string | null; created_at: string | null; is_demo_user: boolean; plan_id: string; is_super_admin: boolean }>>((acc, u) => {
       const isDemoUser = (u.user_metadata as { is_demo_user?: boolean } | null)?.is_demo_user ?? false;
       const planId = ((u.user_metadata as { plan?: { id?: string } } | null)?.plan?.id) ?? "trial";
+      const userRole = (u.user_metadata as { role?: string } | null)?.role ?? null;
+      const isSuperAdmin = userRole === "SUPER_ADMIN";
       acc[u.id] = { 
         email: u.email ?? null, 
         created_at: u.created_at ?? null,
         is_demo_user: isDemoUser,
         plan_id: planId,
+        is_super_admin: isSuperAdmin,
       };
       return acc;
     }, {}) ?? {};
 
-  const membersWithUser: MemberRow[] = members.map((m) => ({
-    ...m,
-    email: usersById[m.user_id]?.email ?? null,
-    created_at: usersById[m.user_id]?.created_at ?? null,
-    is_demo_user: usersById[m.user_id]?.is_demo_user ?? false,
-  }));
+  const membersWithUser: MemberRow[] = members
+    .filter((m) => {
+      // Filter out Super Admin users
+      return !usersById[m.user_id]?.is_super_admin;
+    })
+    .map((m) => ({
+      ...m,
+      email: usersById[m.user_id]?.email ?? null,
+      created_at: usersById[m.user_id]?.created_at ?? null,
+      is_demo_user: usersById[m.user_id]?.is_demo_user ?? false,
+    }));
 
   // Count members per org and get plan_id from first COMPANY_ADMIN
   const orgs: OrgRow[] = rawOrgs.map((org) => {
@@ -87,6 +96,7 @@ export default async function AdminUsersRoute({
     title: t("title"),
     subtitle: t("subtitle"),
     description: t("description"),
+    logout: tCommon("logout"),
     orgsTitle: t("orgsTitle"),
     usersTitle: t("usersTitle"),
     empty: t("empty"),

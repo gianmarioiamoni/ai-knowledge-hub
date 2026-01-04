@@ -25,6 +25,7 @@ export type SuperAdminLabels = {
   title: string;
   subtitle: string;
   description: string;
+  logout: string;
   orgsTitle: string;
   usersTitle: string;
   empty: string;
