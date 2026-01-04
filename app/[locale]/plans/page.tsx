@@ -47,6 +47,7 @@ export default async function PlansPage({ params }: { params: Promise<{ locale: 
       monthly: t("trial.price"),
       annual: t("trial.price"),
       limits: [
+        t("trial.limits.users"),
         t("trial.limits.docs"),
         t("trial.limits.chat"),
         t("trial.limits.procedures"),
@@ -58,7 +59,12 @@ export default async function PlansPage({ params }: { params: Promise<{ locale: 
       description: t("smb.desc"),
       monthly: t("smb.monthly"),
       annual: t("smb.annual"),
-      limits: [t("smb.limits.docs"), t("smb.limits.chat"), t("smb.limits.procedures")],
+      limits: [
+        t("smb.limits.users"),
+        t("smb.limits.docs"),
+        t("smb.limits.chat"),
+        t("smb.limits.procedures"),
+      ],
       highlight: true,
     },
     {
@@ -68,6 +74,7 @@ export default async function PlansPage({ params }: { params: Promise<{ locale: 
       monthly: t("enterprise.monthly"),
       annual: t("enterprise.annual"),
       limits: [
+        t("enterprise.limits.users"),
         t("enterprise.limits.docs"),
         t("enterprise.limits.chat"),
         t("enterprise.limits.procedures"),
