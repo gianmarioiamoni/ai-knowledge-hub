@@ -25,13 +25,18 @@ export default function Icon(): ImageResponse {
           borderRadius: "20%",
         }}
       >
-        {/* Book base */}
+        {/* Logo icon - matches Logo.tsx exactly */}
         <svg width="28" height="28" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           {/* Book background */}
           <path
             d="M10 8C10 6.89543 10.8954 6 12 6H36C37.1046 6 38 6.89543 38 8V40C38 41.1046 37.1046 42 36 42H12C10.8954 42 10 41.1046 10 40V8Z"
             fill="white"
-            opacity="0.3"
+            opacity="0.2"
+          />
+          <path
+            d="M14 10H34V38H14V10Z"
+            fill="white"
+            opacity="0.1"
           />
           
           {/* AI Neural Network Nodes */}
@@ -46,7 +51,7 @@ export default function Icon(): ImageResponse {
             stroke="white"
             strokeWidth="1.5"
             strokeLinecap="round"
-            opacity="0.6"
+            opacity="0.5"
           />
           
           {/* Book outline */}
@@ -60,6 +65,10 @@ export default function Icon(): ImageResponse {
             strokeWidth="2"
             fill="none"
           />
+          
+          {/* Book spine lines */}
+          <line x1="14" y1="10" x2="14" y2="38" stroke="white" strokeWidth="1.5" opacity="0.3" />
+          <line x1="34" y1="10" x2="34" y2="38" stroke="white" strokeWidth="1.5" opacity="0.3" />
         </svg>
       </div>
     ),
