@@ -28,7 +28,7 @@ function LanguageSwitcher(): JSX.Element {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-foreground shadow-sm ring-1 ring-border transition hover:bg-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-foreground shadow-sm ring-1 ring-border transition-all hover:bg-primary/10 hover:ring-primary/20 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           aria-label="Change language"
         >
           <Languages className="h-4 w-4 text-muted-foreground" />

@@ -16,7 +16,7 @@ export function UserProfileLink({ userName, label }: UserProfileLinkProps): JSX.
   return (
     <button
       onClick={() => router.push("/profile")}
-      className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-sm font-semibold text-foreground ring-1 ring-border transition hover:bg-white hover:shadow-sm"
+      className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-sm font-semibold text-foreground ring-1 ring-border transition-all hover:bg-primary/10 hover:ring-primary/20 hover:shadow-sm"
       aria-label={label}
       title={label}
     >

@@ -30,10 +30,10 @@ function TopNav({ items, helpHref, helpLabel }: TopNavProps): JSX.Element {
             key={item.href}
             onClick={() => router.push(item.href)}
             className={clsx(
-              "rounded-full px-3 py-1.5 text-sm font-semibold transition",
+              "rounded-full px-3 py-1.5 text-sm font-semibold transition-all",
               active
                 ? "bg-primary text-white shadow-sm"
-                : "bg-white/70 text-foreground ring-1 ring-border hover:bg-white"
+                : "bg-white/70 text-foreground ring-1 ring-border hover:bg-primary/10 hover:ring-primary/20 hover:shadow-sm"
             )}
           >
             {item.label}
@@ -45,7 +45,7 @@ function TopNav({ items, helpHref, helpLabel }: TopNavProps): JSX.Element {
           onClick={() => router.push(helpHref)}
           aria-label={helpLabel ?? "Help Center"}
           title={helpLabel ?? "Help Center"}
-          className="inline-flex items-center justify-center rounded-full bg-white/80 p-2 text-foreground ring-1 ring-border transition hover:-translate-y-0.5 hover:shadow-sm"
+          className="inline-flex items-center justify-center rounded-full bg-white/80 p-2 text-foreground ring-1 ring-border transition-all hover:bg-primary/10 hover:ring-primary/20 hover:shadow-sm"
         >
           <CircleHelpIcon className="size-4" />
         </button>

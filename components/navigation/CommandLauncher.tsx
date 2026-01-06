@@ -10,7 +10,7 @@ function CommandLauncher(): JSX.Element {
   return (
     <button
       onClick={openPalette}
-      className="inline-flex items-center gap-1 rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-foreground ring-1 ring-border sm:hidden"
+      className="inline-flex items-center gap-1 rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-foreground ring-1 ring-border transition-all hover:bg-primary/10 hover:ring-primary/20 hover:shadow-sm sm:hidden"
       aria-label="Open command palette"
     >
       ⌘K / Ctrl+K
