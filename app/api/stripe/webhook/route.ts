@@ -28,9 +28,59 @@ const upsertUserPlan = async (
     nextMetadata.stripeCustomerId = stripeCustomerId;
   }
 
+  // Update Company Admin (the user who made the purchase)
   await supabase.auth.admin.updateUserById(supabaseUserId, {
     user_metadata: nextMetadata,
   });
+
+  // Get organization_id of the Company Admin
+  const { data: memberData } = await supabase
+    .from("organization_members")
+    .select("organization_id")
+    .eq("user_id", supabaseUserId)
+    .single();
+
+  if (memberData?.organization_id) {
+    const organizationId = memberData.organization_id;
+    console.log("[Stripe Webhook] Updating plan for organization:", organizationId);
+
+    // Get all members of the same organization (excluding the Company Admin)
+    const { data: orgMembers } = await supabase
+      .from("organization_members")
+      .select("user_id")
+      .eq("organization_id", organizationId)
+      .neq("user_id", supabaseUserId);
+
+    if (orgMembers && orgMembers.length > 0) {
+      console.log("[Stripe Webhook] Found", orgMembers.length, "other members to update");
+
+      // Update plan for all organization members
+      for (const member of orgMembers) {
+        const { data: memberUser } = await supabase.auth.admin.getUserById(member.user_id);
+        if (memberUser?.user) {
+          const memberMeta = (memberUser.user.user_metadata as Record<string, unknown> | null) ?? {};
+          const memberExistingPlan = (memberMeta.plan as PlanMetadata | undefined) ?? {};
+          const memberNextPlan: PlanMetadata = {
+            ...memberExistingPlan,
+            ...planPatch,
+            reminder3DaysSent: false,
+            reminder1DaySent: false,
+          };
+
+          await supabase.auth.admin.updateUserById(member.user_id, {
+            user_metadata: {
+              ...memberMeta,
+              plan: memberNextPlan,
+            },
+          });
+        }
+      }
+      console.log("[Stripe Webhook] Successfully updated plan for all organization members");
+    } else {
+      console.log("[Stripe Webhook] No other members found in organization");
+    }
+  }
+
   return { email: data.user?.email ?? null };
 };
 
