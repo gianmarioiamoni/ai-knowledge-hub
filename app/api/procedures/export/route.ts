@@ -11,6 +11,7 @@ import { ensureActivePlan } from "@/lib/server/subscriptions";
 import { canGenerateSop } from "@/lib/server/roles";
 
 export const runtime = "nodejs";
+export const maxDuration = 30; // 30 seconds timeout for PDF generation
 
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
@@ -87,19 +88,32 @@ export async function GET(request: Request): Promise<Response> {
   }
 
   if (format === "pdf") {
-    const pdf = await renderSopPdf({
-      title: data.title,
-      content: data.content,
-      sourceDocuments: data.source_documents ?? [],
-    });
-    const pdfBytes = new Uint8Array(pdf);
-    logInfo("SOP export PDF", { id, org: organizationId });
-    return new NextResponse(pdfBytes, {
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="${data.title || "sop"}.pdf"`,
-      },
-    });
+    try {
+      const pdf = await renderSopPdf({
+        title: data.title,
+        content: data.content,
+        sourceDocuments: data.source_documents ?? [],
+      });
+      const pdfBytes = new Uint8Array(pdf);
+      logInfo("SOP export PDF success", { id, org: organizationId, size: pdfBytes.length });
+      return new NextResponse(pdfBytes, {
+        headers: {
+          "Content-Type": "application/pdf",
+          "Content-Disposition": `attachment; filename="${data.title || "sop"}.pdf"`,
+        },
+      });
+    } catch (pdfError) {
+      logError("PDF export failed", { 
+        id, 
+        org: organizationId,
+        error: pdfError instanceof Error ? pdfError.message : String(pdfError),
+        stack: pdfError instanceof Error ? pdfError.stack : undefined
+      });
+      return NextResponse.json(
+        { error: "PDF generation failed. Please try again or contact support." },
+        { status: 500 }
+      );
+    }
   }
 
   // default markdown

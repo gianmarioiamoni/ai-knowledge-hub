@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "app/api/procedures/export/route.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  }
+}
+

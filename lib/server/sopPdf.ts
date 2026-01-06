@@ -1,8 +1,12 @@
 import type { SopGenerated } from "./sop";
+import { logError, logInfo } from "./logger";
 
 const renderSopPdf = async (sop: SopGenerated): Promise<Buffer> => {
-  const { PDFDocument, StandardFonts } = await import("pdf-lib");
-  const doc = await PDFDocument.create();
+  try {
+    logInfo("Starting PDF generation", { titleLength: sop.title.length, contentLength: sop.content.length });
+    
+    const { PDFDocument, StandardFonts } = await import("pdf-lib");
+    const doc = await PDFDocument.create();
   const page = doc.addPage();
   const { width, height } = page.getSize();
 
@@ -87,7 +91,17 @@ const renderSopPdf = async (sop: SopGenerated): Promise<Buffer> => {
   }
 
   const pdfBytes = await doc.save();
+  logInfo("PDF generation completed", { byteSize: pdfBytes.length });
   return Buffer.from(pdfBytes);
+  } catch (error) {
+    logError("PDF generation failed", { 
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      title: sop.title,
+      contentLength: sop.content.length
+    });
+    throw new Error(`PDF generation failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+  }
 };
 
 export { renderSopPdf };
