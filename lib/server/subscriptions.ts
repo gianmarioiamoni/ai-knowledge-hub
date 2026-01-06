@@ -69,7 +69,6 @@ const planLimits: Record<string, PlanLimits> = {
   },
 };
 
-
 const getPlanStatus = (user: User): PlanStatus => {
   const meta = (user.user_metadata as { plan?: PlanMetadata } | null)?.plan ?? {};
   const planId = meta.id ?? "trial";
