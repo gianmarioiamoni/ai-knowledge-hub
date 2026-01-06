@@ -3,7 +3,7 @@ import Link from "next/link";
 import { JSX } from "react";
 
 type LogoProps = {
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl";
   showText?: boolean;
   href?: string;
   className?: string;
@@ -14,6 +14,7 @@ const sizeClasses = {
   md: "h-8 w-8",
   lg: "h-10 w-10",
   xl: "h-12 w-12",
+  "2xl": "h-14 w-14",
 };
 
 const textSizeClasses = {
@@ -21,9 +22,10 @@ const textSizeClasses = {
   md: "text-xl",
   lg: "text-2xl",
   xl: "text-3xl",
+  "2xl": "text-4xl",
 };
 
-function LogoIcon({ size = "md" }: { size?: "sm" | "md" | "lg" | "xl" }): JSX.Element {
+function LogoIcon({ size = "md" }: { size?: "sm" | "md" | "lg" | "xl" | "2xl" }): JSX.Element {
   return (
     <svg
       viewBox="0 0 48 48"
@@ -87,7 +89,12 @@ function LogoIcon({ size = "md" }: { size?: "sm" | "md" | "lg" | "xl" }): JSX.El
 }
 
 function LogoContent({ size = "md", showText = true }: Pick<LogoProps, "size" | "showText">): JSX.Element {
-  const subtitleSize = size === "sm" ? "text-xs" : size === "md" ? "text-sm" : size === "lg" ? "text-base" : "text-lg";
+  const subtitleSize = 
+    size === "sm" ? "text-xs" : 
+    size === "md" ? "text-sm" : 
+    size === "lg" ? "text-base" : 
+    size === "xl" ? "text-lg" :
+    "text-xl"; // 2xl
   
   return (
     <div className="flex items-center gap-3">

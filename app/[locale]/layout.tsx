@@ -101,7 +101,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             <SentryClientInit />
             <div className="relative z-50 mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
               <div className="flex items-center gap-4">
-                <Logo href={`/${locale}`} size="lg" showText={true} />
+                <Logo href={`/${locale}`} size="2xl" showText={true} />
                 {role !== "SUPER_ADMIN" && orgName ? (
                   <span className="hidden rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary ring-1 ring-primary/20 sm:inline">
                     {orgName}
