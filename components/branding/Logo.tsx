@@ -22,7 +22,7 @@ const textSizeClasses = {
   md: "text-xl",
   lg: "text-2xl",
   xl: "text-3xl",
-  "2xl": "text-4xl",
+  "2xl": "text-2xl", // Large icon, but same text size as "lg"
 };
 
 function LogoIcon({ size = "md" }: { size?: "sm" | "md" | "lg" | "xl" | "2xl" }): JSX.Element {
@@ -94,7 +94,7 @@ function LogoContent({ size = "md", showText = true }: Pick<LogoProps, "size" | 
     size === "md" ? "text-sm" : 
     size === "lg" ? "text-base" : 
     size === "xl" ? "text-lg" :
-    "text-xl"; // 2xl
+    "text-base"; // 2xl - large icon, same text as "lg"
   
   return (
     <div className="flex items-center gap-3">
