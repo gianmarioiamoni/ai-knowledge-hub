@@ -3,6 +3,38 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { env } from "../env";
 
+/**
+ * Suppresses innocuous Supabase auth errors in development logs.
+ * These errors occur when:
+ * - User visits public pages (not authenticated)
+ * - Session/refresh token is expired or missing
+ * - Supabase tries to auto-refresh but finds no token
+ * 
+ * The errors are safe to ignore as they don't affect functionality.
+ */
+function suppressAuthErrorLogs() {
+  if (process.env.NODE_ENV === "development") {
+    const originalError = console.error;
+    console.error = (...args: unknown[]) => {
+      // Suppress specific Supabase auth errors that are expected
+      const message = String(args[0] || "");
+      if (
+        message.includes("Invalid Refresh Token") ||
+        message.includes("Refresh Token Not Found") ||
+        message.includes("refresh_token_not_found")
+      ) {
+        // Silently ignore - this is expected behavior for public pages
+        return;
+      }
+      // Log all other errors normally
+      originalError.apply(console, args);
+    };
+  }
+}
+
+// Suppress auth error logs on module load
+suppressAuthErrorLogs();
+
 const mapCookies = (allowWrite: boolean) => ({
   get: async (name: string) => {
     const store = await cookies();
