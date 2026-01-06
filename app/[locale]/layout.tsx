@@ -17,6 +17,7 @@ import { SentryClientInit } from "@/components/SentryClientInit";
 import { CookieBanner } from "@/components/CookieBanner/CookieBanner";
 import { Toaster } from "@/components/ui/sonner";
 import { FooterLinks } from "@/components/navigation/FooterLinks";
+import { Logo } from "@/components/branding/Logo";
 import "@/app/globals.css";
 
 const geistSans = Geist({
@@ -98,8 +99,9 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         <NextIntlClientProvider locale={locale} messages={messages}>
           <NavProvider items={navItems}>
             <SentryClientInit />
-            <div className="relative z-50 mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
-              <div className="flex items-center gap-2">
+            <div className="relative z-50 mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
+              <div className="flex items-center gap-4">
+                <Logo href={`/${locale}`} size="lg" showText={true} />
                 {role !== "SUPER_ADMIN" && orgName ? (
                   <span className="hidden rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary ring-1 ring-primary/20 sm:inline">
                     {orgName}

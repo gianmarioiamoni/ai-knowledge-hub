@@ -17,7 +17,6 @@ import { routing } from "@/i18n/routing";
 import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 import { getPublicStats } from "@/lib/server/adminStats";
 import { formatNumberWithSuffix } from "@/lib/utils/formatNumber";
-import { Logo } from "@/components/branding/Logo";
 
 type LoginPageProps = {
   params: Promise<{ locale: string }> | { locale: string };
@@ -100,7 +99,6 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
       </div>
 
       <div className={`relative mx-auto flex w-full max-w-6xl flex-col gap-10 ${LAYOUT_CLASSES.horizontalPadding}`}>
-        <Logo href={`/${locale}`} size="md" showText={true} className="self-start" />
         <BadgeBar label={t("badgeLabel")} hint={t("badgeHint")} />
 
         <div className="grid items-start justify-items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:justify-items-stretch">

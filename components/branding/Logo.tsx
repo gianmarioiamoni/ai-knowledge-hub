@@ -3,7 +3,7 @@ import Link from "next/link";
 import { JSX } from "react";
 
 type LogoProps = {
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   showText?: boolean;
   href?: string;
   className?: string;
@@ -13,15 +13,17 @@ const sizeClasses = {
   sm: "h-6 w-6",
   md: "h-8 w-8",
   lg: "h-10 w-10",
+  xl: "h-12 w-12",
 };
 
 const textSizeClasses = {
   sm: "text-lg",
   md: "text-xl",
   lg: "text-2xl",
+  xl: "text-3xl",
 };
 
-function LogoIcon({ size = "md" }: { size?: "sm" | "md" | "lg" }): JSX.Element {
+function LogoIcon({ size = "md" }: { size?: "sm" | "md" | "lg" | "xl" }): JSX.Element {
   return (
     <svg
       viewBox="0 0 48 48"
@@ -85,15 +87,17 @@ function LogoIcon({ size = "md" }: { size?: "sm" | "md" | "lg" }): JSX.Element {
 }
 
 function LogoContent({ size = "md", showText = true }: Pick<LogoProps, "size" | "showText">): JSX.Element {
+  const subtitleSize = size === "sm" ? "text-xs" : size === "md" ? "text-sm" : size === "lg" ? "text-base" : "text-lg";
+  
   return (
-    <div className="flex items-center gap-2.5">
+    <div className="flex items-center gap-3">
       <LogoIcon size={size} />
       {showText ? (
         <div className="flex flex-col leading-none">
           <span className={`font-bold tracking-tight text-foreground ${textSizeClasses[size]}`}>
             AI Knowledge
           </span>
-          <span className={`font-medium tracking-wide text-muted-foreground ${size === "sm" ? "text-xs" : size === "md" ? "text-sm" : "text-base"}`}>
+          <span className={`font-medium tracking-wide text-muted-foreground ${subtitleSize}`}>
             Hub
           </span>
         </div>
