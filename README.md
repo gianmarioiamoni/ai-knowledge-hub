@@ -1,16 +1,49 @@
 # AI Knowledge Hub
+<img width="1452" height="915" alt="01 - Homepage" src="https://github.com/user-attachments/assets/59ee0cbe-1e94-49a0-9618-e3dd335397b1" />
 
 Enterprise-grade multi-tenant RAG (Retrieval-Augmented Generation) platform built with Next.js 15, Supabase, LangChain, and OpenAI. Transform your company's documentation into an AI-powered knowledge assistant that answers questions, generates SOPs, and scales with your team.
 
 ## 🎯 What It Does
 
 - **Document Ingestion**: Upload PDFs, automatically extract text, chunk intelligently, and vectorize with OpenAI embeddings
+  <img width="1436" height="915" alt="04 - Documents" src="https://github.com/user-attachments/assets/b400ab74-9fa9-4285-b0e8-b7678478143c" />
+
 - **RAG Chat**: Ask questions in natural language, get contextual answers with source attribution
+  <img width="1436" height="915" alt="05 - Chats" src="https://github.com/user-attachments/assets/f98971d4-5fbe-4dcd-a722-8e8cf519d115" />
+
 - **SOP Generation**: Auto-generate Standard Operating Procedures from your documentation
-- **Team Management**: Role-based access control (RBAC) with 4 permission levels
+  <img width="1436" height="915" alt="06 - Procedures" src="https://github.com/user-attachments/assets/c9328d61-bc99-473f-aa59-3e8fbacc1fca" />
+  <img width="1436" height="915" alt="07 - New Procedure" src="https://github.com/user-attachments/assets/c16316ca-5b61-4c33-9a95-8eba16fe4121" />
+  <img width="1436" height="915" alt="08 - View Procedure" src="https://github.com/user-attachments/assets/ddf7e429-c8dc-4706-b681-b355f02ddc70" />
+
+
+- **Team Management**: Role-based access control (RBAC) with 4 permission levels.
+  Super Admin predefined user with administration and monitoring capabilities.
+  <img width="833" height="915" alt="14 - Super Admin dashboard" src="https://github.com/user-attachments/assets/20f661fd-dd1e-4acb-aaaf-b3bf8b7683e2" />
+  <img width="1330" height="915" alt="15 - Super Admin stats" src="https://github.com/user-attachments/assets/9c5d7c7e-9292-4c30-b2ff-3c76c9c42335" />
+  <img width="1022" height="915" alt="16 - Super Admin stats 2" src="https://github.com/user-attachments/assets/bafb9816-ec86-4922-8be8-dd96607fc753" />
+
+  Company Admin role with full control of company's users
+  <img width="1436" height="915" alt="10 - Company Admin" src="https://github.com/user-attachments/assets/fed66e21-0fff-4d78-8b4a-7758ecac4f5d" />
+
+
 - **Multi-tenancy**: Complete data isolation per organization with Row-Level Security
+  <img width="1452" height="915" alt="02 - Dashboard" src="https://github.com/user-attachments/assets/3ad697a4-7cc8-418f-8d5f-3230e944ed6d" />
+  <img width="1452" height="915" alt="03 - Dashboard - info" src="https://github.com/user-attachments/assets/6adfb87d-c45f-434b-b615-da64384afd42" />
+
 - **Subscriptions**: Stripe-powered billing with trial, SMB, and Enterprise tiers
+  <img width="1436" height="915" alt="09 - Plans" src="https://github.com/user-attachments/assets/64eed8dc-dc07-49f2-8c65-81599d7ae64a" />
+
 - **Bilingual**: Full internationalization (English/Italian) with `next-intl`
+  <img width="1387" height="915" alt="13 - Multilanguage" src="https://github.com/user-attachments/assets/2376c6d7-0110-4f2f-b66e-6e856b442016" />
+
+- **Search and Help**: Advanced search tool
+  <img width="1387" height="915" alt="12 - Search" src="https://github.com/user-attachments/assets/ca51c18f-2494-4a5e-a8a8-d163c95a5242" />
+
+  Help Center 
+  <img width="955" height="915" alt="11 - Help Center" src="https://github.com/user-attachments/assets/ddcc70e5-2e83-459c-83f9-5cc91521cf58" />
+
+
 
 ## 🏗️ Architecture Overview
 
@@ -443,6 +476,7 @@ ai-knowledge-hub/
 - **Mobile (<1024px)**: CommandPalette (Ctrl+K / Cmd+K)
 - **Dynamic menus**: Filtered by user role
 - **Keyboard shortcuts**: Fast navigation for power users
+
 
 ## 🔍 API Endpoints
 
