@@ -17,6 +17,33 @@ Il webhook Stripe non viene ricevuto o processato correttamente.
 
 ---
 
+## 📢 **IMPORTANTE: Piano a Livello di Organizzazione**
+
+**Quando il Company Admin cambia piano:**
+- ✅ Il piano viene aggiornato per **TUTTI i membri dell'organizzazione**
+- ✅ Contributors, Viewers e altri admin vedranno lo stesso piano
+- ✅ La data di rinnovo sarà identica per tutti
+- ✅ I limiti (documenti, chat, SOP) si applicano a livello organizzativo
+
+**Esempio:**
+```
+Company Admin acquista piano Enterprise
+→ Webhook ricevuto
+→ Piano aggiornato per Company Admin
+→ Sistema trova organization_id del Company Admin
+→ Sistema trova tutti i membri (Contributors, Viewers)
+→ Piano Enterprise propagato a TUTTI i membri
+```
+
+**Nei log Vercel vedrai:**
+```
+[Stripe Webhook] Updating plan for organization: 123e4567-...
+[Stripe Webhook] Found 3 other members to update
+[Stripe Webhook] Successfully updated plan for all organization members
+```
+
+---
+
 ## ✅ **STEP 1: Verifica Configurazione Webhook su Stripe**
 
 ### **A) Dashboard Stripe → Developers → Webhooks**
@@ -175,13 +202,23 @@ Questo riprocesserà l'evento e aggiornerà il piano.
 4. Clicca sull'evento
 5. In alto: **"Send test webhook"** → Send
 
-### **Verifica Profilo:**
+### **Verifica Profilo (Company Admin):**
 
 1. Vai su `/profile`
 2. Verifica che:
    - **Plan:** mostra il piano corretto (SMB/Enterprise)
    - **Next renewal:** mostra una data (es. "Renews on 06 Feb, 2026")
    - (Non più "Not available")
+
+### **Verifica Profilo (Altri Membri):**
+
+1. **Logout** dal Company Admin
+2. **Login** come Contributor o Viewer della stessa organizzazione
+3. Vai su `/profile`
+4. Verifica che:
+   - **Plan:** mostra lo stesso piano del Company Admin
+   - **Next renewal:** mostra la stessa data di rinnovo
+   - Tutto deve essere identico per tutti i membri
 
 ---
 
@@ -284,8 +321,10 @@ Prima di considerare il webhook funzionante:
 - [ ] Test checkout completato
 - [ ] Webhook triggerato manualmente (test mode)
 - [ ] Log Vercel mostrano elaborazione corretta
-- [ ] Piano aggiornato nel profilo utente
-- [ ] "Next renewal" mostra data corretta
+- [ ] Piano aggiornato nel profilo Company Admin
+- [ ] Piano aggiornato in TUTTI i membri dell'organizzazione
+- [ ] "Next renewal" mostra data corretta per tutti
+- [ ] Log mostrano "Successfully updated plan for all organization members"
 
 ---
 
