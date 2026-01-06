@@ -30,3 +30,4 @@ export function FAQSection({ title, items }: FAQSectionProps): JSX.Element {
   );
 }
 
+

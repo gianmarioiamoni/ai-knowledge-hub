@@ -13,3 +13,4 @@ export type ProcedurePageLabels = {
   breadcrumbsProcedures: string;
 };
 
+

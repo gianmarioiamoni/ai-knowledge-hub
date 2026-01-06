@@ -14,3 +14,4 @@ export function formatDate(value: string | null, locale: string): string {
   }).format(new Date(value));
 }
 
+

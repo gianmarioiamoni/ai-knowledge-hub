@@ -20,3 +20,4 @@ export const LAYOUT_CLASSES = {
   pageContainerWide: "mx-auto flex min-h-screen max-w-6xl flex-col gap-12 px-6 py-12 sm:px-6 lg:px-6 xl:px-0",
 } as const;
 
+
