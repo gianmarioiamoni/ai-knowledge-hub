@@ -6,6 +6,7 @@ import type {
   PipelineStep,
   IngestionData,
 } from "./types";
+import type { ResourceUsage } from "@/lib/server/resourceUsage";
 
 type DashboardPageProps = {
   labels: DashboardLabels;
@@ -13,6 +14,7 @@ type DashboardPageProps = {
   pipelineSteps: PipelineStep[];
   nextActions: string[];
   ingestion: IngestionData;
+  resourceUsage: ResourceUsage | null;
   locale: string;
 };
 
@@ -22,6 +24,7 @@ export function DashboardPage({
   pipelineSteps,
   nextActions,
   ingestion,
+  resourceUsage,
   locale,
 }: DashboardPageProps): JSX.Element {
   return (
@@ -31,6 +34,7 @@ export function DashboardPage({
       pipelineSteps={pipelineSteps}
       nextActions={nextActions}
       ingestion={ingestion}
+      resourceUsage={resourceUsage}
       locale={locale}
     />
   );

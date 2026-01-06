@@ -41,6 +41,13 @@ export async function getDashboardLabels({
     ingestionNotAvailable: t("ingestion.notAvailable"),
     integrity: t("integrity"),
     synced: t("synced"),
+    resourceUsageTitle: t("resourceUsage.title"),
+    resourceUsageDocuments: t("resourceUsage.documents"),
+    resourceUsageConversations: t("resourceUsage.conversations"),
+    resourceUsageProcedures: t("resourceUsage.procedures"),
+    resourceUsageContributors: t("resourceUsage.contributors"),
+    resourceUsageViewers: t("resourceUsage.viewers"),
+    resourceUsageOf: t("resourceUsage.of"),
   };
 
   return labels;

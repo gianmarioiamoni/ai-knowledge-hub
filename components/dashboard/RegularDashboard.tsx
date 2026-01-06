@@ -11,8 +11,10 @@ import { BackgroundGradient } from "./BackgroundGradient";
 import { StatsGrid } from "./StatsGrid";
 import { PipelineCard } from "./PipelineCard";
 import { RecommendedActionsCard } from "./RecommendedActionsCard";
+import { ResourceUsageCard } from "./ResourceUsageCard";
 import { LogoutButton } from "@/components/common/LogoutButton";
 import type { DashboardLabels, DashboardStat, PipelineStep, IngestionData } from "./types";
+import type { ResourceUsage } from "@/lib/server/resourceUsage";
 import { LAYOUT_CLASSES } from "@/lib/styles/layout";
 
 type RegularDashboardProps = {
@@ -21,6 +23,7 @@ type RegularDashboardProps = {
   pipelineSteps: PipelineStep[];
   nextActions: string[];
   ingestion: IngestionData;
+  resourceUsage: ResourceUsage | null;
   locale: string;
 };
 
@@ -30,6 +33,7 @@ export function RegularDashboard({
   pipelineSteps,
   nextActions,
   ingestion,
+  resourceUsage,
   locale,
 }: RegularDashboardProps): JSX.Element {
   return (
@@ -66,6 +70,21 @@ export function RegularDashboard({
         </StatusCard>
 
         <StatsGrid stats={stats} />
+
+        {resourceUsage && (
+          <ResourceUsageCard
+            usage={resourceUsage}
+            labels={{
+              title: labels.resourceUsageTitle,
+              documents: labels.resourceUsageDocuments,
+              conversations: labels.resourceUsageConversations,
+              procedures: labels.resourceUsageProcedures,
+              contributors: labels.resourceUsageContributors,
+              viewers: labels.resourceUsageViewers,
+              of: labels.resourceUsageOf,
+            }}
+          />
+        )}
 
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.9fr]">
           <PipelineCard

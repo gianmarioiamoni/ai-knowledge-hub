@@ -395,6 +395,15 @@
     "kpiDesc": "Here we will display live metrics: latency, hit rate, answer quality, sync status.",
     "integrity": "Dataset integrity",
     "synced": "Sources synced",
+    "resourceUsage": {
+      "title": "Resource Usage",
+      "documents": "Documents",
+      "conversations": "Conversations",
+      "procedures": "Procedures",
+      "contributors": "Contributors",
+      "viewers": "Viewers",
+      "of": "of"
+    },
     "ingestion": {
       "title": "Ingestion status",
       "ingested": "ingested",

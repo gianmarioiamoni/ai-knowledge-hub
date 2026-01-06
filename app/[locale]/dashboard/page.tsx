@@ -8,7 +8,8 @@ import { ensureUserOrganization } from "@/lib/server/organizations";
 import { createSupabaseServerClient } from "@/lib/server/supabaseUser";
 import { getDashboardStats } from "@/lib/server/stats";
 import { buildMetadata } from "@/lib/seo";
-import { ensureActivePlan } from "@/lib/server/subscriptions";
+import { ensureActivePlan, getPlanStatus } from "@/lib/server/subscriptions";
+import { getResourceUsage } from "@/lib/server/resourceUsage";
 import {
   getDashboardLabels,
   buildDashboardStats,
@@ -89,6 +90,12 @@ export default async function DashboardPageRoute({
   const pipelineSteps = await buildPipelineSteps(locale);
   const nextActions = await getNextActions(locale);
 
+  // Resource usage (only for COMPANY_ADMIN)
+  const isCompanyAdmin = role === "COMPANY_ADMIN";
+  const resourceUsage = isCompanyAdmin
+    ? await getResourceUsage(organizationId, getPlanStatus(user).planId ?? "trial")
+    : null;
+
   return (
     <DashboardPage
       labels={labels}
@@ -96,6 +103,7 @@ export default async function DashboardPageRoute({
       pipelineSteps={pipelineSteps}
       nextActions={nextActions}
       ingestion={ingestion}
+      resourceUsage={resourceUsage}
       locale={locale}
     />
   );

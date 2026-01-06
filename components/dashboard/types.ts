@@ -37,6 +37,13 @@ export type DashboardLabels = {
   ingestionNotAvailable: string;
   integrity: string;
   synced: string;
+  resourceUsageTitle: string;
+  resourceUsageDocuments: string;
+  resourceUsageConversations: string;
+  resourceUsageProcedures: string;
+  resourceUsageContributors: string;
+  resourceUsageViewers: string;
+  resourceUsageOf: string;
 };
 
 export type IngestionData = {

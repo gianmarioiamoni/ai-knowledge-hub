@@ -395,6 +395,15 @@
     "kpiDesc": "In questa sezione mostreremo metriche live: latenza media, hit rate, qualità delle risposte e stato delle sincronizzazioni.",
     "integrity": "Integrità dataset",
     "synced": "Sorgenti sincronizzate",
+    "resourceUsage": {
+      "title": "Utilizzo Risorse",
+      "documents": "Documenti",
+      "conversations": "Conversazioni",
+      "procedures": "Procedure",
+      "contributors": "Contributors",
+      "viewers": "Viewers",
+      "of": "di"
+    },
     "ingestion": {
       "title": "Stato ingestion",
       "ingested": "ingestati",
