@@ -519,7 +519,7 @@
   "adminStats": {
     "title": "Statistiche admin",
     "subtitle": "Metriche dettagliate per i super admin.",
-    "description": "Visualizza l’uso della piattaforma: utenti, documenti, conversazioni, stato ingestion e procedure tra i tenant.",
+    "description": "Visualizza l'uso della piattaforma: utenti, documenti, conversazioni, stato ingestion e procedure tra i tenant.",
     "placeholder": "Vista metriche in arrivo.",
     "users": "Utenti",
     "banned": "Disabilitati: {count}",
@@ -531,7 +531,23 @@
     "docsByStatus": "Documenti per stato",
     "conversations7d": "Conversazioni (ultimi 7 giorni)",
     "procedures7d": "Procedure (ultimi 7 giorni)",
-    "noData": "Nessun dato disponibile"
+    "noData": "Nessun dato disponibile",
+    "planDistribution": "Distribuzione piani",
+    "userGrowth30d": "Crescita utenti (ultimi 30 giorni)",
+    "topOrganizations": "Top 10 organizzazioni",
+    "engagement": "Metriche di engagement",
+    "avgDocsPerOrg": "Media docs/org",
+    "avgChatsPerOrg": "Media chat/org",
+    "avgSopsPerOrg": "Media SOP/org",
+    "avgMembersPerOrg": "Media membri/org",
+    "activeUsers7d": "Utenti attivi (7gg)",
+    "activeUsers30d": "Utenti attivi (30gg)",
+    "orgName": "Organizzazione",
+    "docs": "Docs",
+    "chats": "Chat",
+    "sops": "SOP",
+    "plan": "Piano",
+    "total": "Totale"
   },
   "adminUsers": {
     "title": "Utenti e organizzazioni",

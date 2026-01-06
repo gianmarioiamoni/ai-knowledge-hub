@@ -52,6 +52,22 @@ export default async function AdminStatsRoute({
         conversations7d: t("conversations7d"),
         procedures7d: t("procedures7d"),
         noData: t("noData"),
+        planDistribution: t("planDistribution"),
+        userGrowth30d: t("userGrowth30d"),
+        topOrganizations: t("topOrganizations"),
+        engagement: t("engagement"),
+        avgDocsPerOrg: t("avgDocsPerOrg"),
+        avgChatsPerOrg: t("avgChatsPerOrg"),
+        avgSopsPerOrg: t("avgSopsPerOrg"),
+        avgMembersPerOrg: t("avgMembersPerOrg"),
+        activeUsers7d: t("activeUsers7d"),
+        activeUsers30d: t("activeUsers30d"),
+        orgName: t("orgName"),
+        docs: t("docs"),
+        chats: t("chats"),
+        sops: t("sops"),
+        plan: t("plan"),
+        total: t("total"),
       }}
     />
   );
