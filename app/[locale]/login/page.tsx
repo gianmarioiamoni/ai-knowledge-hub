@@ -15,6 +15,8 @@ import { buildMetadata } from "@/lib/seo";
 import { Alert } from "@/components/ui/alert";
 import { routing } from "@/i18n/routing";
 import { LAYOUT_CLASSES } from "@/lib/styles/layout";
+import { getPublicStats } from "@/lib/server/adminStats";
+import { formatNumberWithSuffix } from "@/lib/utils/formatNumber";
 
 type LoginPageProps = {
   params: Promise<{ locale: string }> | { locale: string };
@@ -49,10 +51,25 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
   }
   const t = await getTranslations({ locale, namespace: "loginPage" });
 
+  // Get real platform statistics
+  const publicStats = await getPublicStats();
+
   const stats: Stat[] = [
-    { label: t("stats.documents"), value: "1.2k", hint: t("statsHints.documents") },
-    { label: t("stats.conversations"), value: "38k", hint: t("statsHints.conversations") },
-    { label: t("stats.sops"), value: "640", hint: t("statsHints.sops") },
+    {
+      label: t("stats.documents"),
+      value: formatNumberWithSuffix(publicStats.documentsTotal),
+      hint: t("statsHints.documents"),
+    },
+    {
+      label: t("stats.conversations"),
+      value: formatNumberWithSuffix(publicStats.conversationsTotal),
+      hint: t("statsHints.conversations"),
+    },
+    {
+      label: t("stats.sops"),
+      value: formatNumberWithSuffix(publicStats.proceduresTotal),
+      hint: t("statsHints.sops"),
+    },
   ];
 
   const cookieStore = await cookies();

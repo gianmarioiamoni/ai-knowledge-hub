@@ -293,6 +293,38 @@ const getPlatformStats = async (): Promise<PlatformStats> => {
   };
 };
 
+/**
+ * Get public statistics for landing page (lightweight, cacheable)
+ * Returns total counts without sensitive data
+ */
+export async function getPublicStats(): Promise<{
+  documentsTotal: number;
+  conversationsTotal: number;
+  proceduresTotal: number;
+}> {
+  try {
+    const [documentsTotal, conversationsTotal, proceduresTotal] = await Promise.all([
+      countTable("documents"),
+      countTable("conversations"),
+      countTable("procedures"),
+    ]);
+
+    return {
+      documentsTotal,
+      conversationsTotal,
+      proceduresTotal,
+    };
+  } catch (error) {
+    logError("getPublicStats failed", { error: error instanceof Error ? error.message : "Unknown error" });
+    // Return fallback values on error
+    return {
+      documentsTotal: 0,
+      conversationsTotal: 0,
+      proceduresTotal: 0,
+    };
+  }
+}
+
 export type { PlatformStats, PlanDistribution, TopOrganization, EngagementMetrics };
 export { getPlatformStats };
 
