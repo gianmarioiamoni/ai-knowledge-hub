@@ -9,6 +9,7 @@ import { CancelPlanDialog } from "@/components/profile/CancelPlanDialog";
 import { ChangePasswordForm } from "@/components/profile/ChangePasswordForm";
 import { DeleteAccountDialog } from "@/components/profile/DeleteAccountDialog";
 import { ForcePasswordDialog } from "@/components/profile/ForcePasswordDialog";
+import { LogoutButton } from "@/components/common/LogoutButton";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -37,6 +38,7 @@ export default async function ProfilePage({
   }
 
   const t = await getTranslations({ locale, namespace: "profile" });
+  const tLogin = await getTranslations({ locale, namespace: "loginPage" });
   const role = (user?.user_metadata as { role?: string } | null)?.role ?? "USER";
   const orgName =
     ((user?.user_metadata as { organization_name?: string } | null)?.organization_name as string | undefined) ?? null;
@@ -71,9 +73,12 @@ export default async function ProfilePage({
 
   return (
     <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-12">
-      <div className="space-y-1">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{t("title")}</p>
-        <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{t("subtitle")}</h1>
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-1">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{t("title")}</p>
+          <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{t("subtitle")}</h1>
+        </div>
+        <LogoutButton label={tLogin("logout")} />
       </div>
 
       <Card className="border border-white/40 bg-white/70 p-6 backdrop-blur dark:border-white/10 dark:bg-white/5">
