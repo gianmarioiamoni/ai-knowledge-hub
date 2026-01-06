@@ -38,7 +38,7 @@ export default async function ProfilePage({
   }
 
   const t = await getTranslations({ locale, namespace: "profile" });
-  const tLogin = await getTranslations({ locale, namespace: "loginPage" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
   const role = (user?.user_metadata as { role?: string } | null)?.role ?? "USER";
   const orgName =
     ((user?.user_metadata as { organization_name?: string } | null)?.organization_name as string | undefined) ?? null;
@@ -78,7 +78,7 @@ export default async function ProfilePage({
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{t("title")}</p>
           <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{t("subtitle")}</h1>
         </div>
-        <LogoutButton label={tLogin("logout")} />
+        <LogoutButton label={tCommon("logout")} variant="outline" />
       </div>
 
       <Card className="border border-white/40 bg-white/70 p-6 backdrop-blur dark:border-white/10 dark:bg-white/5">
