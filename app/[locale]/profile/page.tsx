@@ -72,7 +72,7 @@ export default async function ProfilePage({
   const forcePassword = resolvedSearch?.forcePassword === "true";
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-12">
+    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 pt-12 pb-6">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{t("title")}</p>

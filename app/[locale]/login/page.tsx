@@ -91,7 +91,7 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
       : null;
 
   return (
-    <div className="relative min-h-screen overflow-hidden py-12 sm:py-16">
+    <div className="relative min-h-screen overflow-hidden pt-12 pb-6 sm:pt-16 sm:pb-8">
       <div className="pointer-events-none absolute inset-0 opacity-70">
         <div className="absolute -left-32 -top-24 h-[36rem] w-[36rem] rounded-full bg-primary/20 blur-[120px]" />
         <div className="absolute bottom-[-18rem] right-[-12rem] h-[32rem] w-[32rem] rounded-full bg-accent/25 blur-[140px]" />

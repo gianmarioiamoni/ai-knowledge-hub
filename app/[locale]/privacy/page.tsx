@@ -23,7 +23,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps): Promise
   const t = await getTranslations({ locale, namespace: "privacy" });
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-6 py-12">
+    <div className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-6 pt-12 pb-6">
       <div className="space-y-2">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{t("title")}</p>
         <h1 className="text-3xl font-semibold text-foreground sm:text-4xl">{t("headline")}</h1>
