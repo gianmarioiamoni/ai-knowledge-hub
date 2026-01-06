@@ -109,29 +109,31 @@ export default async function ProfilePage({
               {user?.created_at ? new Date(user.created_at).toLocaleString() : "—"}
             </p>
           </div>
-          <div className="flex flex-col justify-end gap-2">
-            <Button asChild variant="outline" className="w-fit">
-              <Link href={`/${locale}/plans`}>{t("planManage")}</Link>
-            </Button>
-            {isPaidPlan ? (
-              <CancelPlanDialog
-                labels={{
-                  cta: t("cancel.cta"),
-                  title: t("cancel.title"),
-                  description: t("cancel.description"),
-                  warnings: [
-                    t("cancel.warnings.trialFallback"),
-                    t("cancel.warnings.accessLost"),
-                    t("cancel.warnings.cleanup"),
-                  ],
-                  confirm: t("cancel.confirm"),
-                  cancel: t("cancel.cancel"),
-                  success: t("cancel.success"),
-                  error: t("cancel.error"),
-                }}
-              />
-            ) : null}
-          </div>
+          {role === "COMPANY_ADMIN" ? (
+            <div className="flex flex-col justify-end gap-2">
+              <Button asChild variant="outline" className="w-fit">
+                <Link href="/plans">{t("planManage")}</Link>
+              </Button>
+              {isPaidPlan ? (
+                <CancelPlanDialog
+                  labels={{
+                    cta: t("cancel.cta"),
+                    title: t("cancel.title"),
+                    description: t("cancel.description"),
+                    warnings: [
+                      t("cancel.warnings.trialFallback"),
+                      t("cancel.warnings.accessLost"),
+                      t("cancel.warnings.cleanup"),
+                    ],
+                    confirm: t("cancel.confirm"),
+                    cancel: t("cancel.cancel"),
+                    success: t("cancel.success"),
+                    error: t("cancel.error"),
+                  }}
+                />
+              ) : null}
+            </div>
+          ) : null}
         </div>
       </Card>
 

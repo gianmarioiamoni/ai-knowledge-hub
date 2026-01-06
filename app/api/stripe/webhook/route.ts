@@ -62,14 +62,17 @@ export async function POST(request: Request): Promise<NextResponse> {
   const body = await request.text();
 
   if (!signature) {
+    console.error("[Stripe Webhook] Missing signature");
     return NextResponse.json({ error: "missing_signature" }, { status: 400 });
   }
 
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
+    console.log("[Stripe Webhook] Event received:", event.type);
   } catch (err) {
     const message = err instanceof Error ? err.message : "invalid_signature";
+    console.error("[Stripe Webhook] Signature verification failed:", message);
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
@@ -80,11 +83,21 @@ export async function POST(request: Request): Promise<NextResponse> {
         const supabaseUserId = session.metadata?.supabaseUserId;
         const subscriptionId = session.subscription as string | null;
         const customerId = session.customer as string | null;
-        if (!supabaseUserId || !subscriptionId || !customerId) break;
+        console.log("[Stripe Webhook] checkout.session.completed:", {
+          supabaseUserId,
+          subscriptionId,
+          customerId,
+        });
+        if (!supabaseUserId || !subscriptionId || !customerId) {
+          console.error("[Stripe Webhook] Missing required metadata");
+          break;
+        }
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         const plan = buildPlanFromSubscription(subscription);
+        console.log("[Stripe Webhook] Plan built:", plan);
         if (plan) {
           const { email } = await upsertUserPlan(supabaseUserId, plan, customerId);
+          console.log("[Stripe Webhook] Plan updated for user:", email);
           await sendAdminSubscriptionChange({
             userEmail: email,
             planId: plan.id,
@@ -96,10 +109,16 @@ export async function POST(request: Request): Promise<NextResponse> {
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
         const supabaseUserId = subscription.metadata?.supabaseUserId;
-        if (!supabaseUserId) break;
+        console.log("[Stripe Webhook] customer.subscription.updated:", { supabaseUserId });
+        if (!supabaseUserId) {
+          console.error("[Stripe Webhook] Missing supabaseUserId in subscription metadata");
+          break;
+        }
         const plan = buildPlanFromSubscription(subscription);
+        console.log("[Stripe Webhook] Plan built:", plan);
         if (plan) {
           const { email } = await upsertUserPlan(supabaseUserId, plan);
+          console.log("[Stripe Webhook] Plan updated for user:", email);
           await sendAdminSubscriptionChange({
             userEmail: email,
             planId: plan.id,
@@ -111,7 +130,11 @@ export async function POST(request: Request): Promise<NextResponse> {
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
         const supabaseUserId = subscription.metadata?.supabaseUserId;
-        if (!supabaseUserId) break;
+        console.log("[Stripe Webhook] customer.subscription.deleted:", { supabaseUserId });
+        if (!supabaseUserId) {
+          console.error("[Stripe Webhook] Missing supabaseUserId in subscription metadata");
+          break;
+        }
         const { email } = await upsertUserPlan(supabaseUserId, {
           id: "expired",
           billingCycle: subscription.metadata?.billingCycle as PlanPatch["billingCycle"],
@@ -121,6 +144,7 @@ export async function POST(request: Request): Promise<NextResponse> {
           customerId: typeof subscription.customer === "string" ? subscription.customer : subscription.customer?.id,
           cancelAtPeriodEnd: false,
         });
+        console.log("[Stripe Webhook] Plan expired for user:", email);
         await sendAdminSubscriptionChange({
           userEmail: email,
           planId: "expired",
@@ -129,10 +153,12 @@ export async function POST(request: Request): Promise<NextResponse> {
         break;
       }
       default:
+        console.log("[Stripe Webhook] Unhandled event type:", event.type);
         break;
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : "webhook_error";
+    console.error("[Stripe Webhook] Error processing event:", message, err);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 
