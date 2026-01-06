@@ -3,7 +3,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import { createSupabaseServiceClient } from "@/lib/server/supabaseService";
 import type { SeedResult, SeedDocument, DemoDataStatus } from "./types";
-import { SAMPLE_CONVERSATIONS } from "./sampleConversations";
+import { getSampleConversations } from "./sampleConversations";
 import { SAMPLE_PROCEDURES } from "./sampleProcedures";
 import {
   getDemoOrgId,
@@ -12,6 +12,7 @@ import {
   generateMockEmbedding,
   formatEmbeddingForPg,
   sleep,
+  type DemoUserInfo,
 } from "./demoSeedHelpers";
 
 /**
@@ -132,15 +133,20 @@ async function seedDocuments(orgId: string): Promise<{ docsCreated: number; chun
  */
 async function seedConversations(
   orgId: string,
-  userIds: Record<string, string>
+  userInfo: DemoUserInfo
 ): Promise<{ conversationsCreated: number; messagesCreated: number }> {
   const supabase = createSupabaseServiceClient();
   
   let conversationsCreated = 0;
   let messagesCreated = 0;
 
-  for (const conv of SAMPLE_CONVERSATIONS) {
-    const userId = userIds[conv.userEmail];
+  // Get sample conversations with actual demo user emails
+  const adminEmail = userInfo.admin?.email ?? "demo@aiknowledgehub.com";
+  const contributorEmail = userInfo.contributor?.email ?? "demo.contributor@aiknowledgehub.com";
+  const conversations = getSampleConversations(adminEmail, contributorEmail);
+
+  for (const conv of conversations) {
+    const userId = userInfo.byEmail[conv.userEmail];
     
     if (!userId) {
       console.warn(`[seedConversations] User not found: ${conv.userEmail}`);
@@ -238,8 +244,8 @@ export async function seedDemoData(): Promise<SeedResult> {
     console.log(`[seedDemoData] Found demo organization: ${orgId}`);
 
     // 2. Get demo user IDs
-    const userIds = await getDemoUserIds();
-    if (Object.keys(userIds).length === 0) {
+    const userInfo = await getDemoUserIds();
+    if (Object.keys(userInfo.byEmail).length === 0) {
       return {
         success: false,
         documentsCreated: 0,
@@ -251,14 +257,14 @@ export async function seedDemoData(): Promise<SeedResult> {
       };
     }
 
-    console.log(`[seedDemoData] Found ${Object.keys(userIds).length} demo users`);
+    console.log(`[seedDemoData] Found ${Object.keys(userInfo.byEmail).length} demo users`);
 
     // 3. Seed documents
     const { docsCreated, chunksCreated } = await seedDocuments(orgId);
     console.log(`[seedDemoData] Documents: ${docsCreated}, Chunks: ${chunksCreated}`);
 
     // 4. Seed conversations
-    const { conversationsCreated, messagesCreated } = await seedConversations(orgId, userIds);
+    const { conversationsCreated, messagesCreated } = await seedConversations(orgId, userInfo);
     console.log(`[seedDemoData] Conversations: ${conversationsCreated}, Messages: ${messagesCreated}`);
 
     // 5. Seed procedures
@@ -330,32 +336,34 @@ export async function deleteDemoData(): Promise<{
     // Delete procedures
     const { error: procError, count: procCount } = await supabase
       .from("procedures")
-      .delete()
-      .eq("organization_id", orgId)
-      .select("id", { count: "exact", head: true });
+      .delete({ count: "exact" })
+      .eq("organization_id", orgId);
 
     // Delete conversations (messages cascade)
     const { error: convError, count: convCount } = await supabase
       .from("conversations")
-      .delete()
-      .eq("organization_id", orgId)
-      .select("id", { count: "exact", head: true });
+      .delete({ count: "exact" })
+      .eq("organization_id", orgId);
 
     // Count messages before deletion (for reporting)
-    const { count: msgCount } = await supabase
-      .from("messages")
-      .select("id", { count: "exact", head: true })
-      .in(
-        "conversation_id",
-        supabase.from("conversations").select("id").eq("organization_id", orgId)
-      );
+    const { data: conversations } = await supabase
+      .from("conversations")
+      .select("id")
+      .eq("organization_id", orgId);
+
+    const conversationIds = conversations?.map((c) => c.id) ?? [];
+    const { count: msgCount } = conversationIds.length > 0
+      ? await supabase
+          .from("messages")
+          .select("id", { count: "exact", head: true })
+          .in("conversation_id", conversationIds)
+      : { count: 0 };
 
     // Delete documents (chunks cascade)
     const { error: docError, count: docCount } = await supabase
       .from("documents")
-      .delete()
-      .eq("organization_id", orgId)
-      .select("id", { count: "exact", head: true });
+      .delete({ count: "exact" })
+      .eq("organization_id", orgId);
 
     // Count chunks before deletion (for reporting)
     const { count: chunkCount } = await supabase
@@ -414,6 +422,14 @@ export async function getDemoDataStatus(): Promise<DemoDataStatus> {
 
   const supabase = createSupabaseServiceClient();
 
+  // First, get conversation IDs for message counting
+  const { data: conversations } = await supabase
+    .from("conversations")
+    .select("id")
+    .eq("organization_id", orgId);
+
+  const conversationIds = conversations?.map((c) => c.id) ?? [];
+
   const [
     { count: documentCount },
     { count: chunkCount },
@@ -424,10 +440,12 @@ export async function getDemoDataStatus(): Promise<DemoDataStatus> {
     supabase.from("documents").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
     supabase.from("document_chunks").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
     supabase.from("conversations").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
-    supabase
-      .from("messages")
-      .select("id", { count: "exact", head: true })
-      .in("conversation_id", supabase.from("conversations").select("id").eq("organization_id", orgId)),
+    conversationIds.length > 0
+      ? supabase
+          .from("messages")
+          .select("id", { count: "exact", head: true })
+          .in("conversation_id", conversationIds)
+      : Promise.resolve({ count: 0 }),
     supabase.from("procedures").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
   ]);
 

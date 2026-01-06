@@ -14,6 +14,7 @@ export async function seedDemoDataAction(locale: string): Promise<SeedResult> {
 
   if (error || !data.user) {
     redirect({ href: "/login", locale });
+    return {} as never; // Redirect throws, but TypeScript doesn't know
   }
 
   const role = (data.user.user_metadata as { role?: string } | null)?.role;
@@ -41,6 +42,7 @@ export async function resetDemoDataAction(locale: string): Promise<ResetResult> 
 
   if (error || !data.user) {
     redirect({ href: "/login", locale });
+    return {} as never; // Redirect throws, but TypeScript doesn't know
   }
 
   const role = (data.user.user_metadata as { role?: string } | null)?.role;
@@ -105,6 +107,7 @@ export async function getDemoDataStatusAction(locale: string): Promise<DemoDataS
 
   if (error || !data.user) {
     redirect({ href: "/login", locale });
+    return {} as never; // Redirect throws, but TypeScript doesn't know
   }
 
   const role = (data.user.user_metadata as { role?: string } | null)?.role;

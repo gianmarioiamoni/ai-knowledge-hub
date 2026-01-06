@@ -20,38 +20,77 @@ export async function getDemoOrgId(): Promise<string | null> {
   return data?.id ?? null;
 }
 
+export type DemoUserInfo = {
+  admin: { email: string; userId: string } | null;
+  contributor: { email: string; userId: string } | null;
+  viewer: { email: string; userId: string } | null;
+  byEmail: Record<string, string>; // email -> userId map for backward compatibility
+};
+
 /**
- * Get demo user IDs by email
- * Returns a map of email -> user_id
+ * Get demo user IDs with role information
+ * Returns structured info about admin, contributor, viewer + email->userId map
  */
-export async function getDemoUserIds(): Promise<Record<string, string>> {
+export async function getDemoUserIds(): Promise<DemoUserInfo> {
   const orgId = await getDemoOrgId();
-  if (!orgId) return {};
+  if (!orgId) {
+    return { admin: null, contributor: null, viewer: null, byEmail: {} };
+  }
 
   const service = createSupabaseServiceClient();
   const { data: members, error } = await service
     .from("organization_members")
-    .select("user_id")
+    .select("user_id, role")
     .eq("organization_id", orgId);
 
   if (error || !members) {
     console.error("[getDemoUserIds] Error:", error);
-    return {};
+    return { admin: null, contributor: null, viewer: null, byEmail: {} };
   }
 
   // Get user emails from auth
   const { data: usersData } = await service.auth.admin.listUsers();
-  if (!usersData?.users) return {};
+  if (!usersData?.users) {
+    return { admin: null, contributor: null, viewer: null, byEmail: {} };
+  }
 
+  // Build maps
   const userIdToEmail: Record<string, string> = {};
+  const userIdToRole: Record<string, string> = {};
+
   for (const user of usersData.users) {
     const isDemoUser = (user.user_metadata as { is_demo_user?: boolean } | null)?.is_demo_user ?? false;
     if (isDemoUser && user.email) {
-      userIdToEmail[user.email] = user.id;
+      userIdToEmail[user.id] = user.email;
     }
   }
 
-  return userIdToEmail;
+  for (const member of members) {
+    userIdToRole[member.user_id] = member.role;
+  }
+
+  // Find specific roles
+  let admin = null;
+  let contributor = null;
+  let viewer = null;
+  const byEmail: Record<string, string> = {};
+
+  for (const member of members) {
+    const email = userIdToEmail[member.user_id];
+    if (!email) continue;
+
+    byEmail[email] = member.user_id;
+
+    if (member.role === "COMPANY_ADMIN" && !admin) {
+      admin = { email, userId: member.user_id };
+    } else if (member.role === "CONTRIBUTOR" && !contributor) {
+      contributor = { email, userId: member.user_id };
+    } else if (member.role === "VIEWER" && !viewer) {
+      viewer = { email, userId: member.user_id };
+    }
+  }
+
+  return { admin, contributor, viewer, byEmail };
 }
 
 /**

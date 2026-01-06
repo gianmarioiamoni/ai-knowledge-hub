@@ -9,7 +9,11 @@ type DemoUser = {
   role: "COMPANY_ADMIN" | "CONTRIBUTOR" | "VIEWER";
 };
 
-const DEMO_ORG_NAME = "Demo Company";
+// Exported constants for seed data
+export const DEMO_ORG_NAME = "Demo Company";
+export const DEMO_USER_ADMIN_EMAIL = "demo@aiknowledgehub.com";
+export const DEMO_USER_CONTRIBUTOR_EMAIL = "demo.contributor@aiknowledgehub.com";
+export const DEMO_USER_VIEWER_EMAIL = "demo.viewer@aiknowledgehub.com";
 
 // Default values if env vars not provided
 const DEFAULT_DEMO_EMAIL = "demo@aiknowledgehub.com";

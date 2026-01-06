@@ -1,11 +1,12 @@
 // seed/sampleConversations.ts
 import type { SeedConversation } from "./types";
-import { DEMO_USER_ADMIN_EMAIL, DEMO_USER_CONTRIBUTOR_EMAIL } from "@/lib/server/demoUsers";
 
-export const SAMPLE_CONVERSATIONS: SeedConversation[] = [
-  {
-    title: "Password Reset Procedure",
-    userEmail: DEMO_USER_ADMIN_EMAIL,
+// Function to generate sample conversations with dynamic email addresses
+export function getSampleConversations(adminEmail: string, contributorEmail: string): SeedConversation[] {
+  return [
+    {
+      title: "Password Reset Procedure",
+      userEmail: adminEmail,
     messages: [
       { role: "user", content: "How do I reset my password if I forgot it?" },
       {
@@ -25,9 +26,9 @@ If you don't receive the email within 5 minutes, contact IT Support at ext. 5555
       },
     ],
   },
-  {
-    title: "VPN Connection Issue",
-    userEmail: DEMO_USER_CONTRIBUTOR_EMAIL,
+    {
+      title: "VPN Connection Issue",
+      userEmail: contributorEmail,
     messages: [
       { role: "user", content: "I can't connect to the company VPN from home. What should I check?" },
       {
@@ -62,9 +63,9 @@ IT Helpdesk: ext. 5555 or helpdesk@company.com`,
       },
     ],
   },
-  {
-    title: "New Employee Onboarding",
-    userEmail: DEMO_USER_ADMIN_EMAIL,
+    {
+      title: "New Employee Onboarding",
+      userEmail: adminEmail,
     messages: [
       { role: "user", content: "What are the IT tasks for onboarding a new employee?" },
       {
@@ -103,9 +104,9 @@ All steps must be documented in ServiceNow with ticket number.`,
       },
     ],
   },
-  {
-    title: "Multi-Factor Authentication Setup",
-    userEmail: DEMO_USER_CONTRIBUTOR_EMAIL,
+    {
+      title: "Multi-Factor Authentication Setup",
+      userEmail: contributorEmail,
     messages: [
       { role: "user", content: "How do I enable MFA on my account?" },
       {
@@ -144,5 +145,6 @@ You can use:
 - Review login history monthly`,
       },
     ],
-  },
-];
+    },
+  ];
+}
