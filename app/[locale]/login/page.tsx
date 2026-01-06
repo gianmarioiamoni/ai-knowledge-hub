@@ -101,7 +101,7 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
       <div className={`relative mx-auto flex w-full max-w-6xl flex-col gap-10 ${LAYOUT_CLASSES.horizontalPadding}`}>
         <BadgeBar label={t("badgeLabel")} hint={t("badgeHint")} />
 
-        <div className="grid items-start justify-items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:justify-items-stretch">
+        <div className="grid items-start justify-items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:justify-items-stretch">
           <div className="space-y-8">
             {errorMessage ? (
               <Alert variant="destructive">
