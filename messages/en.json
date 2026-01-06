@@ -2,6 +2,7 @@
   "profile": {
     "title": "Profile",
     "subtitle": "Manage your account details.",
+    "viewProfile": "View profile",
     "email": "Email",
     "role": "Role",
     "organization": "Organization",

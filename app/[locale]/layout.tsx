@@ -11,6 +11,7 @@ import { CommandHint } from "@/components/navigation/CommandHint";
 import { CommandLauncher } from "@/components/navigation/CommandLauncher";
 import { TopNav } from "@/components/navigation/TopNav";
 import { NavProvider } from "@/components/navigation/NavProvider";
+import { UserProfileLink } from "@/components/navigation/UserProfileLink";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SentryClientInit } from "@/components/SentryClientInit";
 import { CookieBanner } from "@/components/CookieBanner/CookieBanner";
@@ -62,6 +63,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const tProcedures = await getTranslations({ locale, namespace: "proceduresPage" });
   const tPlans = await getTranslations({ locale, namespace: "plans" });
   const tHelp = await getTranslations({ locale, namespace: "help" });
+  const tProfile = await getTranslations({ locale, namespace: "profile" });
 
   const baseNav = [
     { label: tDashboard("title"), href: "/dashboard" },
@@ -97,13 +99,19 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           <NavProvider items={navItems}>
             <SentryClientInit />
             <div className="relative z-50 mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-6 pt-4 sm:px-6 sm:pt-6 lg:px-6 xl:px-0">
-              {role !== "SUPER_ADMIN" && orgName ? (
-                <span className="hidden rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary ring-1 ring-primary/20 sm:inline">
-                  {orgName}
-                </span>
-              ) : (
-                <span />
-              )}
+              <div className="flex items-center gap-2">
+                {role !== "SUPER_ADMIN" && orgName ? (
+                  <span className="hidden rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary ring-1 ring-primary/20 sm:inline">
+                    {orgName}
+                  </span>
+                ) : null}
+                {isAuthenticated && data.user ? (
+                  <UserProfileLink
+                    userName={data.user.user_metadata?.name || data.user.email?.split("@")[0] || "User"}
+                    label={tProfile("viewProfile")}
+                  />
+                ) : null}
+              </div>
               <div className="flex items-center justify-end gap-3">
                 <TopNav items={navItems} helpHref="/help" helpLabel={tHelp("title")} />
                 <CommandHint />
