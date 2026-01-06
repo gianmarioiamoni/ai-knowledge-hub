@@ -34,44 +34,58 @@ export function UserGrowth({ title, data, noDataLabel }: UserGrowthProps): JSX.E
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-64 w-full">
-          {/* Y-axis labels */}
-          <div className="flex h-full gap-2">
-            <div className="flex flex-col justify-between py-1 text-xs text-muted-foreground">
+        <div className="space-y-2">
+          {/* Chart area */}
+          <div className="flex gap-2">
+            {/* Y-axis labels */}
+            <div className="flex w-8 flex-col justify-between text-right text-xs text-muted-foreground">
               <span>{maxCount}</span>
-              <span>{Math.round(maxCount / 2)}</span>
-              <span>0</span>
+              <span className="mt-20">{Math.round(maxCount / 2)}</span>
+              <span className="mt-20">0</span>
             </div>
 
-            {/* Chart bars */}
-            <div className="flex flex-1 items-end gap-1">
+            {/* Bars container with fixed height */}
+            <div className="relative flex flex-1 items-end gap-1" style={{ height: "200px" }}>
               {data.map((item, index) => {
-                const height = maxCount > 0 ? (item.count / maxCount) * 100 : 0;
+                const heightPx = maxCount > 0 ? (item.count / maxCount) * 200 : 0;
                 const isFirst = index === 0;
                 const isLast = index === data.length - 1;
                 const showLabel = isFirst || isLast || index % 5 === 0;
 
                 return (
-                  <div key={item.label} className="group relative flex flex-1 flex-col items-center">
+                  <div
+                    key={item.label}
+                    className="group relative flex flex-1 flex-col items-center"
+                    style={{ height: `${heightPx}px` }}
+                  >
                     {/* Tooltip on hover */}
-                    <div className="pointer-events-none absolute -top-10 hidden rounded bg-foreground px-2 py-1 text-xs text-background group-hover:block">
-                      {item.count}
-                    </div>
+                    {item.count > 0 && (
+                      <div className="pointer-events-none absolute -top-8 hidden rounded bg-foreground px-2 py-1 text-xs text-background group-hover:block">
+                        {item.count}
+                      </div>
+                    )}
 
                     {/* Bar */}
-                    <div className="relative w-full" style={{ height: "100%" }}>
-                      <div
-                        className="absolute bottom-0 w-full rounded-t bg-primary transition-all group-hover:opacity-80"
-                        style={{ height: `${height}%` }}
-                      />
-                    </div>
-
-                    {/* X-axis label */}
-                    {showLabel && (
-                      <span className="mt-2 text-[10px] text-muted-foreground">{item.label}</span>
-                    )}
+                    <div
+                      className="w-full rounded-t bg-primary transition-all group-hover:opacity-80"
+                      style={{ height: `${heightPx}px`, minHeight: item.count > 0 ? "2px" : "0px" }}
+                    />
                   </div>
                 );
+              })}
+            </div>
+          </div>
+
+          {/* X-axis labels */}
+          <div className="flex gap-2">
+            <div className="w-8" /> {/* Spacer for Y-axis */}
+            <div className="flex flex-1 justify-between text-[10px] text-muted-foreground">
+              {data.map((item, index) => {
+                const isFirst = index === 0;
+                const isLast = index === data.length - 1;
+                const showLabel = isFirst || isLast || index % 5 === 0;
+
+                return showLabel ? <span key={item.label}>{item.label}</span> : <span key={item.label} />;
               })}
             </div>
           </div>
